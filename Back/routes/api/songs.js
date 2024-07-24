@@ -17,4 +17,14 @@ router.get('/:songId', async (req, res) => {
     res.json(song);
 });
 
+router.post('/', async  (req, res) => {
+    try{
+        const song = await Song.create(req.body);
+        res.json(song);
+    }catch (error){
+        res.json({ error: error.message });
+    }
+    
+})
+
 module.exports = router;
