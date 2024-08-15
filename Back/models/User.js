@@ -1,5 +1,3 @@
-const { model } = require('mongoose');
-
 const mongoose = require('mongoose');
 
 // Definición del esquema para los títulos/estudios/acreditaciones
@@ -62,6 +60,3 @@ const UserSchema = new mongoose.Schema({
 
 
 module.exports = mongoose.model('User', UserSchema);
-
-
-module.exports = model('user', userSchema);

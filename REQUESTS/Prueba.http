@@ -1,0 +1,11 @@
+POST http://localhost:3000/api/profile
+Content-Type: application/json
+
+{
+    "nombre": "Mario",
+    "apellidos": "Olmos Manso",
+    "email": "olmosmansomario26@gmail.com",
+    "password": "pruebaPassword",
+    "fechaNacimiento": "Thu, 30 Aug 2001 09:28:21 GMT",
+    "rol": "Usuario"
+}

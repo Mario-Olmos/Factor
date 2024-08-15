@@ -11,7 +11,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
-//GET /api/songs
+//GET /api
 app.use('/api', require('./routes/api'));
 
 const PORT = process.env.PORT || 3000;
