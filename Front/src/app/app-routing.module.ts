@@ -1,11 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ArticuloListComponent } from './components/articulos/articulo-list/articulo-list.component';
-import { ArticuloDetailComponent } from './components/articulos/articulo-detail/articulo-detail.component';
+import { LoginComponent } from './components/user/login/login.component';
+import { RegisterComponent } from './components/user/register/register.component';
 
 const routes: Routes = [
-  { path: 'songs', component: ArticuloListComponent},
-  { path: 'songs/:songId', component: ArticuloDetailComponent}
+  { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
+  { path: '', redirectTo: '/login', pathMatch: 'full' } // Ruta predeterminada
 ];
 
 @NgModule({
