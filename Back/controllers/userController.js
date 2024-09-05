@@ -66,7 +66,20 @@ exports.login = async (req, res) => {
             { expiresIn: '1h' }
         );
 
-        res.status(200).json({ token, user });
+        res.cookie('token', token, {
+            httpOnly: true, 
+            //En desarrollo es false, cuando esté en un servidor real será true
+            secure: false,
+            maxAge: 60 * 60 * 1000, // 1 hora
+            sameSite: 'Lax'
+        });
+
+        const userResponse = user.toObject();
+        delete userResponse.password; // Elimina el campo de la contraseña
+
+        // Enviar respuesta sin el token
+        res.status(200).json({ user: userResponse });
+
     } catch (err) {
         res.status(500).json({ message: 'Error al iniciar sesión', error: err.message });
     }
