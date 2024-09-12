@@ -5,8 +5,12 @@ const jwt = require('jsonwebtoken');
 
 // Endpoint para validar el token
 exports.validateToken = async (req, res) => {
-    res.json({ authenticated: true, user: req.user });
-}
+    if (req.user) {
+        res.json({ authenticated: true, user: req.user });
+    } else {
+        res.json({ authenticated: false, message: 'Usuario no autenticado' });
+    }
+};
 
 // Controlador para registrar un nuevo usuario
 exports.register = async (req, res) => {
@@ -56,13 +60,13 @@ exports.login = async (req, res) => {
     try {
         // Comprobar si el usuario existe
         const user = await User.findOne({ email });
-        
+
         if (!user) {
             return res.status(400).json({ message: 'Credenciales incorrectas' });
         }
         // Comparar la contraseña
         const isMatch = await bcrypt.compare(password, user.password);
-        
+
         if (!isMatch) {
             return res.status(400).json({ message: 'Credenciales incorrectas' });
         }
@@ -74,7 +78,7 @@ exports.login = async (req, res) => {
         );
 
         res.cookie('token', token, {
-            httpOnly: true, 
+            httpOnly: true,
             //En desarrollo es false, cuando esté en un servidor real será true
             secure: false,
             maxAge: 60 * 60 * 1000, // 1 hora
@@ -83,8 +87,8 @@ exports.login = async (req, res) => {
         });
 
         const userResponse = user.toObject();
-        delete userResponse.password; 
-        delete userResponse.veracidad; 
+        delete userResponse.password;
+        delete userResponse.veracidad;
         delete userResponse.acreditaciones;
         delete userResponse.rol;
         delete userResponse.fechaNacimiento;
