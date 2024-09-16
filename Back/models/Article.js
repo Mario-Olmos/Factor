@@ -20,8 +20,7 @@ const articleSchema = new mongoose.Schema({
         required: true,
     },
     theme: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Theme',
+        type: String,
         required: true,
     },
     createdAt: {

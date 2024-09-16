@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const path = require('path');
 
 require('dotenv').config();
 require('./config/db');
@@ -15,6 +16,9 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
+
+// Middleware para servir archivos estáticos (para acceder a los PDFs subidos)
+app.use('/upload', express.static(path.join(__dirname, 'uploads')));
 
 //GET /api
 app.use('/api', require('./routes/api'));
