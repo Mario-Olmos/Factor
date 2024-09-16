@@ -1,1 +1,77 @@
-<p>home works!</p>
+<div class="container">
+    <h2>Subir un nuevo artículo</h2>
+    <form (ngSubmit)="onSubmit()" [formGroup]="articleForm" enctype="multipart/form-data">
+      
+      <!-- Título -->
+      <div class="form-group">
+        <label for="title">Título</label>
+        <input
+          type="text"
+          id="title"
+          formControlName="title"
+          class="form-control"
+          placeholder="Título del artículo"
+          required
+        />
+        <div *ngIf="articleForm.get('title')?.invalid && articleForm.get('title')?.touched">
+          <small class="text-danger">El título es requerido.</small>
+        </div>
+      </div>
+  
+      <!-- Descripción -->
+      <div class="form-group">
+        <label for="description">Descripción</label>
+        <textarea
+          id="description"
+          formControlName="description"
+          class="form-control"
+          placeholder="Descripción del artículo"
+          rows="4"
+        ></textarea>
+      </div>
+  
+      <!-- Tema -->
+      <div class="form-group">
+        <label for="theme">Tema</label>
+        <input
+          type="text"
+          id="theme"
+          formControlName="theme"
+          class="form-control"
+          placeholder="ID del tema"
+          required
+        />
+        <div *ngIf="articleForm.get('theme')?.invalid && articleForm.get('theme')?.touched">
+          <small class="text-danger">El tema es requerido.</small>
+        </div>
+      </div>
+  
+      <!-- PDF -->
+      <div class="form-group">
+        <label for="pdf">Subir PDF</label>
+        <input
+          type="file"
+          id="pdf"
+          (change)="onFileChange($event)"
+          class="form-control"
+          accept="application/pdf"
+          required
+        />
+        <div *ngIf="pdfError">
+          <small class="text-danger">Por favor, selecciona un archivo PDF válido.</small>
+        </div>
+      </div>
+  
+      <!-- Vista previa del archivo seleccionado -->
+      <div *ngIf="pdfFileName">
+        <p><strong>Archivo seleccionado:</strong> {{ pdfFileName }}</p>
+      </div>
+  
+      <!-- Botón de envío -->
+      <button type="submit" class="btn btn-primary" [disabled]="articleForm.invalid || !pdfFile">
+        Subir Artículo
+      </button>
+  
+    </form>
+  </div>
+  
