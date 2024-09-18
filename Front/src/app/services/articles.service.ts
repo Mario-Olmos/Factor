@@ -15,4 +15,8 @@ export class ArticlesService {
   uploadArticle(formData: FormData): Observable<any> {
     return this.http.post(this.apiUrl, formData);
   }
+
+  uploadTheme(formData: FormData): Observable<any> {
+    return this.http.post(`${this.apiUrl}/theme`, formData);
+  }
 }
