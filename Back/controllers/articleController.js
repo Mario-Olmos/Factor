@@ -20,7 +20,20 @@ exports.uploadArticle = async (req, res) => {
 
         res.status(201).json(newArticle);
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Error subiendo el PDF' });
+        console.error('Error al crear el artículo:', err);
+
+        // Si hay un error, eliminar el archivo PDF del servidor
+        if (req.file && req.file.path) {
+            const filePath = path.join(__dirname, '..', req.file.path);
+            fs.unlink(filePath, (unlinkErr) => {
+                if (unlinkErr) {
+                    console.error('Error al eliminar el archivo:', unlinkErr);
+                } else {
+                    console.log('Archivo eliminado debido a error en BD');
+                }
+            });
+        }
+
+        res.status(500).json({ error: 'Error subiendo el PDF o creando el artículo' });
     }
 };
