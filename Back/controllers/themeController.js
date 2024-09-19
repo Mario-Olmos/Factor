@@ -11,22 +11,22 @@ exports.createTheme = async (req, res) => {
 
         let newTheme;
         if (parentTheme) {
-
-            const parentThemeObject = await Theme.findById(parentTheme);
-            console.log(parentThemeObject)
-            if (!parentThemeObject) {
+            const parentObject = await Theme.findOne({ name: parentTheme });
+            
+            console.log(parentObject.name);
+            if (!parentObject) {
                 return res.status(404).json({ error: 'La temática padre no existe' });
             }
 
             newTheme = new Theme({
                 name,
-                parentTheme: parentThemeObject.name
+                parentTheme: parentObject._id
             });
 
             await newTheme.save();
 
-            parentThemeObject.subthemes.push(newTheme._id);
-            await parentTheme.save();
+            parentObject.subthemes.push(newTheme._id);
+            await parentObject.save();
 
         } else {
             newTheme = new Theme({ name });
