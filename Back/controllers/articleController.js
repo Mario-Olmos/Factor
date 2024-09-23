@@ -1,8 +1,17 @@
 const Article = require('../models/Article');
+const User = require('../models/User');
 
 exports.uploadArticle = async (req, res) => {
     try {
         const { title, description, author, theme } = req.body;
+
+        const user = await User.findById(author);
+
+        if (user.reputacion < 20) {
+            return res.status(403).json({
+                message: 'No tienes suficiente reputación para publicar un artículo'
+            });
+        }
 
         // URL del PDF subido
         const pdfUrl = `/uploads/pdf/${req.file.filename}`;
@@ -16,9 +25,18 @@ exports.uploadArticle = async (req, res) => {
             theme
         });
 
+        if (user.reputation >= 50) {
+            // Impulso inicial proporcional y normalizado (máximo de 10)
+            newArticle.veracity = (user.reputacion / 100) * 10;
+        }
+
         await newArticle.save();
 
-        res.status(201).json(newArticle);
+        res.status(201).json({
+            message: 'Artículo creado con éxito',
+            newArticle
+        });
+
     } catch (err) {
         console.error('Error al crear el artículo:', err);
 

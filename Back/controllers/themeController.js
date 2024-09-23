@@ -40,3 +40,14 @@ exports.createTheme = async (req, res) => {
         res.status(500).json({ error: 'Error al crear el tema' });
     }
 };
+
+
+exports.getThemes = async (req, res) => {
+  try {
+    const themes = await Theme.find().populate('subthemes'); // Poblamos las subtemáticas
+    res.status(200).json(themes);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Error al obtener las temáticas' });
+  }
+};
