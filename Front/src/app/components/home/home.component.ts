@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ArticlesService } from '../../services/articles.service'; 
 import { AuthService } from '../../services/auth.service';
-import { User } from '../../models/user.model'; // Importa el modelo
+import { User } from '../../models/user.model';
+import { Theme } from '../../models/theme.model';
 
 @Component({
   selector: 'app-home',
@@ -15,6 +16,7 @@ export class HomeComponent implements OnInit {
   pdfFileName: string | null = null;
   pdfError: boolean = false;
   currentUser: User | null = null;
+  themes: Theme[] = [];
 
   constructor(private fb: FormBuilder, private articlesService: ArticlesService, private authService: AuthService) {
   }
@@ -25,9 +27,19 @@ export class HomeComponent implements OnInit {
       description: [''],
       theme: ['', Validators.required],
     });
+
     this.authService.getCurrentUser().subscribe(user => {
       this.currentUser = user;
     });
+
+    this.articlesService.getThemes().subscribe(
+      (themes: Theme[]) => {
+        this.themes = themes; 
+      },
+      (error) => {
+        console.error('Error al cargar las temáticas', error);
+      }
+    );
   }
 
   // Maneja el cambio de archivo PDF

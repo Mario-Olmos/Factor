@@ -19,9 +19,19 @@ const articleSchema = new mongoose.Schema({
         ref: 'User',
         required: true,
     },
+    authorReputationAtCreation: { 
+        // Guardamos la reputación del autor al momento de publicar
+        type: Number,
+        required: true,
+    },
     theme: {
         type: String,
         required: true,
+    },
+    veracity: {
+        // Valor inicial de la veracidad que puede modificarse con votos
+        type: Number,
+        default: 0, 
     },
     createdAt: {
         type: Date,
@@ -49,6 +59,12 @@ const articleSchema = new mongoose.Schema({
             }
         }
     ]
+});
+
+// Middleware para actualizar la fecha de "updatedAt" cada vez que se guarda un artículo
+articleSchema.pre('save', function(next) {
+    this.updatedAt = Date.now();
+    next();
 });
 
 const Article = mongoose.model('Article', articleSchema);

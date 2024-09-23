@@ -1,0 +1,21 @@
+<!-- theme.component.html -->
+<div class="container">
+    <h2>Insertar Temática o Subtemática</h2>
+    <form (ngSubmit)="onSubmit()" [formGroup]="themeForm">
+      <div class="form-group">
+        <label for="name">Nombre del Tema/Subtema</label>
+        <input type="text" id="name" formControlName="name" placeholder="Introduce el nombre" required>
+      </div>
+  
+      <div class="form-group">
+        <label for="parentTheme">Temática Padre (dejar vacío si es un tema principal)</label>
+        <input type="text" id="parentTheme" formControlName="parentTheme" placeholder="Introduce el ID de la temática padre (opcional)">
+      </div>
+  
+      <button type="submit" [disabled]="themeForm.invalid">Crear Tema</button>
+    </form>
+  
+    <p *ngIf="successMessage" style="color:green;">{{ successMessage }}</p>
+    <p *ngIf="errorMessage" style="color:red;">{{ errorMessage }}</p>
+  </div>
+  

@@ -41,17 +41,13 @@ const UserSchema = new mongoose.Schema({
     },
     rol: {
         type: String,
-        enum: ['Usuario', 'Autor'],
+        enum: ['Usuario'],
         default: 'Usuario',
         required: true,
     },
-    reputacion: { type: Number, default: 1 },
+    reputacion: { type: Number, default: 30 },
     fechaUltimaPublicacion: { type: Date, default: null },
     fechaUltimoVoto: { type: Date, default: null },
-    veracidad: {
-        puntuacion: { type: Number, default: 0 },
-        votos: { type: Number, default: 0 },
-    },
     acreditaciones: [AccreditationSchema],
 }, { timestamps: true });
 
