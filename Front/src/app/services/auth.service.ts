@@ -29,7 +29,7 @@ export class AuthService {
   validateToken(): Observable<TokenValidationResponse> {
     return this.http.get<TokenValidationResponse>(`${this.apiUrl}/validate-token`, { withCredentials: true }).pipe(
       map(response => {
-        if (response.authenticated && response.user) {
+        if (response.authenticated && response.user ) {
           this.currentUser.next(response.user);
         } else {
           this.currentUser.next(null);

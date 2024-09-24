@@ -42,8 +42,7 @@ const UserSchema = new mongoose.Schema({
     rol: {
         type: String,
         enum: ['Usuario'],
-        default: 'Usuario',
-        required: true,
+        default: 'Usuario'
     },
     reputacion: { type: Number, default: 30 },
     fechaUltimaPublicacion: { type: Date, default: null },

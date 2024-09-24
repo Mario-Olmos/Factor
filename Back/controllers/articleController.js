@@ -1,5 +1,6 @@
 const Article = require('../models/Article');
 const User = require('../models/User');
+const path = require('path');
 
 exports.uploadArticle = async (req, res) => {
     try {
@@ -22,7 +23,8 @@ exports.uploadArticle = async (req, res) => {
             description,
             pdfUrl,
             author,
-            theme
+            theme,
+            authorReputationAtCreation: user.reputacion
         });
 
         if (user.reputation >= 50) {
