@@ -1,1 +1,82 @@
-/* You can add global styles to this file, and also import other style files */
+/* Estilos globales para formularios */
+form {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #343a40;
+    /* Fondo más oscuro */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"] {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #444;
+    /* Borde más oscuro */
+    border-radius: 5px;
+    font-size: 16px;
+    background-color: #555;
+    /* Fondo del input más oscuro */
+    color: #fff;
+    /* Texto en blanco */
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+input:focus {
+    background-color: #666;
+    /* Fondo ligeramente más claro al hacer foco */
+    border-color: #007bff;
+    /* Borde azul al hacer foco */
+    outline: none;
+}
+
+button[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3;
+    /* Cambio de color al pasar el ratón */
+}
+
+/* Enlaces */
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Estilos para h2 y p centrados */
+h2,
+p {
+    text-align: center;
+    color: #000000;
+    /* Texto en blanco */
+}
+
+/* Para el contenedor de los formularios */
+.container {
+    margin-top: 50px;
+    color: #fff;
+    /* Color del texto en el contenedor */
+}
