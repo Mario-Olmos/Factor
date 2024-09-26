@@ -6,11 +6,6 @@
     <input type="email" formControlName="email" placeholder="Email" required>
     <input type="password" formControlName="password" placeholder="Contraseña" required>
     <input type="date" formControlName="fechaNacimiento" required>
-    <select formControlName="rol">
-      <option value="Usuario">Usuario</option>
-      <option value="Autor">Autor</option>
-    </select>
-    <textarea formControlName="acreditaciones" placeholder="Acreditaciones (solo si eres Autor)"></textarea>
     <button type="submit">Registrar</button>
   </form>
   <p>¿Ya tienes una cuenta? <a routerLink="/login">Inicia sesión aquí</a></p>

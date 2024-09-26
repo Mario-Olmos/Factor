@@ -12,11 +12,24 @@ exports.validateToken = async (req, res) => {
     }
 };
 
+// Endpoint para cerrar Sesión
+exports.logout = (req, res) => {
+    res.clearCookie('token', {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'Lax',
+        path: '/'
+    });
+    return res.status(200).json({ message: 'Logout successful' });
+};
+
+
 // Controlador para registrar un nuevo usuario
 exports.register = async (req, res) => {
-    const { nombre, apellidos, email, password, fechaNacimiento, rol, acreditaciones } = req.body;
+    const { nombre, apellidos, email, password, fechaNacimiento } = req.body;
 
     try {
+
         // Comprobar si el usuario ya existe
         const existingUser = await User.findOne({ email });
         if (existingUser) {
@@ -33,15 +46,14 @@ exports.register = async (req, res) => {
             email,
             password: hashedPassword,
             fechaNacimiento,
-            rol,
-            acreditaciones: rol === 'Autor' ? acreditaciones : undefined, // Acreditaciones solo para 'Autor'
+            reputacion: 30
         });
 
         await newUser.save();
 
         // Generar un token JWT
         const token = jwt.sign(
-            { userId: newUser._id, rol: newUser.rol },
+            { userId: newUser._id, email: newUser.email, reputacion: newUser.reputacion },
             process.env.JWT_SECRET,
             { expiresIn: '1h' }
         );
@@ -72,7 +84,7 @@ exports.login = async (req, res) => {
         }
         // Generar un token JWT
         const token = jwt.sign(
-            { userId: user._id, rol: user.rol },
+            { userId: user._id, email: user.email, reputacion: user.reputacion },
             process.env.JWT_SECRET,
             { expiresIn: '1h' }
         );
@@ -88,12 +100,10 @@ exports.login = async (req, res) => {
 
         const userResponse = user.toObject();
         delete userResponse.password;
-        delete userResponse.veracidad;
         delete userResponse.acreditaciones;
         delete userResponse.rol;
         delete userResponse.fechaNacimiento;
 
-        // Enviar respuesta sin el token
         res.status(200).json({ user: userResponse });
 
     } catch (err) {
