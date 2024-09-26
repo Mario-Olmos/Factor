@@ -1,0 +1,24 @@
+<nav class="navbar">
+    <div class="container">
+      <a routerLink="/" class="navbar-brand">FACTOR</a>
+  
+      <ul class="navbar-nav">
+        <li class="nav-item" *ngIf="isLoggedIn">
+          <a routerLink="/home" class="nav-link">Home</a>
+        </li>
+        <li class="nav-item" *ngIf="!isLoggedIn">
+          <a routerLink="/login" class="nav-link">Login</a>
+        </li>
+        <li class="nav-item" *ngIf="!isLoggedIn">
+            <a routerLink="/register" class="nav-link">Registrate</a>
+          </li>
+        <li class="nav-item" *ngIf="isLoggedIn">
+          <a routerLink="/theme" class="nav-link">Perfil</a>
+        </li>
+        <li class="nav-item" *ngIf="isLoggedIn">
+          <a (click)="logout()" class="nav-link">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  

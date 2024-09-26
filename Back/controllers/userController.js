@@ -12,6 +12,18 @@ exports.validateToken = async (req, res) => {
     }
 };
 
+// Endpoint para cerrar Sesión
+exports.logout = (req, res) => {
+    res.clearCookie('token', {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'Lax',
+        path: '/'
+    });
+    return res.status(200).json({ message: 'Logout successful' });
+};
+
+
 // Controlador para registrar un nuevo usuario
 exports.register = async (req, res) => {
     const { nombre, apellidos, email, password, fechaNacimiento } = req.body;
@@ -41,7 +53,7 @@ exports.register = async (req, res) => {
 
         // Generar un token JWT
         const token = jwt.sign(
-            { userId: newUser._id , email: newUser.email, reputacion: newUser.reputacion },
+            { userId: newUser._id, email: newUser.email, reputacion: newUser.reputacion },
             process.env.JWT_SECRET,
             { expiresIn: '1h' }
         );
