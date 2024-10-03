@@ -1,10 +1,47 @@
-<div class="container">
-    <h2>Inicio de Sesión</h2>
-    <form (ngSubmit)="onLogin()" [formGroup]="loginForm">
-      <input type="email" formControlName="email" placeholder="Email" required>
-      <input type="password" formControlName="password" placeholder="Contraseña" required>
-      <button type="submit">Iniciar Sesión</button>
-    </form>
-    <p>¿No tienes una cuenta? <a routerLink="/register">Regístrate aquí</a></p>
+<!-- Popup de notificación -->
+<div class="popup-notification" *ngIf="successMessage || errorMessage">
+  <div [ngClass]="{'popup-success': successMessage, 'popup-error': errorMessage}">
+    {{ successMessage || errorMessage }}
   </div>
-  
+</div>
+
+
+<div class="container">
+  <h2>Inicio de Sesión</h2>
+  <form (ngSubmit)="onLogin()" [formGroup]="loginForm">
+
+    <!-- Campo de Email -->
+    <input type="email" formControlName="email" placeholder="Email" required class="form-control" [ngClass]="{
+        'is-invalid': loginForm.get('email')!.invalid && loginForm.get('email')!.touched
+      }" />
+    <div *ngIf="loginForm.get('email')!.invalid && loginForm.get('email')!.touched" class="invalid-feedback">
+      <small *ngIf="loginForm.get('email')!.hasError('required')">
+        El correo electrónico es obligatorio.
+      </small>
+      <small *ngIf="loginForm.get('email')!.hasError('email')">
+        Debe ser un formato de email válido.
+      </small>
+    </div>
+
+    <!-- Campo de Contraseña -->
+    <input type="password" formControlName="password" placeholder="Contraseña" required class="form-control" [ngClass]="{
+        'is-invalid': loginForm.get('password')!.invalid && loginForm.get('password')!.touched
+      }" />
+    <div *ngIf="loginForm.get('password')!.invalid && loginForm.get('password')!.touched" class="invalid-feedback">
+      <small *ngIf="loginForm.get('password')!.hasError('required')">
+        La contraseña es obligatoria.
+      </small>
+      <small *ngIf="loginForm.get('password')!.hasError('pattern')">
+        La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un carácter especial.
+      </small>
+    </div>
+
+    <!-- Botón de Login -->
+    <button type="submit" [disabled]="loginForm.invalid">
+      Iniciar Sesión
+    </button>
+  </form>
+
+  <p>¿No tienes una cuenta? <a routerLink="/register">Regístrate aquí</a></p>
+
+</div>
