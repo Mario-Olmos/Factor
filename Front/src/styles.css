@@ -119,3 +119,53 @@ p {
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
     /* Sombra suave */
 }
+
+/* Contenedor general de la Home */
+.home-container {
+    margin-top: 30px;
+    padding: 15px;
+    color: #fff;
+}
+
+/* Título de la Home */
+.home-title {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+/* Estilos para las tarjetas */
+.card {
+    background-color: #343a40;
+    /* Fondo oscuro similar a los formularios */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out, background-color 0.3s ease;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.card:hover {
+    transform: scale(1.05);
+    /* Efecto de hover */
+}
+
+/* Estilos para el cuerpo de la tarjeta */
+.card-body {
+    padding: 20px;
+    text-align: center;
+}
+
+/* Título de las tarjetas */
+.card-title {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #00ff95;
+    /* Color similar al de los botones */
+}
+
+/* Texto de la tarjeta */
+.card-text {
+    color: #ffffff;
+    /* Texto blanco */
+    font-size: 16px;
+}

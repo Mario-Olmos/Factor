@@ -57,3 +57,13 @@ exports.uploadArticle = async (req, res) => {
         res.status(500).json({ error: 'Error subiendo el PDF o creando el artículo' });
     }
 };
+
+exports.getArticles = async (req, res) => {
+    try {
+        const articles = await Article.find({});
+        res.status(200).json(articles);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error al obtener los artículos' });
+    }
+};

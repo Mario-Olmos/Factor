@@ -7,4 +7,6 @@ router.use('/upload', require('./api/upload'));
 
 router.use('/theme', require('./api/theme'));
 
+router.use('/articles', require('./api/articles'));
+
 module.exports = router;

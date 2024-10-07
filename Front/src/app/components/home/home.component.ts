@@ -1,83 +1,34 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ArticlesService } from '../../services/articles.service'; 
-import { AuthService } from '../../services/auth.service';
-import { User } from '../../models/user.model';
 import { Theme } from '../../models/theme.model';
+import { Article } from '../../models/article.model'
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements OnInit {
-  articleForm!: FormGroup;
-  pdfFile: File | null = null;
-  pdfFileName: string | null = null;
-  pdfError: boolean = false;
-  currentUser: User | null = null;
-  themes: Theme[] = [];
 
-  constructor(private fb: FormBuilder, private articlesService: ArticlesService, private authService: AuthService) {
-  }
+export class HomeComponent implements OnInit {
+  temas: Theme[] = []; 
+  articulos: Article[] = []; 
+
+  constructor(private articleService: ArticlesService) {}
 
   ngOnInit(): void {
-    this.articleForm = this.fb.group({
-      title: ['', Validators.required],
-      description: [''],
-      theme: ['', Validators.required],
-    });
-
-    this.authService.getCurrentUser().subscribe(user => {
-      this.currentUser = user;
-    });
-
-    this.articlesService.getThemes().subscribe(
-      (themes: Theme[]) => {
-        this.themes = themes; 
-      },
-      (error) => {
-        console.error('Error al cargar las temáticas', error);
-      }
-    );
+    this.cargarTemas();
+    this.cargarArticulos();
   }
 
-  // Maneja el cambio de archivo PDF
-  onFileChange(event: any) {
-    const file = event.target.files[0];
-    if (file && file.type === 'application/pdf') {
-      this.pdfFile = file;
-      this.pdfFileName = file.name;
-      this.pdfError = false;
-    } else {
-      this.pdfFile = null;
-      this.pdfFileName = null;
-      this.pdfError = true;
-    }
+  cargarTemas(): void {
+    this.articleService.getThemes().subscribe(temas => {
+      this.temas = temas;
+    });
   }
 
-  // Envío del formulario
-  onSubmit(): void {
-    if (this.currentUser && this.articleForm.valid) {
-      const formData = new FormData();
-      formData.append('title', this.articleForm.get('title')?.value);
-      formData.append('description', this.articleForm.get('description')?.value);
-      formData.append('theme', this.articleForm.get('theme')?.value);
-      if (this.pdfFile) {
-        formData.append('pdf', this.pdfFile);
-      }
-      formData.append('author', this.currentUser.userId);
-
-      this.articlesService.uploadArticle(formData).subscribe(
-        response => {
-          console.log('Artículo subido con éxito', response);
-        },
-        error => {
-          console.error('Error al subir el artículo', error);
-        }
-      );
-    } else {
-      console.error('Formulario inválido o usuario no logueado');
-    }
+  cargarArticulos(): void {
+    this.articleService.getArticles().subscribe(articulos => {
+      this.articulos = articulos;
+    });
   }
 }
