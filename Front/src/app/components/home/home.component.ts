@@ -31,4 +31,12 @@ export class HomeComponent implements OnInit {
       this.articulos = articulos;
     });
   }
+
+  likeArticle(articleId: string): void {
+    // Implementa aquí la lógica para dar "me gusta"
+  }
+
+  DislikeArticle(articleId: string): void {
+    // Implementa aquí la lógica para dar "no me gusta"
+  }
 }

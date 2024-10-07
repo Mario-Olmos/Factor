@@ -2,33 +2,39 @@
     <h1 class="home-title"></h1>
 
     <!-- Tarjetas de Temas -->
-    <h2>Temas</h2>
+    <div class="section-divider">
+        <h2 class="section-subtitle">Temas Populares</h2>
+        <hr class="section-line"> 
+    </div>
     <div class="row home-row">
         <div class="col-md-4" *ngFor="let tema of temas">
             <div class="card mb-4">
                 <div class="card-body">
                     <h5 class="card-title">{{ tema.name }}</h5>
-                     <!-- <a class="btn btn-primary" [routerLink]="['/tema', tema.id]">Ver Tema</a>-->
+                    <!-- <a class="btn btn-primary" [routerLink]="['/tema', tema.id]">Ver Tema</a>-->
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Tarjetas de Artículos -->
-    <h2>Artículos</h2>
-    <div class="row home-row">
-        <div class="col-md-4" *ngFor="let articulo of articulos">
-            <div class="card mb-4">
-                <div class="card-body">
-                    <h5 class="card-title">{{ articulo.title }}</h5>
-                    <p class="card-text">{{ articulo.description }}</p>
-                    <p class="card-text">
-                        <small class="text-muted">Autor: {{ articulo.author }}</small>
-                    </p>
-                    <!--<a class="btn btn-info" [routerLink]="['/articulo', articulo._id]">Ver</a>
-                    <button class="btn btn-success" (click)="darMeGusta(articulo._id)">Dar Me Gusta</button> -->
-                </div>
-            </div>
+    <!-- Tarjetas de Artículos en Formato Horizontal -->
+    <div class="section-divider">
+        <h2 class="section-subtitle">Artículos Relevantes</h2>
+        <hr class="section-line"> 
+    </div>
+
+    <div class="article-card" *ngFor="let articulo of articulos">
+        <div class="article-info">
+            <h5 class="article-title">{{ articulo.title }}</h5>
+            <p class="article-description">{{ articulo.description }}</p>
+            <!--<div class="article-actions">
+                <a class="btn btn-info" [routerLink]="['/articulo', articulo.id]">Ver</a>
+                <button class="btn btn-success" (click)="darMeGusta(articulo.id)">Me Gusta</button> 
+            </div>-->
+        </div>
+        <div class="author-info">
+            <p><strong>Autor:</strong> {{ articulo.author }}</p>
+            <p><strong>Fecha de publicación:</strong> {{ articulo.createdAt | date }}</p>
         </div>
     </div>
 </div>
