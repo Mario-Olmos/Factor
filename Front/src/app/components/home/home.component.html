@@ -1,69 +1,40 @@
-<div class="container">
-  <h2>Subir un nuevo artículo</h2>
-  <form (ngSubmit)="onSubmit()" [formGroup]="articleForm" enctype="multipart/form-data">
+<div class="home-container">
+    <h1 class="home-title"></h1>
 
-    <!-- Título -->
-    <div class="form-group">
-      <label for="title">Título</label>
-      <input type="text" id="title" formControlName="title" class="form-control" placeholder="Título del artículo"
-        required />
-      <div *ngIf="articleForm.get('title')?.invalid && articleForm.get('title')?.touched">
-        <small class="text-danger">El título es requerido.</small>
-      </div>
+    <!-- Tarjetas de Temas -->
+    <div class="section-divider">
+        <h2 class="section-subtitle">Temas Populares</h2>
+        <hr class="section-line"> 
+    </div>
+    <div class="row home-row">
+        <div class="col-md-4" *ngFor="let tema of temas">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">{{ tema.name }}</h5>
+                    <!-- <a class="btn btn-primary" [routerLink]="['/tema', tema.id]">Ver Tema</a>-->
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Descripción -->
-    <div class="form-group">
-      <label for="description">Descripción</label>
-      <textarea id="description" formControlName="description" class="form-control"
-        placeholder="Descripción del artículo" rows="4"></textarea>
+    <!-- Tarjetas de Artículos en Formato Horizontal -->
+    <div class="section-divider">
+        <h2 class="section-subtitle">Artículos Relevantes</h2>
+        <hr class="section-line"> 
     </div>
 
-    <!-- Tema -->
-    <div>
-      <label for="theme">Temática</label>
-      <select id="theme" formControlName="theme">
-        <option value="" disabled selected>Seleccione una temática</option>
-        <!-- Primer nivel: Temática principal -->
-        <ng-container *ngFor="let theme of themes">
-          <option [disabled]="true" style="font-weight: bold; font-size: 1.1rem;">{{ theme.name }}</option>
-
-          <!-- Segundo nivel: Subtemas del primer nivel -->
-          <ng-container *ngFor="let subtheme of theme.subthemes">
-            <option [disabled]="true" style="margin-left: 10px; font-size: 1rem; font-weight: 500;">
-              -- {{ subtheme.name }}
-            </option>
-
-            <!-- Tercer nivel: Subtemas del segundo nivel -->
-            <ng-container *ngFor="let subSubtheme of subtheme.subthemes">
-              <option [value]="subSubtheme._id" style="margin-left: 20px; font-size: 0.9rem;">
-                ---- {{ subSubtheme.name }}
-              </option>
-            </ng-container>
-          </ng-container>
-        </ng-container>
-      </select>
+    <div class="article-card" *ngFor="let articulo of articulos">
+        <div class="article-info">
+            <h5 class="article-title">{{ articulo.title }}</h5>
+            <p class="article-description">{{ articulo.description }}</p>
+            <!--<div class="article-actions">
+                <a class="btn btn-info" [routerLink]="['/articulo', articulo.id]">Ver</a>
+                <button class="btn btn-success" (click)="darMeGusta(articulo.id)">Me Gusta</button> 
+            </div>-->
+        </div>
+        <div class="author-info">
+            <p><strong>Autor:</strong> {{ articulo.author }}</p>
+            <p><strong>Fecha de publicación:</strong> {{ articulo.createdAt | date }}</p>
+        </div>
     </div>
-
-    <!-- PDF -->
-    <div class="form-group">
-      <label for="pdf">Subir PDF</label>
-      <input type="file" id="pdf" (change)="onFileChange($event)" class="form-control" accept="application/pdf"
-        required />
-      <div *ngIf="pdfError">
-        <small class="text-danger">Por favor, selecciona un archivo PDF válido.</small>
-      </div>
-    </div>
-
-    <!-- Vista previa del archivo seleccionado -->
-    <div *ngIf="pdfFileName">
-      <p><strong>Archivo seleccionado:</strong> {{ pdfFileName }}</p>
-    </div>
-
-    <!-- Botón de envío -->
-    <button type="submit" class="btn btn-primary" [disabled]="articleForm.invalid || !pdfFile">
-      Subir Artículo
-    </button>
-
-  </form>
 </div>

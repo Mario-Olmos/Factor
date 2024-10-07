@@ -119,3 +119,142 @@ p {
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
     /* Sombra suave */
 }
+
+/* Contenedor general de la Home */
+.home-container {
+    margin-top: 30px;
+    padding: 15px;
+    color: #fff;
+}
+
+/* Título de la Home */
+.home-title {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+/* Estilos para las tarjetas */
+.card {
+    background-color: #343a40;
+    /* Fondo oscuro similar a los formularios */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out, background-color 0.3s ease;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.card:hover {
+    transform: scale(1.05);
+    /* Efecto de hover */
+}
+
+/* Estilos para el cuerpo de la tarjeta */
+.card-body {
+    padding: 20px;
+    text-align: center;
+}
+
+/* Título de las tarjetas */
+.card-title {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #00ff95;
+    /* Color similar al de los botones */
+}
+
+/* Texto de la tarjeta */
+.card-text {
+    color: #ffffff;
+    /* Texto blanco */
+    font-size: 16px;
+}
+
+/* Tarjeta de artículo en formato horizontal */
+.article-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #343a40;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+}
+
+.article-card:hover {
+    transform: scale(1.02);
+}
+
+/* Información del artículo (columna izquierda) */
+.article-info {
+    flex: 1;
+}
+
+.article-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #00ff95;
+    margin-bottom: 10px;
+}
+
+.article-description {
+    color: #ffffff;
+    font-size: 1rem;
+    margin-bottom: 15px;
+}
+
+.article-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.article-actions .btn {
+    padding: 10px 15px;
+    font-size: 0.9rem;
+}
+
+/* Información del autor (columna derecha) */
+.author-info {
+    flex: 0 0 150px;
+    text-align: right;
+    color: #cccccc;
+}
+
+.author-info p {
+    margin: 5px 0;
+}
+
+.author-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-top: 10px;
+}
+
+/* Ajustes de los botones */
+.btn {
+    background-color: #00ff95;
+    color: #000;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #00ff95cf;
+}
+
+.section-divider {
+    margin-top: 40px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.section-line {
+    border: 2px solid #00ff95;
+    margin: 20px auto;
+    width: 60%;
+}
