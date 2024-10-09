@@ -4,10 +4,10 @@
     <!-- Tarjetas de Temas -->
     <div class="section-divider">
         <h2 class="section-subtitle">Temas Populares</h2>
-        <hr class="section-line"> 
+        <hr class="section-line">
     </div>
     <div class="row home-row">
-        <div class="col-md-4" *ngFor="let tema of temas">
+        <div class="col-md-4" *ngFor="let tema of themes">
             <div class="card mb-4">
                 <div class="card-body">
                     <h5 class="card-title">{{ tema.name }}</h5>
@@ -20,17 +20,21 @@
     <!-- Tarjetas de Artículos en Formato Horizontal -->
     <div class="section-divider">
         <h2 class="section-subtitle">Artículos Relevantes</h2>
-        <hr class="section-line"> 
+        <hr class="section-line">
     </div>
 
-    <div class="article-card" *ngFor="let articulo of articulos">
+    <div class="article-card" *ngFor="let articulo of articles">
         <div class="article-info">
             <h5 class="article-title">{{ articulo.title }}</h5>
             <p class="article-description">{{ articulo.description }}</p>
-            <!--<div class="article-actions">
-                <a class="btn btn-info" [routerLink]="['/articulo', articulo.id]">Ver</a>
-                <button class="btn btn-success" (click)="darMeGusta(articulo.id)">Me Gusta</button> 
-            </div>-->
+            <div class="article-actions">
+                <button class="btn btn-success" (click)="darLike(articulo._id)" [disabled]="!puedeVotar()">Me
+                    Gusta</button>
+                <!--<button class="btn btn-danger" (click)="darDislike(articulo.id)" [disabled]="!puedeVotar()">No Me
+                    Gusta</button>
+                <a class="btn btn-info" [routerLink]="['/articulo', articulo.id]">Ver</a>-->
+            </div>
+
         </div>
         <div class="author-info">
             <p><strong>Autor:</strong> {{ articulo.author }}</p>

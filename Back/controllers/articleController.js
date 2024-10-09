@@ -24,7 +24,8 @@ exports.uploadArticle = async (req, res) => {
             pdfUrl,
             author,
             theme,
-            authorReputationAtCreation: user.reputacion
+            authorReputationAtCreation: user.reputacion,
+            veracity
         });
 
         if (user.reputation >= 50) {
@@ -67,3 +68,66 @@ exports.getArticles = async (req, res) => {
         res.status(500).json({ error: 'Error al obtener los artículos' });
     }
 };
+
+exports.darLike = async (req, res) => {
+    try {
+        const { articleId, pesoVoto, user, voteType } = req.body;
+
+        // Verificar si el usuario tiene suficiente reputación
+        const usuario = await User.findById(user);
+
+        if (usuario.reputacion < 20) {
+            return res.status(403).json({
+                message: 'No tienes suficiente reputación para votar en este artículo'
+            });
+        }
+
+        // Obtener el artículo
+        const articulo = await Article.findById(articleId);
+
+        if (!articulo) {
+            return res.status(404).json({ message: 'Artículo no encontrado' });
+        }
+
+        // Verificar si el usuario ya ha votado este artículo
+        const votoExistente = articulo.votes.find(vote => vote.user.toString() === user.userId);
+
+        if (votoExistente) {
+            return res.status(400).json({ message: 'Ya has votado este artículo' });
+        }
+
+        // Calcular el impacto en la veracidad
+        let cambioVeracidad;
+        if (voteType === 'upvote') {
+            cambioVeracidad = pesoVoto * 0.05; // Incrementar veracidad
+        } else if (voteType === 'downvote') {
+            cambioVeracidad = -pesoVoto * 0.05; // Disminuir veracidad
+        }
+
+        // Actualizar el artículo
+        const updatedArticle = await Article.findByIdAndUpdate(
+            articleId,
+            {
+                $inc: { veracidad: cambioVeracidad }, // Incrementar o disminuir la veracidad
+                $push: {
+                    votes: {
+                        user: user.userId,
+                        voteType: voteType,  // 'upvote' o 'downvote'
+                        votedAt: new Date()
+                    }
+                }
+            },
+            { new: true } // Esto devuelve el artículo actualizado
+        );
+
+        return res.status(200).json({
+            message: 'Voto registrado exitosamente',
+            veracidad: updatedArticle.veracidad,
+            votosTotales: updatedArticle.votes.length
+        });
+
+    } catch (error) {
+        return res.status(500).json({ message: 'Error al votar', error });
+    }
+};
+
