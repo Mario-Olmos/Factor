@@ -32,4 +32,10 @@ export class ArticlesService {
   getArticles(): Observable<any[]> {
     return this.http.get<Article[]>(`${this.apiUrl}/articles/getArticles`);
   }
+
+  //Método para dar "Like"
+  darLike(likeObject: any): Observable<any>{
+    return this.http.post(`${this.apiUrl}/articles/meGusta`, likeObject);
+  }
+
 }

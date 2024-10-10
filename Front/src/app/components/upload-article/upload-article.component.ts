@@ -10,7 +10,7 @@ import { Theme } from '../../models/theme.model';
   templateUrl: './upload-article.component.html',
   styleUrl: './upload-article.component.css'
 })
-export class UploadArticleComponent {
+export class UploadArticleComponent implements OnInit{
   articleForm!: FormGroup;
   pdfFile: File | null = null;
   pdfFileName: string | null = null;
@@ -56,9 +56,21 @@ export class UploadArticleComponent {
     }
   }
 
+  // Verificar si el usuario puede publiccar
+  puedeVotar(): boolean {
+    if(this.currentUser!.reputacion < 20){
+      return false;
+    }else return true;
+  }
+
   // Envío del formulario
   onSubmit(): void {
     if (this.currentUser && this.articleForm.valid) {
+      if(!this.puedeVotar){
+        alert('No tienes suficiente reputación para publicar');
+        return;
+      }
+      
       const formData = new FormData();
       formData.append('title', this.articleForm.get('title')?.value);
       formData.append('description', this.articleForm.get('description')?.value);

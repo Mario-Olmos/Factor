@@ -24,10 +24,10 @@ exports.uploadArticle = async (req, res) => {
             pdfUrl,
             author,
             theme,
-            authorReputationAtCreation: user.reputacion
+            authorReputationAtCreation: user.reputacion,
         });
 
-        if (user.reputation >= 50) {
+        if (user.reputacion >= 50) {
             // Impulso inicial proporcional y normalizado (máximo de 10)
             newArticle.veracity = (user.reputacion / 100) * 10;
         }
@@ -67,3 +67,57 @@ exports.getArticles = async (req, res) => {
         res.status(500).json({ error: 'Error al obtener los artículos' });
     }
 };
+
+exports.darLike = async (req, res) => {
+    try {
+        const { articleId, pesoVoto, user, voteType } = req.body;
+
+        // Verificación de que el usuario tiene reputación suficiente
+        const usuario = await User.findById(user);
+        if (!usuario) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
+        if (usuario.reputacion < 50) { // Puedes ajustar el mínimo de reputación
+            return res.status(403).json({ message: 'No tienes suficiente reputación para votar' });
+        }
+
+        // Encontrar el artículo
+        const articulo = await Article.findById(articleId);
+        if (!articulo) {
+            return res.status(404).json({ message: 'Artículo no encontrado' });
+        }
+
+        // Verificar si el usuario ya ha votado este artículo
+        const votoExistente = articulo.votes.find(vote => vote.user.toString() === usuario._id.toString());
+
+        if (votoExistente) {
+            return res.status(400).json({ message: 'Ya has votado este artículo' });
+        }
+
+        // Definir cómo se afectará la veracidad
+        const cambioVeracidad = voteType === 'upvote' ? pesoVoto : -pesoVoto;
+
+        // Actualizar el artículo: añadir el voto y ajustar la veracidad
+        const updatedArticle = await Article.findByIdAndUpdate(
+            articleId,
+            {
+                $inc: { veracity: cambioVeracidad }, 
+                $push: {
+                    votes: {
+                        user: usuario._id,
+                        voteType: voteType, 
+                        votedAt: new Date()
+                    }
+                }
+            },
+            { new: true } // Devuelve el artículo actualizado
+        );
+
+        return res.status(200).json({ message: 'Voto registrado correctamente', articulo: updatedArticle });
+
+    } catch (error) {
+        return res.status(500).json({ message: 'Error interno del servidor', error: error.message });
+    }
+};
+
+
