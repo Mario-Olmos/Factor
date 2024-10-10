@@ -52,8 +52,8 @@ export class HomeComponent implements OnInit {
 
   // Calcular el peso del voto según la reputación del votante
   calcularPesoVoto(): number {
-    const pesoVoto = 1 + (this.currentUser!.reputacion / 100);
-    return Math.min(pesoVoto, 2.0);  // Limitar a 2.0 como máximo
+    const pesoVoto = 0.01 + (this.currentUser!.reputacion / 1000);
+    return Math.min(pesoVoto, 0.02);  // Limitar a 2.0 como máximo
   }
 
   // Método para dar "Like"
