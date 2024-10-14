@@ -38,4 +38,8 @@ export class ArticlesService {
     return this.http.post(`${this.apiUrl}/articles/meGusta`, likeObject);
   }
 
+  //Método para dar "Dislike"
+  darDislike(likeObject: any): Observable<any>{
+    return this.http.post(`${this.apiUrl}/articles/meGusta`, likeObject);
+  }
 }

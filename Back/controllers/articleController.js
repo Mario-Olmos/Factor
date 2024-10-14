@@ -29,7 +29,7 @@ exports.uploadArticle = async (req, res) => {
 
         if (user.reputacion >= 50) {
             // Impulso inicial proporcional y normalizado (máximo de 10)
-            newArticle.veracity = (user.reputacion / 100) * 10;
+            newArticle.veracity = math.min(7.5, ((user.reputacion / 100) * 10));
         }
 
         await newArticle.save();
