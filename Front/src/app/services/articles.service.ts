@@ -29,7 +29,7 @@ export class ArticlesService {
   }
 
   //Método para cargar los artículos de la app (provisional, luego será el feed el que los devuelva)
-  getArticles(): Observable<any[]> {
+  getArticles(currentPage:number, limit:number): Observable<any[]> {
     return this.http.get<Article[]>(`${this.apiUrl}/articles/getArticles`);
   }
 
@@ -38,4 +38,8 @@ export class ArticlesService {
     return this.http.post(`${this.apiUrl}/articles/meGusta`, likeObject);
   }
 
+  //Método para dar "Dislike"
+  darDislike(likeObject: any): Observable<any>{
+    return this.http.post(`${this.apiUrl}/articles/meGusta`, likeObject);
+  }
 }

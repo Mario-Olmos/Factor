@@ -29,7 +29,7 @@ exports.uploadArticle = async (req, res) => {
 
         if (user.reputacion >= 50) {
             // Impulso inicial proporcional y normalizado (máximo de 10)
-            newArticle.veracity = (user.reputacion / 100) * 10;
+            newArticle.veracity = math.min(7.5, ((user.reputacion / 100) * 10));
         }
 
         await newArticle.save();
@@ -58,15 +58,28 @@ exports.uploadArticle = async (req, res) => {
     }
 };
 
-exports.getArticles = async (req, res) => {
+exports.obtenerArticulosFeed = async (req, res) => {
     try {
-        const articles = await Article.find({});
-        res.status(200).json(articles);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Error al obtener los artículos' });
+        const { page = 1, limit = 10 } = req.query;  // Paginación
+        const diasRecientes = 60; // Definir cuántos días atrás se consideran "recientes"
+
+        const fechaLimite = new Date();
+        fechaLimite.setDate(fechaLimite.getDate() - diasRecientes);  // Calcular la fecha límite para artículos recientes
+
+        const articles = await Article.find({
+            veracity: { $gt: -1 },  // Solo artículos con veracidad mayor que 0
+            createdAt: { $gte: fechaLimite }  // Artículos de los últimos X días
+        })
+            .sort({ veracidad: -1, fechaPublicacion: -1 })  // Ordenar por veracidad y fecha
+            .skip((page - 1) * limit)  // Saltar artículos de las páginas anteriores
+            .limit(limit);  // Limitar el número de artículos devueltos
+
+        return res.status(200).json( articles );
+    } catch (error) {
+        return res.status(500).json({ message: 'Error al cargar el feed de artículos', error: error.message });
     }
 };
+
 
 exports.darLike = async (req, res) => {
     try {

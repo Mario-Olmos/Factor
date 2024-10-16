@@ -1,3 +1,10 @@
+<!-- Popup de notificación -->
+<div class="popup-notification" *ngIf="successMessage || errorMessage">
+    <div [ngClass]="{'popup-success': successMessage, 'popup-error': errorMessage}">
+        {{ successMessage || errorMessage }}
+    </div>
+</div>
+
 <div class="home-container">
     <h1 class="home-title"></h1>
 
@@ -30,9 +37,9 @@
             <div class="article-actions">
                 <button class="btn btn-success" (click)="darLike(articulo._id)" [disabled]="!puedeVotar()">Me
                     Gusta</button>
-                <!--<button class="btn btn-danger" (click)="darDislike(articulo.id)" [disabled]="!puedeVotar()">No Me
+                <button class="btn btn-danger" (click)="darDislike(articulo._id)" [disabled]="!puedeVotar()">No Me
                     Gusta</button>
-                <a class="btn btn-info" [routerLink]="['/articulo', articulo.id]">Ver</a>-->
+                <!--<a class="btn btn-info" [routerLink]="['/articulo', articulo.id]">Ver</a>-->
             </div>
 
         </div>
