@@ -17,10 +17,13 @@ export class HomeComponent implements OnInit {
   currentUser: User | null = null;
   successMessage: string = '';
   errorMessage: string = '';
-
+  currentPage!: number;
+  articlesPerPage = 10;
   constructor(private articlesService: ArticlesService, private authService: AuthService) { }
 
   ngOnInit(): void {
+
+    this.currentPage = 1;
 
     this.authService.getCurrentUser().subscribe(user => {
       this.currentUser = user;
@@ -35,9 +38,10 @@ export class HomeComponent implements OnInit {
       }
     );
 
-    this.articlesService.getArticles().subscribe(
+    this.articlesService.getArticles(this.currentPage, this.articlesPerPage).subscribe(
       (articles: Article[]) => {
-        this.articles = articles;
+        this.articles = articles.reverse();
+        this.currentPage ++;
       },
       (error) => {
         console.error('Error al cargar los artículos', error);
@@ -80,7 +84,7 @@ export class HomeComponent implements OnInit {
         if (response && response.message) {
           this.showSuccessMessage(response.message);  // Muestra el mensaje del backend
         }
-        this.articlesService.getArticles();  // Refresca los artículos
+        this.articlesService.getArticles(this.currentPage, this.articlesPerPage);  // Refresca los artículos
       },
       (error: any) => {
         // Manejar diferentes tipos de errores por el código de estado
@@ -119,7 +123,7 @@ export class HomeComponent implements OnInit {
         if (response && response.message) {
           this.showSuccessMessage(response.message);  // Muestra el mensaje del backend
         }
-        this.articlesService.getArticles();  // Refresca los artículos
+        this.articlesService.getArticles(this.currentPage, this.articlesPerPage);  // Refresca los artículos
       },
       (error: any) => {
         // Manejar diferentes tipos de errores por el código de estado
