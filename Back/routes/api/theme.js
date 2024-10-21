@@ -6,4 +6,6 @@ const themeController = require('../../controllers/themeController');
 
 router.get('/getThemes', themeController.getThemes);
 
+router.get('/getTrendyThemes', themeController.getTrendyThemes);
+
 module.exports = router;

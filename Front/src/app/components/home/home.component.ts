@@ -19,6 +19,8 @@ export class HomeComponent implements OnInit {
   errorMessage: string = '';
   currentPage!: number;
   articlesPerPage = 10;
+  themeLimit = 6;
+  days = 200;
   constructor(private articlesService: ArticlesService, private authService: AuthService) { }
 
   ngOnInit(): void {
@@ -29,19 +31,19 @@ export class HomeComponent implements OnInit {
       this.currentUser = user;
     });
 
-    this.articlesService.getThemes().subscribe(
+    this.articlesService.getTrendyThemes(this.themeLimit, this.days).subscribe(
       (themes: Theme[]) => {
-        this.themes = themes;
+        this.themes = themes; 
       },
       (error) => {
-        console.error('Error al cargar las temáticas', error);
+        console.error('Error al cargar los temas', error);
       }
     );
 
     this.articlesService.getArticles(this.currentPage, this.articlesPerPage).subscribe(
       (articles: Article[]) => {
         this.articles = articles.reverse();
-        this.currentPage ++;
+        this.currentPage++;
       },
       (error) => {
         console.error('Error al cargar los artículos', error);

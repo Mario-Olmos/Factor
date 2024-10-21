@@ -9,7 +9,7 @@ import { Article } from '../models/article.model';
 })
 export class ArticlesService {
 
-  private apiUrl = 'http://localhost:3000/api'; 
+  private apiUrl = 'http://localhost:3000/api';
 
   constructor(private http: HttpClient) { }
 
@@ -28,18 +28,29 @@ export class ArticlesService {
     return this.http.get<Theme[]>(`${this.apiUrl}/theme/getThemes`);
   }
 
+  //Método para el feed de temáticas
+  getTrendyThemes(limit: number, days: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/theme/getTrendyThemes`, {
+      params: {
+        limit: limit.toString(),
+        days: days.toString()
+      }
+    });
+  }
+
   //Método para cargar los artículos de la app (provisional, luego será el feed el que los devuelva)
-  getArticles(currentPage:number, limit:number): Observable<any[]> {
+  getArticles(currentPage: number, limit: number): Observable<any[]> {
     return this.http.get<Article[]>(`${this.apiUrl}/articles/getArticles`);
   }
 
   //Método para dar "Like"
-  darLike(likeObject: any): Observable<any>{
+  darLike(likeObject: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/articles/meGusta`, likeObject);
   }
 
   //Método para dar "Dislike"
-  darDislike(likeObject: any): Observable<any>{
+  darDislike(likeObject: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/articles/meGusta`, likeObject);
   }
+
 }
