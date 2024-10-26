@@ -40,15 +40,22 @@ export class HomeComponent implements OnInit {
       }
     );
 
-    this.articlesService.getArticles(this.currentPage, this.articlesPerPage).subscribe(
-      (articles: Article[]) => {
-        this.articles = articles.reverse();
+    this.articlesService.getArticles(this.currentPage, this.articlesPerPage, this.currentUser!.userId).subscribe(
+      (articles: any[]) => {
+        this.articles = articles.map(article => {
+          return {
+            ...article,
+            userVote: article.userVote  // 'upvote', 'downvote', o null según el backend
+          };
+        });
+        
+        // Aumenta el contador de páginas solo si la carga es exitosa
         this.currentPage++;
       },
       (error) => {
         console.error('Error al cargar los artículos', error);
       }
-    )
+    );
   }
 
   // Verificar si el usuario puede votar
@@ -86,7 +93,7 @@ export class HomeComponent implements OnInit {
         if (response && response.message) {
           this.showSuccessMessage(response.message);  // Muestra el mensaje del backend
         }
-        this.articlesService.getArticles(this.currentPage, this.articlesPerPage);  // Refresca los artículos
+        this.articlesService.getArticles(this.currentPage, this.articlesPerPage, this.currentUser!.userId);  // Refresca los artículos
       },
       (error: any) => {
         // Manejar diferentes tipos de errores por el código de estado
@@ -125,7 +132,7 @@ export class HomeComponent implements OnInit {
         if (response && response.message) {
           this.showSuccessMessage(response.message);  // Muestra el mensaje del backend
         }
-        this.articlesService.getArticles(this.currentPage, this.articlesPerPage);  // Refresca los artículos
+        this.articlesService.getArticles(this.currentPage, this.articlesPerPage, this.currentUser!.userId);  // Refresca los artículos
       },
       (error: any) => {
         // Manejar diferentes tipos de errores por el código de estado

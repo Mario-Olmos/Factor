@@ -60,25 +60,42 @@ exports.uploadArticle = async (req, res) => {
 
 exports.obtenerArticulosFeed = async (req, res) => {
     try {
-        const { page = 1, limit = 10 } = req.query;  // Paginación
-        const diasRecientes = 60; // Definir cuántos días atrás se consideran "recientes"
-
+        const { page = 1, limit = 10 } = req.query;
+        const diasRecientes = 60;
         const fechaLimite = new Date();
-        fechaLimite.setDate(fechaLimite.getDate() - diasRecientes);  // Calcular la fecha límite para artículos recientes
+        fechaLimite.setDate(fechaLimite.getDate() - diasRecientes);
+        
+        const userId = req.userId;  // ID del usuario autenticado (por ejemplo, obtenido del token)
 
+        // Buscar artículos en el período reciente y con veracidad positiva
         const articles = await Article.find({
-            veracity: { $gt: -1 },  // Solo artículos con veracidad mayor que 0
-            createdAt: { $gte: fechaLimite }  // Artículos de los últimos X días
+            veracity: { $gt: -1 },
+            createdAt: { $gte: fechaLimite }
         })
-            .sort({ veracidad: -1, fechaPublicacion: -1 })  // Ordenar por veracidad y fecha
-            .skip((page - 1) * limit)  // Saltar artículos de las páginas anteriores
-            .limit(limit);  // Limitar el número de artículos devueltos
+            .sort({ veracity: -1, fechaPublicacion: -1 })
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .populate({
+                path: 'votes',  // Relacionamos los votos del artículo
+                match: { user: userId },  // Solo incluimos el voto del usuario actual
+                select: 'voteType'  // Solo obtenemos el tipo de voto
+            });
 
-        return res.status(200).json( articles );
+        // Añadir el estado de voto del usuario en cada artículo
+        const articlesWithUserVote = articles.map(article => {
+            const userVote = article.votes.length ? article.votes[0].voteType : null;
+            return {
+                ...article.toObject(),
+                userVote  // 'upvote', 'downvote', o null
+            };
+        });
+
+        return res.status(200).json(articlesWithUserVote);
     } catch (error) {
         return res.status(500).json({ message: 'Error al cargar el feed de artículos', error: error.message });
     }
 };
+
 
 
 exports.darLike = async (req, res) => {
