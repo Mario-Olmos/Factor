@@ -65,9 +65,9 @@ exports.obtenerArticulosFeed = async (req, res) => {
         const fechaLimite = new Date();
         fechaLimite.setDate(fechaLimite.getDate() - diasRecientes);
         
-        const userId = req.userId;  // ID del usuario autenticado (por ejemplo, obtenido del token)
+        const userId = req.userId;
 
-        // Buscar artículos en el período reciente y con veracidad positiva
+        // Buscamos los artículos dentro del período reciente y con veracidad positiva
         const articles = await Article.find({
             veracity: { $gt: -1 },
             createdAt: { $gte: fechaLimite }
@@ -76,17 +76,21 @@ exports.obtenerArticulosFeed = async (req, res) => {
             .skip((page - 1) * limit)
             .limit(limit)
             .populate({
-                path: 'votes',  // Relacionamos los votos del artículo
-                match: { user: userId },  // Solo incluimos el voto del usuario actual
-                select: 'voteType'  // Solo obtenemos el tipo de voto
-            });
+                path: 'votes',  // Poblamos votos
+                match: { user: userId },  // Solo el voto del usuario actual
+                select: 'voteType'        // Solo obtenemos `voteType`
+            })
+            .lean();
 
-        // Añadir el estado de voto del usuario en cada artículo
+        console.log(articles);
+
+        // Procesamos el voto del usuario y devolvemos en `userVote`
         const articlesWithUserVote = articles.map(article => {
             const userVote = article.votes.length ? article.votes[0].voteType : null;
             return {
-                ...article.toObject(),
-                userVote  // 'upvote', 'downvote', o null
+                ...article,
+                userVote,        
+                votes: undefined 
             };
         });
 
@@ -95,8 +99,6 @@ exports.obtenerArticulosFeed = async (req, res) => {
         return res.status(500).json({ message: 'Error al cargar el feed de artículos', error: error.message });
     }
 };
-
-
 
 exports.darLike = async (req, res) => {
     try {
@@ -131,11 +133,11 @@ exports.darLike = async (req, res) => {
         const updatedArticle = await Article.findByIdAndUpdate(
             articleId,
             {
-                $inc: { veracity: cambioVeracidad }, 
+                $inc: { veracity: cambioVeracidad },
                 $push: {
                     votes: {
                         user: usuario._id,
-                        voteType: voteType, 
+                        voteType: voteType,
                         votedAt: new Date()
                     }
                 }

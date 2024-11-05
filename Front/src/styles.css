@@ -202,35 +202,30 @@ p {
 
 .like-btn,
 .dislike-btn {
-    background-color: transparent !important;
-    /* Sin fondo */
-    border: none !important;
-    /* Sin borde */
-    box-shadow: none !important;
-    /* Sin sombra */
-    outline: none;
-    /* Sin contorno de enfoque */
-    cursor: pointer;
-    padding: 0;
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 18px;
+    width: 30px;
+    height: 30px;
     display: inline-flex;
+    /* Asegura que el tamaño y los íconos se mantengan */
     align-items: center;
-    font-size: 26px;
-    /* Tamaño del icono */
-    transition: color 0.3s ease;
+    justify-content: center;
 }
 
-.like-btn i,
-.dislike-btn i {
-    font-size: 26px;
-    color: white;
+.like-btn,
+.dislike-btn {
+    border: 1px solid red;
+    /* Borde temporal */
 }
 
-.voted-up {
-    color: #00ff95; /* Color verde para el voto positivo */
+.liked {
+    color: #00ff95;
 }
 
-.voted-down {
-    color: #ff4c4c; /* Color rojo para el voto negativo */
+.disliked {
+    color: #ff6347;
 }
 
 /* Información del autor (columna derecha) */

@@ -31,6 +31,8 @@ export class HomeComponent implements OnInit {
       this.currentUser = user;
     });
 
+    console.log(this.currentUser?.userId);
+
     this.articlesService.getTrendyThemes(this.themeLimit, this.days).subscribe(
       (themes: Theme[]) => {
         this.themes = themes; 
