@@ -35,20 +35,25 @@
             <h5 class="article-title">{{ article.title }}</h5>
             <p class="article-description">{{ article.description }}</p>
             <div class="article-actions">
+
                 <button class="like-btn" (click)="darLike(article._id)"
                     [ngClass]="{'liked': article.userVote === 'upvote'}" [disabled]="!puedeVotar()">
-                    <i class="fas fa-thumbs-up"></i>
+                    <span class="material-icons">thumb_up</span>
                 </button>
 
                 <button class="dislike-btn" (click)="darDislike(article._id)"
                     [ngClass]="{'disliked': article.userVote === 'downvote'}" [disabled]="!puedeVotar()">
-                    <i class="fas fa-thumbs-down"></i>
+                    <span class="material-icons">thumb_down</span>
                 </button>
+
             </div>
         </div>
+
         <div class="author-info">
             <p><strong>Autor:</strong> {{ article.author }}</p>
             <p><strong>Fecha de publicación:</strong> {{ article.createdAt | date }}</p>
         </div>
+
     </div>
+
 </div>

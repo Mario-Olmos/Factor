@@ -60,14 +60,12 @@ exports.uploadArticle = async (req, res) => {
 
 exports.obtenerArticulosFeed = async (req, res) => {
     try {
-        const { page = 1, limit = 10 } = req.query;
+        const { page = 1, limit = 10, userId } = req.query;
         const diasRecientes = 60;
         const fechaLimite = new Date();
         fechaLimite.setDate(fechaLimite.getDate() - diasRecientes);
-        
-        const userId = req.userId;
 
-        // Buscamos los artículos dentro del período reciente y con veracidad positiva
+        // Obtenemos los artículos dentro del período reciente y con veracidad positiva
         const articles = await Article.find({
             veracity: { $gt: -1 },
             createdAt: { $gte: fechaLimite }
@@ -75,22 +73,18 @@ exports.obtenerArticulosFeed = async (req, res) => {
             .sort({ veracity: -1, fechaPublicacion: -1 })
             .skip((page - 1) * limit)
             .limit(limit)
-            .populate({
-                path: 'votes',  // Poblamos votos
-                match: { user: userId },  // Solo el voto del usuario actual
-                select: 'voteType'        // Solo obtenemos `voteType`
-            })
             .lean();
 
-        console.log(articles);
-
-        // Procesamos el voto del usuario y devolvemos en `userVote`
+        // Procesamos los artículos para encontrar el voto del usuario
         const articlesWithUserVote = articles.map(article => {
-            const userVote = article.votes.length ? article.votes[0].voteType : null;
+            // Busca el voto del usuario dentro del array de votos de cada artículo
+            const userVoteObj = article.votes.find(vote => vote.user.toString() === userId);
+            const userVote = userVoteObj ? userVoteObj.voteType : null;
+
             return {
                 ...article,
-                userVote,        
-                votes: undefined 
+                userVote,          // Añadimos el tipo de voto del usuario (o null si no existe)
+                votes: undefined   // Eliminamos el campo de votos completo del resultado final
             };
         });
 
@@ -99,6 +93,7 @@ exports.obtenerArticulosFeed = async (req, res) => {
         return res.status(500).json({ message: 'Error al cargar el feed de artículos', error: error.message });
     }
 };
+
 
 exports.darLike = async (req, res) => {
     try {
