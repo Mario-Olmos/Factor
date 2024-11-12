@@ -30,22 +30,30 @@
         <hr class="section-line">
     </div>
 
-    <div class="article-card" *ngFor="let articulo of articles">
+    <div class="article-card" *ngFor="let article of articles">
         <div class="article-info">
-            <h5 class="article-title">{{ articulo.title }}</h5>
-            <p class="article-description">{{ articulo.description }}</p>
+            <h5 class="article-title">{{ article.title }}</h5>
+            <p class="article-description">{{ article.description }}</p>
             <div class="article-actions">
-                <button class="btn btn-success" (click)="darLike(articulo._id)" [disabled]="!puedeVotar()">Me
-                    Gusta</button>
-                <button class="btn btn-danger" (click)="darDislike(articulo._id)" [disabled]="!puedeVotar()">No Me
-                    Gusta</button>
-                <!--<a class="btn btn-info" [routerLink]="['/articulo', articulo.id]">Ver</a>-->
-            </div>
 
+                <button class="like-btn" (click)="darLike(article._id)"
+                    [ngClass]="{'liked': article.userVote === 'upvote'}" [disabled]="!puedeVotar()">
+                    <span class="material-icons">thumb_up</span>
+                </button>
+
+                <button class="dislike-btn" (click)="darDislike(article._id)"
+                    [ngClass]="{'disliked': article.userVote === 'downvote'}" [disabled]="!puedeVotar()">
+                    <span class="material-icons">thumb_down</span>
+                </button>
+
+            </div>
         </div>
+
         <div class="author-info">
-            <p><strong>Autor:</strong> {{ articulo.author }}</p>
-            <p><strong>Fecha de publicación:</strong> {{ articulo.createdAt | date }}</p>
+            <p><strong>Autor:</strong> {{ article.author }}</p>
+            <p><strong>Fecha de publicación:</strong> {{ article.createdAt | date }}</p>
         </div>
+
     </div>
+
 </div>

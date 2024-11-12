@@ -19,6 +19,8 @@ export class HomeComponent implements OnInit {
   errorMessage: string = '';
   currentPage!: number;
   articlesPerPage = 10;
+  themeLimit = 6;
+  days = 200;
   constructor(private articlesService: ArticlesService, private authService: AuthService) { }
 
   ngOnInit(): void {
@@ -29,24 +31,33 @@ export class HomeComponent implements OnInit {
       this.currentUser = user;
     });
 
-    this.articlesService.getThemes().subscribe(
+    console.log(this.currentUser?.userId);
+
+    this.articlesService.getTrendyThemes(this.themeLimit, this.days).subscribe(
       (themes: Theme[]) => {
-        this.themes = themes;
+        this.themes = themes; 
       },
       (error) => {
-        console.error('Error al cargar las temáticas', error);
+        console.error('Error al cargar los temas', error);
       }
     );
 
-    this.articlesService.getArticles(this.currentPage, this.articlesPerPage).subscribe(
-      (articles: Article[]) => {
-        this.articles = articles.reverse();
-        this.currentPage ++;
+    this.articlesService.getArticles(this.currentPage, this.articlesPerPage, this.currentUser!.userId).subscribe(
+      (articles: any[]) => {
+        this.articles = articles.map(article => {
+          return {
+            ...article,
+            userVote: article.userVote  // 'upvote', 'downvote', o null según el backend
+          };
+        });
+        
+        // Aumenta el contador de páginas solo si la carga es exitosa
+        this.currentPage++;
       },
       (error) => {
         console.error('Error al cargar los artículos', error);
       }
-    )
+    );
   }
 
   // Verificar si el usuario puede votar
@@ -84,7 +95,7 @@ export class HomeComponent implements OnInit {
         if (response && response.message) {
           this.showSuccessMessage(response.message);  // Muestra el mensaje del backend
         }
-        this.articlesService.getArticles(this.currentPage, this.articlesPerPage);  // Refresca los artículos
+        this.articlesService.getArticles(this.currentPage, this.articlesPerPage, this.currentUser!.userId);  // Refresca los artículos
       },
       (error: any) => {
         // Manejar diferentes tipos de errores por el código de estado
@@ -123,7 +134,7 @@ export class HomeComponent implements OnInit {
         if (response && response.message) {
           this.showSuccessMessage(response.message);  // Muestra el mensaje del backend
         }
-        this.articlesService.getArticles(this.currentPage, this.articlesPerPage);  // Refresca los artículos
+        this.articlesService.getArticles(this.currentPage, this.articlesPerPage, this.currentUser!.userId);  // Refresca los artículos
       },
       (error: any) => {
         // Manejar diferentes tipos de errores por el código de estado

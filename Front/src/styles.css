@@ -1,9 +1,14 @@
+body {
+    background: white;
+}
+
+
 /* Estilos globales para formularios */
 form {
     max-width: 400px;
     margin: 0 auto;
     padding: 20px;
-    background-color: #343a40;
+    background-color: #F2EED7;
     /* Fondo más oscuro */
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -23,9 +28,9 @@ input[type="date"] {
     /* Borde más oscuro */
     border-radius: 5px;
     font-size: 16px;
-    background-color: #555;
+    background-color: #FEFAE0;
     /* Fondo del input más oscuro */
-    color: #fff;
+    color: black;
     /* Texto en blanco */
     transition: background-color 0.3s ease, border-color 0.3s ease;
 }
@@ -34,7 +39,7 @@ button[type="submit"] {
     width: 100%;
     padding: 12px;
     margin-top: 10px;
-    background-color: #00ff95;
+    background-color: #626F47;
     color: #000000;
     border: none;
     border-radius: 5px;
@@ -44,13 +49,13 @@ button[type="submit"] {
 }
 
 button[type="submit"]:hover {
-    background-color: #00ff95cf;
+    background-color: #798645;
     /* Cambio de color al pasar el ratón */
 }
 
 /* Enlaces */
 a {
-    color: #00ff95cf;
+    color: #798645;
     text-decoration: none;
 }
 
@@ -86,9 +91,7 @@ p {
 .popup-notification {
     position: fixed;
     bottom: 20px;
-    /* Más abajo en la pantalla */
     right: 20px;
-    /* Desplazado hacia la derecha */
     max-width: 300px;
     padding: 10px;
     text-align: center;
@@ -98,33 +101,27 @@ p {
 }
 
 .popup-notification .popup-success {
-    background-color: #00ff95;
-    /* Verde para éxito */
+    background-color: #F2EED7;
     color: black;
-    border-left: 5px solid #3c8e38;
-    /* Línea decorativa */
+    border-left: 10px solid #798645;
 }
 
 .popup-notification .popup-error {
-    background-color: #f44336;
-    /* Rojo para error */
-    color: white;
-    border-left: 5px solid #d32f2f;
-    /* Línea decorativa */
+    background-color: #F2EED7;
+    color: black;
+    border-left: 10px solid #d32f2f;
 }
 
 .popup-notification div {
     padding: 15px;
     border-radius: 8px;
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
-    /* Sombra suave */
 }
 
 /* Contenedor general de la Home */
 .home-container {
     margin-top: 30px;
     padding: 15px;
-    color: #fff;
 }
 
 /* Título de la Home */
@@ -135,7 +132,7 @@ p {
 
 /* Estilos para las tarjetas */
 .card {
-    background-color: #343a40;
+    background-color: #626F47;
     /* Fondo oscuro similar a los formularios */
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -159,15 +156,8 @@ p {
 .card-title {
     font-weight: bold;
     font-size: 1.2rem;
-    color: #00ff95;
+    color: #FEFAE0;
     /* Color similar al de los botones */
-}
-
-/* Texto de la tarjeta */
-.card-text {
-    color: #ffffff;
-    /* Texto blanco */
-    font-size: 16px;
 }
 
 /* Tarjeta de artículo en formato horizontal */
@@ -175,10 +165,10 @@ p {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #343a40;
+    background-color: #F2EED7;
     border-radius: 10px;
     padding: 20px;
-    margin-bottom: 20px;
+    margin-bottom: 40px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease-in-out;
 }
@@ -195,12 +185,12 @@ p {
 .article-title {
     font-size: 1.5rem;
     font-weight: bold;
-    color: #00ff95;
+    color: black;
     margin-bottom: 10px;
 }
 
 .article-description {
-    color: #ffffff;
+    color: black;
     font-size: 1rem;
     margin-bottom: 15px;
 }
@@ -208,53 +198,50 @@ p {
 .article-actions {
     display: flex;
     gap: 10px;
+    margin-left: 50px;
 }
 
-.article-actions .btn {
-    padding: 10px 15px;
-    font-size: 0.9rem;
+.like-btn,
+.dislike-btn {
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 24px;
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 10px;
+}
+
+.liked .material-icons {
+    color: #00ff95; /* Verde para Like */
+}
+
+.disliked .material-icons {
+    color: #ff6347; /* Rojo para Dislike */
+}
+
+.material-icons {
+    font-size: 28px;
 }
 
 /* Información del autor (columna derecha) */
 .author-info {
-    flex: 0 0 150px;
+    flex: 0 0 800px;
     text-align: right;
-    color: #cccccc;
-}
-
-.author-info p {
-    margin: 5px 0;
-}
-
-.author-image {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    margin-top: 10px;
-}
-
-/* Ajustes de los botones */
-.btn {
-    background-color: #00ff95;
-    color: #000;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.btn:hover {
-    background-color: #00ff95cf;
 }
 
 .section-divider {
-    margin-top: 40px;
-    margin-bottom: 30px;
+    margin-top: 80px;
+    margin-bottom: 35px;
     text-align: center;
 }
 
 .section-line {
-    border: 2px solid #00ff95;
+    border: 2px solid #798645;
     margin: 20px auto;
     width: 60%;
+    border-radius: 50%;
 }

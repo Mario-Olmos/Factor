@@ -9,5 +9,6 @@ export interface Article{
     createdAt: Date;
     upVotes: number;
     downVotes: number;
+    userVote: string;
   }
     
