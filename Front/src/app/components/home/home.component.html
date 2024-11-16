@@ -24,7 +24,7 @@
         </div>
     </div>
 
-    <!-- Tarjetas de Artículos en Formato Horizontal -->
+    <!-- Tarjetas de Artículos -->
     <div class="section-divider">
         <h2 class="section-subtitle">Artículos Relevantes</h2>
         <hr class="section-line">
@@ -33,27 +33,32 @@
     <div class="article-card" *ngFor="let article of articles">
         <div class="article-info">
             <h5 class="article-title">{{ article.title }}</h5>
-            <p class="article-description">{{ article.description }}</p>
-            <div class="article-actions">
+            <p class="article-description">{{ article.description }}</p>          
 
+            <div class="article-actions">
                 <button class="like-btn" (click)="darLike(article._id)"
                     [ngClass]="{'liked': article.userVote === 'upvote'}" [disabled]="!puedeVotar()">
                     <span class="material-icons">thumb_up</span>
                 </button>
-
                 <button class="dislike-btn" (click)="darDislike(article._id)"
                     [ngClass]="{'disliked': article.userVote === 'downvote'}" [disabled]="!puedeVotar()">
                     <span class="material-icons">thumb_down</span>
                 </button>
-
             </div>
+
+            <!-- Mostrar los temas jerárquicos -->
+            <div class="themes">
+                <span class="theme theme-level1" *ngIf="article.themes?.nivel1">{{ article.themes.nivel1 }}</span>
+                <span class="theme theme-level2" *ngIf="article.themes?.nivel2">{{ article.themes.nivel2 }}</span>
+                <span class="theme theme-level3" *ngIf="article.themes?.nivel3">{{ article.themes.nivel3 }}</span>
+            </div>  
         </div>
 
         <div class="author-info">
             <p><strong>Autor:</strong> {{ article.author }}</p>
             <p><strong>Fecha de publicación:</strong> {{ article.createdAt | date }}</p>
         </div>
-
     </div>
+
 
 </div>

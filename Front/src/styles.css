@@ -3,13 +3,14 @@ body {
 }
 
 
-/* Estilos globales para formularios */
+/**********************************/
+/* ESTILO GLOBAL PARA FORMULARIOS */
+/**********************************/
 form {
     max-width: 400px;
     margin: 0 auto;
     padding: 20px;
     background-color: #F2EED7;
-    /* Fondo más oscuro */
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     display: flex;
@@ -25,13 +26,10 @@ input[type="date"] {
     padding: 12px;
     margin: 10px 0;
     border: 1px solid #444;
-    /* Borde más oscuro */
     border-radius: 5px;
     font-size: 16px;
     background-color: #FEFAE0;
-    /* Fondo del input más oscuro */
     color: black;
-    /* Texto en blanco */
     transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
@@ -53,28 +51,9 @@ button[type="submit"]:hover {
     /* Cambio de color al pasar el ratón */
 }
 
-/* Enlaces */
-a {
-    color: #798645;
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: underline;
-}
-
-/* Estilos para h2 y p centrados */
-h2,
-p {
-    text-align: center;
-    color: #000000;
-}
-
-/* Para el contenedor de los formularios */
 .container {
     margin-top: 50px;
     color: #fff;
-    /* Color del texto en el contenedor */
 }
 
 .error {
@@ -87,7 +66,34 @@ p {
     border: 2px solid #f44336;
 }
 
-/* Popup flotante */
+
+/**********************************/
+/*            ENLACES             */
+/**********************************/
+a {
+    color: #798645;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+
+/**********************************/
+/*        ESTILOS PARA H2 Y P     */
+/**********************************/
+/*  */
+h2,
+p {
+    text-align: center;
+    color: #000000;
+}
+
+
+/**********************************/
+/*       ESTILOS POP UPS          */
+/**********************************/
 .popup-notification {
     position: fixed;
     bottom: 20px;
@@ -97,7 +103,6 @@ p {
     text-align: center;
     z-index: 1000;
     opacity: 0.95;
-    /* Ligera transparencia */
 }
 
 .popup-notification .popup-success {
@@ -118,119 +123,18 @@ p {
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* Contenedor general de la Home */
+
+/**********************************/
+/*          HOME GENERAL          */
+/**********************************/
 .home-container {
     margin-top: 30px;
     padding: 15px;
 }
 
-/* Título de la Home */
 .home-title {
     text-align: center;
     margin-bottom: 25px;
-}
-
-/* Estilos para las tarjetas */
-.card {
-    background-color: #626F47;
-    /* Fondo oscuro similar a los formularios */
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease-in-out, background-color 0.3s ease;
-    padding: 20px;
-    margin-bottom: 20px;
-}
-
-.card:hover {
-    transform: scale(1.05);
-    /* Efecto de hover */
-}
-
-/* Estilos para el cuerpo de la tarjeta */
-.card-body {
-    padding: 20px;
-    text-align: center;
-}
-
-/* Título de las tarjetas */
-.card-title {
-    font-weight: bold;
-    font-size: 1.2rem;
-    color: #FEFAE0;
-    /* Color similar al de los botones */
-}
-
-/* Tarjeta de artículo en formato horizontal */
-.article-card {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #F2EED7;
-    border-radius: 10px;
-    padding: 20px;
-    margin-bottom: 40px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease-in-out;
-}
-
-.article-card:hover {
-    transform: scale(1.02);
-}
-
-/* Información del artículo (columna izquierda) */
-.article-info {
-    flex: 1;
-}
-
-.article-title {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: black;
-    margin-bottom: 10px;
-}
-
-.article-description {
-    color: black;
-    font-size: 1rem;
-    margin-bottom: 15px;
-}
-
-.article-actions {
-    display: flex;
-    gap: 10px;
-    margin-left: 50px;
-}
-
-.like-btn,
-.dislike-btn {
-    background: transparent;
-    border: none;
-    color: #ffffff;
-    font-size: 24px;
-    width: 30px;
-    height: 30px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-left: 10px;
-}
-
-.liked .material-icons {
-    color: #00ff95; /* Verde para Like */
-}
-
-.disliked .material-icons {
-    color: #ff6347; /* Rojo para Dislike */
-}
-
-.material-icons {
-    font-size: 28px;
-}
-
-/* Información del autor (columna derecha) */
-.author-info {
-    flex: 0 0 800px;
-    text-align: right;
 }
 
 .section-divider {
@@ -245,3 +149,131 @@ p {
     width: 60%;
     border-radius: 50%;
 }
+
+
+/*************************************/
+/* ESTILO GLOBAL PARA TARJETAS TEMAS */
+/*************************************/
+.card {
+    background-color: #626F47;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out, background-color 0.3s ease;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+.card-body {
+    padding: 20px;
+    text-align: center;
+}
+
+.card-title {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #FEFAE0;
+}
+
+
+/*****************************************/
+/* ESTILO GLOBAL PARA TARJETAS ARTICULOS */
+/*****************************************/
+.article-card {
+    display: flex;
+    flex-direction: column;
+    background-color: #F2EED7;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 40px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+}
+
+.article-card:hover {
+    transform: scale(1.02);
+}
+
+.article-info {
+    flex: 1;
+}
+
+.article-title {
+    font-size: 1.5rem;  
+    font-weight: bold;
+    color: black;
+    margin-bottom: 10px;
+}
+
+.article-description {
+    color: black;
+    font-size: 1rem;
+    margin-bottom: 15px;
+}
+
+.article-actions {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.like-btn,
+.dislike-btn {
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 10px;
+    color: grey;
+}
+
+.liked .material-icons {
+    color: #00ff95;
+}
+
+.disliked .material-icons {
+    color: #ff6347;
+}
+
+.material-icons {
+    font-size: 28px;
+}
+
+.themes {
+    display: flex;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.theme {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+}
+
+.theme-level1 {
+    background-color: #4CAF50;
+}
+
+.theme-level2 {
+    background-color: #2196F3;
+}
+
+.theme-level3 {
+    background-color: #FF9800;
+}
+
+.author-info {
+    text-align: right;
+}
+
