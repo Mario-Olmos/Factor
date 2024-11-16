@@ -12,6 +12,7 @@ exports.validateToken = async (req, res) => {
     }
 };
 
+
 // Endpoint para cerrar Sesión
 exports.logout = (req, res) => {
     res.clearCookie('token', {
@@ -64,6 +65,7 @@ exports.register = async (req, res) => {
     }
 };
 
+
 // Controlador para iniciar sesión
 exports.login = async (req, res) => {
 
@@ -110,6 +112,7 @@ exports.login = async (req, res) => {
         res.status(500).json({ message: 'Error al iniciar sesión', error: err.message });
     }
 };
+
 
 //Voto a un artículo del usuario que afecta en su valoración
 exports.voteVeracidad = async (voterId, targetUserId, voteValue) => {

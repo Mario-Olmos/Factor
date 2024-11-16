@@ -1,6 +1,7 @@
 const Theme = require('../models/Theme');
 const Article = require('../models/Article');
 
+
 //Crea un tema
 exports.createTheme = async (req, res) => {
     try {
@@ -67,6 +68,7 @@ exports.getThemes = async (req, res) => {
     }
 };
 
+
 // Ruta para obtener temas de tercer nivel con artículos recientes
 exports.getTrendyThemes = async (req, res) => {
     try {
@@ -82,8 +84,8 @@ exports.getTrendyThemes = async (req, res) => {
         const temasIds = articulosRecientes.map(article => article.theme);
 
         const temasNodosHoja = await Theme.find({
-            _id: { $in: temasIds },  // Solo los temas asociados a los artículos recientes
-            subthemes: { $exists: true, $size: 0 }  // Filtrar solo los que no tienen subtemas
+            _id: { $in: temasIds },  
+            subthemes: { $exists: true, $size: 0 }  
         });
 
         const temasFiltrados = temasNodosHoja.slice(0, limit);
@@ -91,6 +93,34 @@ exports.getTrendyThemes = async (req, res) => {
         return res.status(200).json(temasFiltrados);
     } catch (error) {
         return res.status(500).json({ message: 'Error al obtener los temas', error: error.message });
+    }
+};
+
+
+//Método para devolver la línea jerárquica de un tema a partir de su id
+exports.getThemeHierarchyById = async (themeId) => {
+    try {
+        
+        const themeLevel3 = await Theme.findById(themeId).populate('parentTheme');
+
+        if (!themeLevel3) return null;
+
+        const themeLevel2 = themeLevel3.parentTheme
+            ? await Theme.findById(themeLevel3.parentTheme._id).populate('parentTheme')
+            : null;
+
+        const themeLevel1 = themeLevel2 && themeLevel2.parentTheme
+            ? await Theme.findById(themeLevel2.parentTheme._id)
+            : null;
+
+        return {
+            nivel1: themeLevel1 ? themeLevel1.name : null,
+            nivel2: themeLevel2 ? themeLevel2.name : null,
+            nivel3: themeLevel3 ? themeLevel3.name : null,
+        };
+    } catch (err) {
+        console.error('Error obteniendo jerarquía del tema:', err);
+        throw new Error('No se pudo obtener la jerarquía del tema');
     }
 };
 
