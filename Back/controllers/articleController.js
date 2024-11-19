@@ -157,3 +157,24 @@ exports.darLike = async (req, res) => {
 };
 
 
+// Detalle del artículo
+exports.getArticleById = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const article = await Article.findById(id)
+            .populate('theme')
+            .lean();
+
+        if (!article) {
+            return res.status(404).json({ message: "Artículo no encontrado" });
+        }
+
+        return res.status(200).json(article);
+    } catch (error) {
+        console.error("Error obteniendo el artículo:", error);
+        return res.status(500).json({ message: "Error al obtener el artículo" });
+    }
+};
+
+

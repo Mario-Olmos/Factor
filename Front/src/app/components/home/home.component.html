@@ -44,6 +44,7 @@
                     [ngClass]="{'disliked': article.userVote === 'downvote'}" [disabled]="!puedeVotar()">
                     <span class="material-icons">thumb_down</span>
                 </button>
+                <button class="view-btn" [routerLink]="['/article', article._id]">Ver</button>
             </div>
 
             <!-- Mostrar los temas jerárquicos -->

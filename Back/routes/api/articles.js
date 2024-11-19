@@ -6,4 +6,6 @@ router.get('/getArticles', articleController.obtenerArticulosFeed);
 
 router.post('/meGusta', articleController.darLike);
 
+router.get('/:id', articleController.getArticleById);
+
 module.exports = router;

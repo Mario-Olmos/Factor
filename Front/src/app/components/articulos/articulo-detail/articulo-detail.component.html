@@ -1,1 +1,23 @@
-<p>articulo-detail works!</p>
+<div *ngIf="article; else loading">
+    <h1>{{ article?.title }}</h1>
+    <p><strong>Descripción:</strong> {{ article?.description }}</p>
+    <p><strong>Autor:</strong> {{ article?.author }}</p>
+    <p>
+        <strong>Fecha de publicación:</strong> {{ article?.createdAt | date }}
+    </p>
+
+
+    <div class="themes">
+        <span class="theme" *ngIf="article.themes?.nivel1">Tema principal: {{ article?.themes?.nivel1 }}</span>
+        <span class="theme" *ngIf="article.themes?.nivel2">Subtema: {{ article?.themes?.nivel2 }}</span>
+        <span class="theme" *ngIf="article.themes?.nivel3">Sub-subtema: {{ article?.themes?.nivel3 }}</span>
+    </div>
+</div>
+
+<ng-template #loading>
+    <p>Cargando artículo...</p>
+</ng-template>
+
+<div *ngIf="errorMessage" class="error">
+    {{ errorMessage }}
+</div>
