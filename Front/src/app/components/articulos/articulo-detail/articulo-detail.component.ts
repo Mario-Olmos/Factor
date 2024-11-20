@@ -12,9 +12,10 @@ import { AuthService } from '../../../services/auth.service';
   styleUrl: './articulo-detail.component.css'
 })
 export class ArticuloDetailComponent implements OnInit {
-  article: Article | null = null;
   currentUser: User | null = null;
   errorMessage: string = '';
+  article: Article | null = null;
+
 
   constructor(
     private route: ActivatedRoute,
@@ -23,7 +24,7 @@ export class ArticuloDetailComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // Obtiene el usuario logueado
+    
     this.authService.getCurrentUser().subscribe(
       (user) => {
         this.currentUser = user;
@@ -36,6 +37,7 @@ export class ArticuloDetailComponent implements OnInit {
 
     // Obtiene el ID del artículo de la URL y carga los datos
     const articleId = this.route.snapshot.paramMap.get('id');
+    console.log(articleId);
     if (articleId) {
       this.loadArticle(articleId);
     } else {
@@ -45,7 +47,12 @@ export class ArticuloDetailComponent implements OnInit {
 
   private loadArticle(articleId: string): void {
     this.articlesService.getArticleById(articleId).subscribe(
-      (article: Article) => {
+      (article: any) => {
+        
+        if (article.createdAt) {
+          article.createdAt = new Date(article.createdAt);
+        }
+
         this.article = article;
       },
       (error: any) => {
@@ -54,5 +61,4 @@ export class ArticuloDetailComponent implements OnInit {
       }
     );
   }
-
 }

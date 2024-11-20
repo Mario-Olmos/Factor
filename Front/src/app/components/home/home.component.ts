@@ -21,6 +21,7 @@ export class HomeComponent implements OnInit {
   articlesPerPage = 10;
   themeLimit = 6;
   days = 200;
+
   constructor(private articlesService: ArticlesService, private authService: AuthService) { }
 
   ngOnInit(): void {
@@ -91,11 +92,11 @@ export class HomeComponent implements OnInit {
 
     this.articlesService.darLike(likeObject).subscribe(
       (response: any) => {
-        // El backend devuelve un status 200 con un mensaje
+        
         if (response && response.message) {
-          this.showSuccessMessage(response.message);  // Muestra el mensaje del backend
+          this.showSuccessMessage(response.message);  
         }
-        this.articlesService.getArticles(this.currentPage, this.articlesPerPage, this.currentUser!.userId);  // Refresca los artículos
+        this.articlesService.getArticles(this.currentPage, this.articlesPerPage, this.currentUser!.userId); 
       },
       (error: any) => {
         // Manejar diferentes tipos de errores por el código de estado
@@ -130,11 +131,11 @@ export class HomeComponent implements OnInit {
 
     this.articlesService.darDislike(likeObject).subscribe(
       (response: any) => {
-        // El backend devuelve un status 200 con un mensaje
+
         if (response && response.message) {
-          this.showSuccessMessage(response.message);  // Muestra el mensaje del backend
+          this.showSuccessMessage(response.message);  
         }
-        this.articlesService.getArticles(this.currentPage, this.articlesPerPage, this.currentUser!.userId);  // Refresca los artículos
+        this.articlesService.getArticles(this.currentPage, this.articlesPerPage, this.currentUser!.userId); 
       },
       (error: any) => {
         // Manejar diferentes tipos de errores por el código de estado
@@ -150,6 +151,18 @@ export class HomeComponent implements OnInit {
       }
     );
   }
+
+  // Cambia el color de la veracidad en funcion a su valor
+  getVeracityColor(veracity: number): string {
+    if (veracity < 5) {
+      return '#FF4D4D'; 
+    } else if (veracity < 7) {
+      return '#FFC107'; 
+    } else {
+      return '#4CAF50'; 
+    }
+  }
+  
 
   // Muestra el mensaje de éxito temporalmente
   private showSuccessMessage(message: string): void {

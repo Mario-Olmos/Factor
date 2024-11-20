@@ -60,7 +60,7 @@ export class ArticlesService {
   }
 
   //Método get para el detalle del artículo
-  getArticleById(articleId: string) {
+  getArticleById(articleId: string): Observable<Article> {
     return this.http.get<Article>(`${this.apiUrl}/articles/${articleId}`);
   }
 

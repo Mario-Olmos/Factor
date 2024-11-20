@@ -10,6 +10,7 @@ import { HomeComponent } from './components/home/home.component';
 import { ThemeComponent } from './components/theme/theme.component';
 import { NavbarComponent } from './components/shared/navbar/navbar.component';
 import { UploadArticleComponent } from './components/upload-article/upload-article.component';
+import { ArticuloDetailComponent } from './components/articulos/articulo-detail/articulo-detail.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { UploadArticleComponent } from './components/upload-article/upload-artic
     HomeComponent,
     ThemeComponent,
     NavbarComponent,
-    UploadArticleComponent
+    UploadArticleComponent,
+    ArticuloDetailComponent
   ],
   imports: [
     BrowserModule,
