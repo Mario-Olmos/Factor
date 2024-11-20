@@ -59,4 +59,9 @@ export class ArticlesService {
     return this.http.post(`${this.apiUrl}/articles/meGusta`, likeObject);
   }
 
+  //Método get para el detalle del artículo
+  getArticleById(articleId: string): Observable<Article> {
+    return this.http.get<Article>(`${this.apiUrl}/articles/${articleId}`);
+  }
+
 }

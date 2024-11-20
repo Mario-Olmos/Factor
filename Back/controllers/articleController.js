@@ -83,9 +83,12 @@ exports.obtenerArticulosFeed = async (req, res) => {
         // Agregar el voto del usuario y jerarquía de temas
         const articlesWithDetails = await Promise.all(
             articles.map(async (article) => {
-                
+
                 const userVoteObj = article.votes.find(vote => vote.user.toString() === userId);
                 const userVote = userVoteObj ? userVoteObj.voteType : null;
+
+                const upVotes = article.votes.filter(vote => vote.voteType === 'upvote').length;
+                const downVotes = article.votes.filter(vote => vote.voteType === 'downvote').length;
 
                 const themes = article.theme
                     ? await getThemeHierarchyById(article.theme)
@@ -95,6 +98,8 @@ exports.obtenerArticulosFeed = async (req, res) => {
                     ...article,
                     userVote,
                     themes,
+                    upVotes,
+                    downVotes,
                     votes: undefined
                 };
             })
@@ -117,7 +122,7 @@ exports.darLike = async (req, res) => {
         if (!usuario) {
             return res.status(404).json({ message: 'Usuario no encontrado' });
         }
-        if (usuario.reputacion < 50) { 
+        if (usuario.reputacion < 50) {
             return res.status(403).json({ message: 'No tienes suficiente reputación para votar' });
         }
 
@@ -155,5 +160,32 @@ exports.darLike = async (req, res) => {
         return res.status(500).json({ message: 'Error interno del servidor', error: error.message });
     }
 };
+
+
+// Detalle del artículo
+exports.getArticleById = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Encuentra el artículo por ID
+        const article = await Article.findById(id);
+
+        if (!article) {
+            return res.status(404).json({ message: 'Artículo no encontrado' });
+        }
+
+        const themeHierarchy = await getThemeHierarchyById(article.theme);
+        const articleWithThemes = {
+            ...article.toObject(),
+            themes: themeHierarchy, 
+        };
+
+        res.json(articleWithThemes);
+    } catch (err) {
+        console.error('Error al obtener el artículo:', err);
+        res.status(500).json({ message: 'Error al obtener el artículo' });
+    }
+};
+
 
 
