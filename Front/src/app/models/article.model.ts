@@ -1,3 +1,5 @@
+import { User } from './user.model';
+
 export interface Article {
   _id: string;
   title: string;
@@ -10,6 +12,7 @@ export interface Article {
   upVotes: number;
   downVotes: number;
   userVote: string;
+  authorInfo: User;
   themes: {
     nivel1: string | null;
     nivel2: string | null;

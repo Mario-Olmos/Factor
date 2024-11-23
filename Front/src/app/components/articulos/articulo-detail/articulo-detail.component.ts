@@ -45,6 +45,7 @@ export class ArticuloDetailComponent implements OnInit {
     }
   }
 
+  //Cargamos información del artículo
   private loadArticle(articleId: string): void {
     this.articlesService.getArticleById(articleId).subscribe(
       (article: any) => {

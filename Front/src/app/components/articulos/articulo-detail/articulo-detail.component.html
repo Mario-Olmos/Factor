@@ -6,10 +6,11 @@
         <strong>Fecha de publicación:</strong> {{ article.createdAt | date }}
     </p>
     
+    <!-- Mostrar los temas jerárquicos -->
     <div class="themes">
-        <span class="theme" *ngIf="article.themes.nivel1">Tema principal: {{ article.themes.nivel1 }}</span>
-        <span class="theme" *ngIf="article.themes.nivel2">Subtema: {{ article.themes.nivel2 }}</span>
-        <span class="theme" *ngIf="article.themes.nivel3">Sub-subtema: {{ article.themes.nivel3 }}</span>
+        <span class="theme theme-level1">{{ article.themes.nivel1 }}</span>
+        <span class="theme theme-level2">{{ article.themes.nivel2 }}</span>
+        <span class="theme theme-level3">{{ article.themes.nivel3 }}</span>
     </div>
 </div>
 

@@ -294,7 +294,18 @@ p {
 }
 
 .author-info {
-    text-align: right;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.author-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%; 
+    object-fit: cover; 
+    border: 2px solid #ccc; 
 }
 
 .veracity-circle {

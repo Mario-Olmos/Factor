@@ -40,6 +40,13 @@
             <h5 class="article-title">{{ article.title }}</h5>
             <p class="article-description">{{ article.description }}</p>
 
+            <!-- Mostrar los temas jerárquicos -->
+            <div class="themes">
+                <span class="theme theme-level1">{{ article.themes.nivel1 }}</span>
+                <span class="theme theme-level2">{{ article.themes.nivel2 }}</span>
+                <span class="theme theme-level3">{{ article.themes.nivel3 }}</span>
+            </div>
+
             <div class="article-actions">
                 <button class="like-btn" (click)="darLike(article._id)"
                     [ngClass]="{'liked': article.userVote === 'upvote'}" [disabled]="!puedeVotar()">
@@ -52,12 +59,18 @@
                     <span class="material-icons">thumb_down</span>
                 </button>
                 <span class="vote-counter">{{ article.downVotes }}</span>
+                <button class="view-btn" [routerLink]="['/article', article._id]">Ver</button>
             </div>
         </div>
 
 
+        <!-- Información del autor -->
         <div class="author-info">
-            <p><strong>Autor:</strong> {{ article.author }}</p>
+            <img [src]="article.authorInfo.imagenPerfil || 'assets/images/default-avatar.png'" alt="Foto del autor"
+                class="author-image">
+            <p>
+                <strong>{{ article.authorInfo.nombre }} {{ article.authorInfo.apellidos }}</strong>
+            </p>
             <p><strong>Fecha de publicación:</strong> {{ article.createdAt | date }}</p>
         </div>
     </div>

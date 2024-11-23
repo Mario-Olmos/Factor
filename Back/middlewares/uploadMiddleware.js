@@ -1,9 +1,8 @@
 const multer = require('multer');
 
-// Configuración de Multer para subir archivos PDF
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'uploads/pdf'); // Carpeta donde se guardarán los PDFs
+        cb(null, 'uploads/pdf'); 
     },
     filename: (req, file, cb) => {
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);

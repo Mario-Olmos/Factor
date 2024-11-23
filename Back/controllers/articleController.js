@@ -1,5 +1,6 @@
 const Article = require('../models/Article');
 const { getThemeHierarchyById } = require('./themeController');
+const { getUserInfoById } = require('./userController');
 const User = require('../models/User');
 const path = require('path');
 
@@ -94,12 +95,15 @@ exports.obtenerArticulosFeed = async (req, res) => {
                     ? await getThemeHierarchyById(article.theme)
                     : { nivel1: null, nivel2: null, nivel3: null };
 
+                const authorInfo = await getUserInfoById(article.author);
+
                 return {
                     ...article,
                     userVote,
                     themes,
                     upVotes,
                     downVotes,
+                    authorInfo,
                     votes: undefined
                 };
             })
