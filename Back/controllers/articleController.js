@@ -67,7 +67,7 @@ exports.uploadArticle = async (req, res) => {
 exports.obtenerArticulosFeed = async (req, res) => {
     try {
         const { page = 1, limit = 10, userId } = req.query;
-        const diasRecientes = 60;
+        const diasRecientes = 100;
         const fechaLimite = new Date();
         fechaLimite.setDate(fechaLimite.getDate() - diasRecientes);
 

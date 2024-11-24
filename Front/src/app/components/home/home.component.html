@@ -24,54 +24,55 @@
         </div>
     </div>
 
-    <!-- Tarjetas de Artículos -->
     <div class="section-divider">
-        <h2 class="section-subtitle">Artículos Relevantes</h2>
+        <h2 class="section-subtitle">Artículos en Tendencia</h2>
         <hr class="section-line">
     </div>
 
+    <!-- Tarjetas de Artículos -->
     <div class="article-card" *ngFor="let article of articles">
-        <div class="article-info">
-            <!-- Círculo de veracidad -->
-            <div class="veracity-circle" [ngStyle]="{'background-color': getVeracityColor(article.veracity)}">
-                {{ article.veracity | number: '1.1-1' }}
+        
+        <div class="article-layout">
+            
+            <div class="article-info">
+                <div class="veracity-circle" [ngStyle]="{'background-color': getVeracityColor(article.veracity)}">
+                    {{ article.veracity | number: '1.1-1' }}
+                </div>
+                <h5 class="article-title">{{ article.title }}</h5>
+                <p class="article-description">{{ article.description }}</p>
+
+                <div class="themes">
+                    <span class="theme theme-level1">{{ article.themes.nivel1 }}</span>
+                    <span class="theme theme-level2">{{ article.themes.nivel2 }}</span>
+                    <span class="theme theme-level3">{{ article.themes.nivel3 }}</span>
+                </div>
+
+                <div class="article-actions">
+                    <button class="like-btn" (click)="darLike(article._id)"
+                        [ngClass]="{'liked': article.userVote === 'upvote'}" [disabled]="!puedeVotar()">
+                        <span class="material-icons">thumb_up</span>
+                    </button>
+                    <span class="vote-counter">{{ article.upVotes }}</span>
+
+                    <button class="dislike-btn" (click)="darDislike(article._id)"
+                        [ngClass]="{'disliked': article.userVote === 'downvote'}" [disabled]="!puedeVotar()">
+                        <span class="material-icons">thumb_down</span>
+                    </button>
+                    <span class="vote-counter">{{ article.downVotes }}</span>
+
+                    <button class="view-btn" [routerLink]="['/article', article._id]">Ver</button>
+                </div>
             </div>
 
-            <h5 class="article-title">{{ article.title }}</h5>
-            <p class="article-description">{{ article.description }}</p>
-
-            <!-- Mostrar los temas jerárquicos -->
-            <div class="themes">
-                <span class="theme theme-level1">{{ article.themes.nivel1 }}</span>
-                <span class="theme theme-level2">{{ article.themes.nivel2 }}</span>
-                <span class="theme theme-level3">{{ article.themes.nivel3 }}</span>
+            <div class="author-info">
+                <img [src]="article.authorInfo.imagenPerfil || 'assets/images/default-avatar.png'" alt="Foto del autor"
+                    class="author-image">
+                <p>
+                    <strong>{{ article.authorInfo.nombre }} {{ article.authorInfo.apellidos }}</strong>
+                </p>
+                <p><strong>Fecha de publicación:</strong> {{ article.createdAt | date }}</p>
             </div>
-
-            <div class="article-actions">
-                <button class="like-btn" (click)="darLike(article._id)"
-                    [ngClass]="{'liked': article.userVote === 'upvote'}" [disabled]="!puedeVotar()">
-                    <span class="material-icons">thumb_up</span>
-                </button>
-                <span class="vote-counter">{{ article.upVotes }}</span>
-
-                <button class="dislike-btn" (click)="darDislike(article._id)"
-                    [ngClass]="{'disliked': article.userVote === 'downvote'}" [disabled]="!puedeVotar()">
-                    <span class="material-icons">thumb_down</span>
-                </button>
-                <span class="vote-counter">{{ article.downVotes }}</span>
-                <button class="view-btn" [routerLink]="['/article', article._id]">Ver</button>
-            </div>
-        </div>
-
-
-        <!-- Información del autor -->
-        <div class="author-info">
-            <img [src]="article.authorInfo.imagenPerfil || 'assets/images/default-avatar.png'" alt="Foto del autor"
-                class="author-image">
-            <p>
-                <strong>{{ article.authorInfo.nombre }} {{ article.authorInfo.apellidos }}</strong>
-            </p>
-            <p><strong>Fecha de publicación:</strong> {{ article.createdAt | date }}</p>
         </div>
     </div>
+
 </div>
