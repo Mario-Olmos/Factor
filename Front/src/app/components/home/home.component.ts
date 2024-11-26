@@ -48,7 +48,7 @@ export class HomeComponent implements OnInit {
         this.articles = articles.map(article => {
           return {
             ...article,
-            userVote: article.userVote  // 'upvote', 'downvote', o null según el backend
+            userVote: article.userVote  
           };
         });
         
@@ -71,7 +71,7 @@ export class HomeComponent implements OnInit {
   // Calcular el peso del voto según la reputación del votante
   calcularPesoVoto(): number {
     const pesoVoto = 0.05 + (this.currentUser!.reputacion / 400);
-    return Math.min(pesoVoto, 0.3);  // Limitar a 0.3 como máximo
+    return Math.min(pesoVoto, 0.3);  // Limitar a 0.3 
   }
 
   // Método para dar "Like"

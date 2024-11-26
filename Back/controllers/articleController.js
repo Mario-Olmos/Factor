@@ -1,5 +1,6 @@
 const Article = require('../models/Article');
 const { getThemeHierarchyById } = require('./themeController');
+const { getUserInfoById } = require('./userController');
 const User = require('../models/User');
 const path = require('path');
 
@@ -66,7 +67,7 @@ exports.uploadArticle = async (req, res) => {
 exports.obtenerArticulosFeed = async (req, res) => {
     try {
         const { page = 1, limit = 10, userId } = req.query;
-        const diasRecientes = 60;
+        const diasRecientes = 100;
         const fechaLimite = new Date();
         fechaLimite.setDate(fechaLimite.getDate() - diasRecientes);
 
@@ -94,12 +95,15 @@ exports.obtenerArticulosFeed = async (req, res) => {
                     ? await getThemeHierarchyById(article.theme)
                     : { nivel1: null, nivel2: null, nivel3: null };
 
+                const authorInfo = await getUserInfoById(article.author);
+
                 return {
                     ...article,
                     userVote,
                     themes,
                     upVotes,
                     downVotes,
+                    authorInfo,
                     votes: undefined
                 };
             })
@@ -175,9 +179,11 @@ exports.getArticleById = async (req, res) => {
         }
 
         const themeHierarchy = await getThemeHierarchyById(article.theme);
+        const authorInfo = await getUserInfoById(article.author);
         const articleWithThemes = {
             ...article.toObject(),
-            themes: themeHierarchy, 
+            themes: themeHierarchy,
+            authorInfo: authorInfo 
         };
 
         res.json(articleWithThemes);

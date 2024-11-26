@@ -48,6 +48,7 @@ const UserSchema = new mongoose.Schema({
     fechaUltimaPublicacion: { type: Date, default: null },
     fechaUltimoVoto: { type: Date, default: null },
     acreditaciones: [AccreditationSchema],
+    imagenPerfil: { type: String, default: null }, 
 }, { timestamps: true });
 
 

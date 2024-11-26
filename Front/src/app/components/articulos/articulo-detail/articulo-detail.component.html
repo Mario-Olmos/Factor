@@ -1,15 +1,47 @@
-<div *ngIf="article; else loading">
-    <h1>{{ article.title }}</h1>
-    <p><strong>Descripción:</strong> {{ article.description }}</p>
-    <p><strong>Autor:</strong> {{ article.author }}</p>
-    <p *ngIf="article?.createdAt">
-        <strong>Fecha de publicación:</strong> {{ article.createdAt | date }}
-    </p>
-    
-    <div class="themes">
-        <span class="theme" *ngIf="article.themes.nivel1">Tema principal: {{ article.themes.nivel1 }}</span>
-        <span class="theme" *ngIf="article.themes.nivel2">Subtema: {{ article.themes.nivel2 }}</span>
-        <span class="theme" *ngIf="article.themes.nivel3">Sub-subtema: {{ article.themes.nivel3 }}</span>
+<div class="article-detail-container" *ngIf="article; else loading">
+    <!-- Cabecera del artículo -->
+    <div class="article-header">
+        <div>
+            <h1 class="article-title">{{ article.title }}</h1>
+            <p class="article-description">{{ article.description }}</p>
+        </div>
+        <div class="veracity-circle" [ngStyle]="{'background-color': getVeracityColor(article.veracity)}">
+            {{ article.veracity | number: '1.1-1' }}
+        </div>
+    </div>
+
+    <div class="content-wrapper">
+        <!-- Visor del PDF -->
+        <div class="pdf-viewer">
+            <p>Visor del artículo PDF aquí.</p>
+            
+        </div>
+
+        <!-- Columna lateral derecha -->
+        <div class="author-details">
+            <img [src]="article.authorInfo.imagenPerfil || 'assets/images/default-avatar.png'" 
+                 alt="Foto del autor" class="author-image">
+            <h3 class="author-name">{{ article.authorInfo.nombre }} {{ article.authorInfo.apellidos }}</h3>
+            <!--<p><strong>Reputación:</strong> {{ article.authorInfo.reputacion }}</p>
+            <p><strong>Última publicación:</strong> {{ article.authorInfo.fechaUltimaPublicacion | date }}</p>
+            <p><strong>Acreditaciones:</strong></p>-->
+            <!--<ul>
+                <li *ngFor="let acc of article.authorInfo.acreditaciones">
+                    {{ acc.title }} - {{ acc.institution }} ({{ acc.year }})
+                </li>
+            </ul>-->
+        </div>
+    </div>
+
+    <div class="article-footer">
+        <div class="themes">
+            <span class="theme theme-level1">{{ article.themes.nivel1 }}</span>
+            <span class="theme theme-level2">{{ article.themes.nivel2 }}</span>
+            <span class="theme theme-level3">{{ article.themes.nivel3 }}</span>
+        </div>
+        <p *ngIf="article?.createdAt" class="article-date">
+            <strong>Fecha de publicación:</strong> {{ article.createdAt | date }}
+        </p>
     </div>
 </div>
 
