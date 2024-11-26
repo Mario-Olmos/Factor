@@ -4,6 +4,7 @@ import { User } from '../../../models/user.model';
 import { ActivatedRoute } from '@angular/router';
 import { ArticlesService } from '../../../services/articles.service';
 import { AuthService } from '../../../services/auth.service';
+import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 
 
 @Component({
@@ -61,5 +62,16 @@ export class ArticuloDetailComponent implements OnInit {
         this.errorMessage = 'No se pudo cargar el artículo.';
       }
     );
+  }
+
+  // Cambia el color de la veracidad en funcion a su valor
+  getVeracityColor(veracity: number): string {
+    if (veracity < 5) {
+      return '#FF4D4D'; 
+    } else if (veracity < 7) {
+      return '#FFC107'; 
+    } else {
+      return '#4CAF50'; 
+    }
   }
 }

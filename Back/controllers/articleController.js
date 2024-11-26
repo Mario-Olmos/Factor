@@ -179,9 +179,11 @@ exports.getArticleById = async (req, res) => {
         }
 
         const themeHierarchy = await getThemeHierarchyById(article.theme);
+        const authorInfo = await getUserInfoById(article.author);
         const articleWithThemes = {
             ...article.toObject(),
-            themes: themeHierarchy, 
+            themes: themeHierarchy,
+            authorInfo: authorInfo 
         };
 
         res.json(articleWithThemes);

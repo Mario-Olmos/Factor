@@ -231,6 +231,9 @@ p {
     color: black;
     font-size: 1rem;
     margin-bottom: 15px;
+    font-family: 'Georgia', 'Times New Roman', serif; 
+    text-align: justify;
+    color: #333;
 }
 
 .article-actions {
@@ -244,11 +247,10 @@ p {
 .dislike-btn {
     background: transparent;
     border: none;
-    font-size: 24px;
+    font-size: 28px;
     display: inline-flex;
     justify-content: center;
     color: grey;
-    margin-left: 15px;
 }
 
 .liked .material-icons {
