@@ -4,7 +4,6 @@ import { User } from '../../../models/user.model';
 import { ActivatedRoute } from '@angular/router';
 import { ArticlesService } from '../../../services/articles.service';
 import { AuthService } from '../../../services/auth.service';
-import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 
 
 @Component({
@@ -16,6 +15,7 @@ export class ArticuloDetailComponent implements OnInit {
   currentUser: User | null = null;
   errorMessage: string = '';
   article: Article | null = null;
+  pdfSrc: string = '';
 
 
   constructor(
@@ -56,6 +56,9 @@ export class ArticuloDetailComponent implements OnInit {
         }
 
         this.article = article;
+        this.pdfSrc = `http://localhost:3000/api${this.article?.pdfUrl}`;
+        console.log(this.pdfSrc);
+
       },
       (error: any) => {
         console.error('Error al cargar el artículo:', error);

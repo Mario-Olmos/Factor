@@ -9,4 +9,6 @@ router.use('/theme', require('./api/theme'));
 
 router.use('/articles', require('./api/articles'));
 
+router.use('/uploads', require('./api/uploads'));
+
 module.exports = router;
