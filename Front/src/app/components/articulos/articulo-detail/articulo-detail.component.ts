@@ -4,6 +4,7 @@ import { User } from '../../../models/user.model';
 import { ActivatedRoute } from '@angular/router';
 import { ArticlesService } from '../../../services/articles.service';
 import { AuthService } from '../../../services/auth.service';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 
 @Component({
@@ -15,13 +16,14 @@ export class ArticuloDetailComponent implements OnInit {
   currentUser: User | null = null;
   errorMessage: string = '';
   article: Article | null = null;
-  pdfSrc: string = '';
+  pdfSrc!: SafeResourceUrl;
 
 
   constructor(
     private route: ActivatedRoute,
     private articlesService: ArticlesService,
-    private authService: AuthService
+    private authService: AuthService,
+    private sanitizer: DomSanitizer
   ) { }
 
   ngOnInit(): void {
@@ -38,7 +40,6 @@ export class ArticuloDetailComponent implements OnInit {
 
     // Obtiene el ID del artículo de la URL y carga los datos
     const articleId = this.route.snapshot.paramMap.get('id');
-    console.log(articleId);
     if (articleId) {
       this.loadArticle(articleId);
     } else {
@@ -56,9 +57,8 @@ export class ArticuloDetailComponent implements OnInit {
         }
 
         this.article = article;
-        this.pdfSrc = `http://localhost:3000/api${this.article?.pdfUrl}`;
+        this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(`http://localhost:3000/api${this.article?.pdfUrl}`);
         console.log(this.pdfSrc);
-
       },
       (error: any) => {
         console.error('Error al cargar el artículo:', error);

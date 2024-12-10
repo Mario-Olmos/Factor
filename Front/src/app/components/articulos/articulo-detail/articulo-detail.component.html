@@ -13,8 +13,7 @@
     <div class="content-wrapper">
         <!-- Visor del PDF -->
         <div class="pdf-viewer" *ngIf="pdfSrc">
-            <ngx-extended-pdf-viewer [src]="pdfSrc" [showToolbar]="false" [textLayer]="true">
-                
+            <ngx-extended-pdf-viewer [src]="pdfSrc" useBrowserLocale="true">
             </ngx-extended-pdf-viewer>
         </div>
 
