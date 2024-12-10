@@ -12,15 +12,20 @@
 
     <div class="content-wrapper">
         <!-- Visor del PDF -->
-        <div class="pdf-viewer">
-            <p>Visor del artículo PDF aquí.</p>
-            
+        <div class="pdf-viewer" *ngIf="pdfSrc">
+            <ngx-extended-pdf-viewer [src]="pdfSrc" useBrowserLocale="true">
+            </ngx-extended-pdf-viewer>
+        </div>
+
+        <!-- Muestra un mensaje mientras carga el PDF -->
+        <div *ngIf="!pdfSrc">
+            <p>Cargando PDF...</p>
         </div>
 
         <!-- Columna lateral derecha -->
         <div class="author-details">
-            <img [src]="article.authorInfo.imagenPerfil || 'assets/images/default-avatar.png'" 
-                 alt="Foto del autor" class="author-image">
+            <img [src]="article.authorInfo.imagenPerfil || 'assets/images/default-avatar.png'" alt="Foto del autor"
+                class="author-image">
             <h3 class="author-name">{{ article.authorInfo.nombre }} {{ article.authorInfo.apellidos }}</h3>
             <!--<p><strong>Reputación:</strong> {{ article.authorInfo.reputacion }}</p>
             <p><strong>Última publicación:</strong> {{ article.authorInfo.fechaUltimaPublicacion | date }}</p>

@@ -18,7 +18,7 @@ app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 
 // Middleware para servir archivos estáticos (para acceder a los PDFs subidos)
-app.use('/upload', express.static(path.join(__dirname, 'uploads')));
+app.use('/api/uploads', express.static(path.join(__dirname, 'uploads')));
 
 //GET /api
 app.use('/api', require('./routes/api'));
