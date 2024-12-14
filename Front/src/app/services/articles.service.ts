@@ -39,15 +39,33 @@ export class ArticlesService {
   }
 
   //Método para cargar los artículos de la app (provisional, luego será el feed el que los devuelva)
-  getArticles(currentPage: number, limit: number, userId: string): Observable<any[]> {
-    return this.http.get<Article[]>(`${this.apiUrl}/articles/getArticles`, {
-      params: {
-        page: currentPage.toString(),
-        limit: limit.toString(),
-        userId: userId
-      }
-    });
+  getArticles(
+    page: number,
+    limit: number,
+    userId: string,
+    tema?: string,
+    ordenarPorFecha?: 'asc' | 'desc',
+    ordenarPorVeracidad?: 'asc' | 'desc'
+  ): Observable<any[]> {
+    const params: any = {
+      page: page.toString(),
+      limit: limit.toString(),
+      userId
+    };
+  
+    if (tema) {
+      params.tema = tema;
+    }
+    if (ordenarPorFecha) {
+      params.ordenarPorFecha = ordenarPorFecha;
+    }
+    if (ordenarPorVeracidad) {
+      params.ordenarPorVeracidad = ordenarPorVeracidad;
+    }
+  
+    return this.http.get<any[]>(`${this.apiUrl}/articles/getArticles`, { params });
   }
+  
 
   //Método para dar "Like"
   darLike(likeObject: any): Observable<any> {

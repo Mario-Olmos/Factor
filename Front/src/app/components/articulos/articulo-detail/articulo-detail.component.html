@@ -13,8 +13,14 @@
     <div class="content-wrapper">
         <!-- Visor del PDF -->
         <div class="pdf-viewer" *ngIf="pdfSrc">
-            <ngx-extended-pdf-viewer [src]="pdfSrc" useBrowserLocale="true">
-            </ngx-extended-pdf-viewer>
+            <div class="iframe-container">
+                <iframe #pdfIframe [src]="pdfSrc" width="100%" height="80vh" frameborder="0" allowfullscreen></iframe>
+                <div class="fullscreen-button">
+                    <button (click)="toggleFullScreen()">
+                        <span class="material-icons">fullscreen</span>
+                    </button>
+                </div>
+            </div>
         </div>
 
         <!-- Muestra un mensaje mientras carga el PDF -->

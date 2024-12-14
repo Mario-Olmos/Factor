@@ -66,20 +66,37 @@ exports.uploadArticle = async (req, res) => {
 //Método para obetener los artículos del feed, con el voto del usuario logeado y jerarquía de temas
 exports.obtenerArticulosFeed = async (req, res) => {
     try {
-        const { page = 1, limit = 10, userId } = req.query;
+        const { page = 1, limit = 10, userId, tema, ordenarPorFecha, ordenarPorVeracidad } = req.query;
         const diasRecientes = 100;
         const fechaLimite = new Date();
         fechaLimite.setDate(fechaLimite.getDate() - diasRecientes);
 
-        // Obtenemos los artículos dentro del período reciente y con veracidad positiva
-        const articles = await Article.find({
+        let query = {
             veracity: { $gt: -1 },
             createdAt: { $gte: fechaLimite }
-        })
-            .sort({ veracity: -1, createdAt: -1 })
+        };
+
+        // Si se proporciona un tema, se filtra por tema
+        if (tema) {
+            query.theme = tema;
+        }
+
+        // Obtener los artículos dentro del período reciente y con veracidad positiva
+        let articlesQuery = Article.find(query).lean();
+
+        // Ordenar por veracidad y fecha si se especifica
+        if (ordenarPorVeracidad) {
+            articlesQuery = articlesQuery.sort({ veracity: ordenarPorVeracidad === 'asc' ? 1 : -1 });
+        }
+
+        if (ordenarPorFecha) {
+            articlesQuery = articlesQuery.sort({ createdAt: ordenarPorFecha === 'asc' ? 1 : -1 });
+        }
+
+        // Paginación
+        const articles = await articlesQuery
             .skip((page - 1) * limit)
-            .limit(limit)
-            .lean();
+            .limit(limit);
 
         // Agregar el voto del usuario y jerarquía de temas
         const articlesWithDetails = await Promise.all(
@@ -115,6 +132,8 @@ exports.obtenerArticulosFeed = async (req, res) => {
         return res.status(500).json({ message: 'Error al cargar el feed de artículos', error: error.message });
     }
 };
+
+
 
 
 //Método para dar like a un artículo

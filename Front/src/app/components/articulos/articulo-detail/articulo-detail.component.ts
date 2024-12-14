@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Article } from '../../../models/article.model';
 import { User } from '../../../models/user.model';
 import { ActivatedRoute } from '@angular/router';
@@ -13,10 +13,11 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
   styleUrl: './articulo-detail.component.css'
 })
 export class ArticuloDetailComponent implements OnInit {
+  @ViewChild('pdfIframe') pdfIframe!: ElementRef;
   currentUser: User | null = null;
   errorMessage: string = '';
   article: Article | null = null;
-  pdfSrc!: SafeResourceUrl;
+  pdfSrc!: any;
 
 
   constructor(
@@ -57,7 +58,9 @@ export class ArticuloDetailComponent implements OnInit {
         }
 
         this.article = article;
-        this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(`http://localhost:3000/api${this.article?.pdfUrl}`);
+        this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(
+          `http://localhost:3000/api${this.article?.pdfUrl}`
+        );
         console.log(this.pdfSrc);
       },
       (error: any) => {
@@ -75,6 +78,20 @@ export class ArticuloDetailComponent implements OnInit {
       return '#FFC107'; 
     } else {
       return '#4CAF50'; 
+    }
+  }
+
+  toggleFullScreen() {
+    const iframeElement = this.pdfIframe.nativeElement;
+    
+    if (iframeElement.requestFullscreen) {
+      iframeElement.requestFullscreen();
+    } else if (iframeElement.mozRequestFullScreen) { /* Firefox */
+      iframeElement.mozRequestFullScreen();
+    } else if (iframeElement.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+      iframeElement.webkitRequestFullscreen();
+    } else if (iframeElement.msRequestFullscreen) { /* IE/Edge */
+      iframeElement.msRequestFullscreen();
     }
   }
 }
