@@ -12,6 +12,7 @@ import { NavbarComponent } from './components/shared/navbar/navbar.component';
 import { UploadArticleComponent } from './components/upload-article/upload-article.component';
 import { ArticuloDetailComponent } from './components/articulos/articulo-detail/articulo-detail.component';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
+import { ArticuloListComponent } from './components/articulos/articulo-list/articulo-list.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
     ThemeComponent,
     NavbarComponent,
     UploadArticleComponent,
-    ArticuloDetailComponent
+    ArticuloDetailComponent,
+    ArticuloListComponent
   ],
   imports: [
     BrowserModule,

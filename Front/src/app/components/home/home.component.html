@@ -1,4 +1,3 @@
-<!-- Popup de notificación -->
 <div class="popup-notification" *ngIf="successMessage || errorMessage">
     <div [ngClass]="{'popup-success': successMessage, 'popup-error': errorMessage}">
         {{ successMessage || errorMessage }}
@@ -18,7 +17,6 @@
             <div class="card mb-4">
                 <div class="card-body">
                     <h5 class="card-title">{{ tema.name }}</h5>
-                    <!-- <a class="btn btn-primary" [routerLink]="['/tema', tema.id]">Ver Tema</a>-->
                 </div>
             </div>
         </div>
@@ -29,52 +27,7 @@
         <hr class="section-line">
     </div>
 
-    <!-- Tarjetas de Artículos -->
-    <div class="article-card" *ngFor="let article of articles">
-        
-        <div class="article-layout">
-            
-            <div class="article-info">
-                <div class="veracity-circle" [ngStyle]="{'background-color': getVeracityColor(article.veracity)}">
-                    {{ article.veracity | number: '1.1-1' }}
-                </div>
-                <h5 class="article-title">{{ article.title }}</h5>
-                <p class="article-description">{{ article.description }}</p>
-
-                
-
-                <div class="article-actions">
-                    <button class="like-btn" (click)="darLike(article._id)"
-                        [ngClass]="{'liked': article.userVote === 'upvote'}" [disabled]="!puedeVotar()">
-                        <span class="material-icons">thumb_up</span>
-                    </button>
-                    <span class="vote-counter">{{ article.upVotes }}</span>
-
-                    <button class="dislike-btn" (click)="darDislike(article._id)"
-                        [ngClass]="{'disliked': article.userVote === 'downvote'}" [disabled]="!puedeVotar()">
-                        <span class="material-icons">thumb_down</span>
-                    </button>
-                    <span class="vote-counter">{{ article.downVotes }}</span>
-
-                    <button class="view-btn" [routerLink]="['/article', article._id]">Ver</button>
-                </div>
-
-                <div class="themes">
-                    <span class="theme theme-level1">{{ article.themes.nivel1 }}</span>
-                    <span class="theme theme-level2">{{ article.themes.nivel2 }}</span>
-                    <span class="theme theme-level3">{{ article.themes.nivel3 }}</span>
-                </div>
-            </div>
-
-            <div class="author-info">
-                <img [src]="article.authorInfo.imagenPerfil || 'assets/images/default-avatar.png'" alt="Foto del autor"
-                    class="author-image">
-                <p>
-                    <strong>{{ article.authorInfo.nombre }} {{ article.authorInfo.apellidos }}</strong>
-                </p>
-                <p><strong>Fecha de publicación:</strong> {{ article.createdAt | date }}</p>
-            </div>
-        </div>
-    </div>
+    <!-- Componente ArticleList-->
+    <app-article-list [articles]="articles" [currentUser]="currentUser"></app-article-list>
 
 </div>
