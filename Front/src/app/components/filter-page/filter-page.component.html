@@ -1,0 +1,45 @@
+<div class="filter-bar">
+    <!-- Dropdown de temáticas -->
+    <form [formGroup]="filterForm" (ngSubmit)="onFilterChange()">
+        <div>
+          <label for="theme">Temática</label>
+          <select id="theme" formControlName="theme">
+            <option value="" disabled selected>Seleccione una temática</option>
+            <!-- Primer nivel: Temática principal -->
+            <ng-container *ngFor="let theme of themes">
+              <option [disabled]="true" style="font-weight: bold; font-size: 1.1rem;">
+                {{ theme.name }}
+              </option>
+      
+              <!-- Segundo nivel: Subtemas del primer nivel -->
+              <ng-container *ngFor="let subtheme of theme.subthemes">
+                <option [disabled]="true" style="margin-left: 10px; font-size: 1rem; font-weight: 500;">
+                  -- {{ subtheme.name }}
+                </option>
+      
+                <!-- Tercer nivel: Subtemas del segundo nivel -->
+                <ng-container *ngFor="let subSubtheme of subtheme.subthemes">
+                  <option [value]="subSubtheme._id" style="margin-left: 20px; font-size: 0.9rem;">
+                    ---- {{ subSubtheme.name }}
+                  </option>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+          </select>
+        </div>
+      </form>
+  
+    <!-- Botones para ordenar -->
+    <div class="filter-buttons">
+      <button (click)="setOrder('veracity', 'asc')">Veracidad ↑</button>
+      <button (click)="setOrder('veracity', 'desc')">Veracidad ↓</button>
+      <button (click)="setOrder('date', 'asc')">Fecha ↑</button>
+      <button (click)="setOrder('date', 'desc')">Fecha ↓</button>
+    </div>
+  </div>
+  
+  <!-- Lista de artículos filtrados -->
+  <div class="articles-list">
+    <app-article-list [articles]="articles"></app-article-list>
+  </div>
+  

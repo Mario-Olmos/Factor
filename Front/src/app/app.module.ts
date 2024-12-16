@@ -13,6 +13,7 @@ import { UploadArticleComponent } from './components/upload-article/upload-artic
 import { ArticuloDetailComponent } from './components/articulos/articulo-detail/articulo-detail.component';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 import { ArticuloListComponent } from './components/articulos/articulo-list/articulo-list.component';
+import { FilterPageComponent } from './components/filter-page/filter-page.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { ArticuloListComponent } from './components/articulos/articulo-list/arti
     NavbarComponent,
     UploadArticleComponent,
     ArticuloDetailComponent,
-    ArticuloListComponent
+    ArticuloListComponent,
+    FilterPageComponent
   ],
   imports: [
     BrowserModule,

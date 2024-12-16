@@ -23,7 +23,7 @@ export class HomeComponent implements OnInit {
   tema = undefined; 
   ordenarPorFecha: 'asc' | 'desc' = 'desc'; 
   ordenarPorVeracidad: 'asc' | 'desc' = 'desc';
-
+  
   constructor(private articlesService: ArticlesService, private authService: AuthService) { }
 
   ngOnInit(): void {
