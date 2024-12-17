@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, SimpleChanges, OnChanges } from '@angular/core';
 import { Article } from '../../../models/article.model';
 import { ArticlesService } from '../../../services/articles.service';
 import { AuthService } from '../../../services/auth.service';
@@ -9,14 +9,22 @@ import { User } from '../../../models/user.model';
   templateUrl: './articulo-list.component.html',
   styleUrls: ['./articulo-list.component.css']
 })
-export class ArticuloListComponent implements OnInit {
+export class ArticuloListComponent implements OnChanges{
   @Input() articles: Article[] = [];
   @Input() currentUser!: User | null;
 
-  constructor(private articlesService: ArticlesService, private authService: AuthService) { }
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['articles']) {
+      console.log('Artículos recibidos en ArticleListComponent:', this.articles);
+      
+    }
 
-  ngOnInit(): void {
+    if (changes['currentUser']) {
+      console.log('Usuario Actual:', this.currentUser);
+    }
   }
+
+  constructor(private articlesService: ArticlesService, private authService: AuthService) { }
 
   puedeVotar(): boolean {
     return this.currentUser!.reputacion >= 50;

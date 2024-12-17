@@ -161,19 +161,19 @@ p {
     transition: transform 0.2s ease-in-out, background-color 0.3s ease;
     padding: 15px;
     margin-bottom: 20px;
-    min-height: 130px; 
-    display: flex; 
-    flex-direction: column; 
+    min-height: 130px;
+    display: flex;
+    flex-direction: column;
     justify-content: center;
 }
 
 .card-body {
     padding: 20px;
     text-align: center;
-    flex-grow: 1; 
-    display: flex; 
+    flex-grow: 1;
+    display: flex;
     flex-direction: column;
-    justify-content: center; 
+    justify-content: center;
 }
 
 .card:hover {
@@ -198,8 +198,8 @@ p {
     margin-bottom: 60px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease-in-out;
-    display: flex; 
-    flex-direction: column; 
+    display: flex;
+    flex-direction: column;
 }
 
 .article-card:hover {
@@ -220,7 +220,7 @@ p {
 }
 
 .article-title {
-    font-size: 1.5rem;  
+    font-size: 1.5rem;
     font-weight: bold;
     color: black;
     margin-bottom: 10px;
@@ -231,7 +231,7 @@ p {
     color: black;
     font-size: 1rem;
     margin-bottom: 15px;
-    font-family: 'Georgia', 'Times New Roman', serif; 
+    font-family: 'Georgia', 'Times New Roman', serif;
     text-align: justify;
     color: #333;
 }
@@ -311,13 +311,13 @@ p {
 }
 
 .author-info {
-    flex: 1; 
+    flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: center; 
-    text-align: center; 
+    align-items: center;
+    text-align: center;
     font-size: large;
-    gap: 10px; 
+    gap: 10px;
     background-color: #FEFAE0;
     padding: 15px;
     border-radius: 10px;
@@ -334,10 +334,10 @@ p {
 }
 
 .veracity-circle {
-    position: absolute; 
-    top: 10px; 
+    position: absolute;
+    top: 10px;
     left: 20px;
-    transform: translateY(-50%); 
+    transform: translateY(-50%);
     width: 50px;
     height: 50px;
     border-radius: 50%;
@@ -354,4 +354,77 @@ p {
     margin: 0 0px;
     font-size: 1rem;
     color: #555;
+}
+
+
+/*****************************************/
+/* ESTILO GLOBAL PARA DROPDOWN TEMAS */
+/*****************************************/
+/* Estilo general del dropdown */
+.theme-dd-dropdown {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    appearance: none;
+    /* Elimina el estilo por defecto */
+    cursor: pointer;
+}
+
+/* Primer nivel: Temática principal */
+.theme-dd-level1 {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #2c3e50; 
+    background-color: #ecf0f1;
+}
+
+/* Segundo nivel: Subtemas */
+.theme-dd-level2 {
+    font-size: 1.1rem;
+    color: #34495e;
+    padding-left: 20px;
+    background-color: #f4f6f7;
+}
+
+/* Tercer nivel: Sub-subtemas (seleccionables) */
+.theme-dd-level3 {
+    font-size: 0.95rem;
+    color: #16a085;
+    padding-left: 40px;
+    background-color: #ffffff;
+}
+
+/* Hover solo para los seleccionables */
+.theme-dropdown option:not([disabled]):hover {
+    background-color: #e7f3ff;
+    color: #000;
+}
+
+/* Resaltar cuando una opción es seleccionada */
+.theme-dropdown:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+
+
+/*****************************************/
+/* ESTILO GLOBAL PARA BARRA FILTRADO */
+/*****************************************/
+.filter-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: space-between;
+    background-color: #F2EED7;
+    padding: 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+}
+
+.filter-item {
+    flex: 1 1 calc(33% - 15px);
+    min-width: 200px;
 }
