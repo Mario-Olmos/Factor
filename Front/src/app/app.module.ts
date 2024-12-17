@@ -32,8 +32,7 @@ import { FilterPageComponent } from './components/filter-page/filter-page.compon
     BrowserModule,
     ReactiveFormsModule,
     HttpClientModule,
-    AppRoutingModule,
-    NgxExtendedPdfViewerModule
+    AppRoutingModule
   ],
   providers: [],
   bootstrap: [AppComponent]

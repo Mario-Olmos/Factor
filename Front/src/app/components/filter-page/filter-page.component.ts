@@ -5,6 +5,7 @@ import { Theme } from '../../models/theme.model';
 import { Article } from '../../models/article.model';
 import { User } from '../../models/user.model';
 import { AuthService } from '../../services/auth.service';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-filter-page',
@@ -22,48 +23,43 @@ export class FilterPageComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private articlesService: ArticlesService,
-    private authService: AuthService
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef
   ) {
 
     // Inicializar formulario
     this.filterForm = this.fb.group({
       theme: [''],
-      orderField: [''], 
-      orderDirection: [''] 
+      orderField: [''],
+      orderDirection: ['']
     });
   }
 
   ngOnInit(): void {
-    this.authService.getCurrentUser().subscribe(
-      (user) => {
-        this.currentUser = user;
-  
-        this.fetchFilteredArticles();
-      },
-      (error) => {
-        console.error('Error al obtener el usuario actual:', error);
-        this.errorMessage = 'Error al cargar los datos del usuario.';
-      }
-    );
-  
+    this.authService.getCurrentUser().subscribe(user => {
+      this.currentUser = user;
+    });
+
     this.articlesService.getThemes().subscribe((themes) => {
       this.themes = themes;
     });
+
+    this.fetchFilteredArticles();
   }
 
   // Llamar al servicio de artículos con los filtros actuales
   fetchFilteredArticles(): void {
     const filters = this.filterForm.value;
-  
-    const theme = filters.theme || undefined; 
+
+    const theme = filters.theme || undefined;
     const orderField = filters.orderField || 'asc'; // Ordenar por fecha por defecto
     const orderDirection = filters.orderDirection || 'desc'; // Orden descendente por defecto
-  
+
     this.articlesService.getArticles(
       1, // Página inicial
       10, // Límite de artículos por página
-      this.currentUser!.userId, 
-      theme, 
+      this.currentUser!.userId,
+      theme,
       orderField,
       orderDirection
     ).subscribe((articles: any[]) => {
@@ -73,16 +69,14 @@ export class FilterPageComponent implements OnInit {
           userVote: article.userVote,
         };
       });
-
+      this.cdr.detectChanges();
     },
-    (error) => {
-      console.error('Error al cargar los artículos', error);
-    }
-  );
-    console.log('Filtros enviados:', theme, orderField, orderDirection, this.currentUser);
-    console.log(this.articles);
+      (error) => {
+        console.error('Error al cargar los artículos', error);
+      }
+    );
   }
-  
+
   onFilterChange(): void {
     this.fetchFilteredArticles();
   }

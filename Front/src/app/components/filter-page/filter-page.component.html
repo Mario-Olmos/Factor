@@ -1,45 +1,61 @@
-<div class="filter-bar">
-    <!-- Dropdown de temáticas -->
+<div class="filter-container">
+  <!-- Dropdown de Temática -->
+  <div class="filter-item">
     <form [formGroup]="filterForm" (ngSubmit)="onFilterChange()">
-        <div>
-          <label for="theme">Temática</label>
-          <select id="theme" formControlName="theme">
-            <option value="" disabled selected>Seleccione una temática</option>
-            <!-- Primer nivel: Temática principal -->
-            <ng-container *ngFor="let theme of themes">
-              <option [disabled]="true" style="font-weight: bold; font-size: 1.1rem;">
-                {{ theme.name }}
+      <label for="theme">Temática</label>
+      <select id="theme" class="theme-dropdown" formControlName="theme">
+        <option value="" disabled selected>Seleccione una temática</option>
+    
+        <!-- Primer nivel -->
+        <ng-container *ngFor="let theme of themes">
+          <option [disabled]="true" class="theme-dd-level1">
+            {{ theme.name }}
+          </option>
+    
+          <!-- Segundo nivel -->
+          <ng-container *ngFor="let subtheme of theme.subthemes">
+            <option [disabled]="true" class="theme-dd-level2">
+              &nbsp;&nbsp;{{ subtheme.name }}
+            </option>
+    
+            <!-- Tercer nivel -->
+            <ng-container *ngFor="let subSubtheme of subtheme.subthemes">
+              <option [value]="subSubtheme._id" class="theme-dd-level3">
+                &nbsp;&nbsp;&nbsp;&nbsp;• {{ subSubtheme.name }}
               </option>
-      
-              <!-- Segundo nivel: Subtemas del primer nivel -->
-              <ng-container *ngFor="let subtheme of theme.subthemes">
-                <option [disabled]="true" style="margin-left: 10px; font-size: 1rem; font-weight: 500;">
-                  -- {{ subtheme.name }}
-                </option>
-      
-                <!-- Tercer nivel: Subtemas del segundo nivel -->
-                <ng-container *ngFor="let subSubtheme of subtheme.subthemes">
-                  <option [value]="subSubtheme._id" style="margin-left: 20px; font-size: 0.9rem;">
-                    ---- {{ subSubtheme.name }}
-                  </option>
-                </ng-container>
-              </ng-container>
             </ng-container>
-          </select>
-        </div>
-      </form>
-  
-    <!-- Botones para ordenar -->
-    <div class="filter-buttons">
-      <button (click)="setOrder('veracity', 'asc')">Veracidad ↑</button>
-      <button (click)="setOrder('veracity', 'desc')">Veracidad ↓</button>
-      <button (click)="setOrder('date', 'asc')">Fecha ↑</button>
-      <button (click)="setOrder('date', 'desc')">Fecha ↓</button>
-    </div>
+          </ng-container>
+        </ng-container>
+      </select>
+    </form>    
   </div>
-  
-  <!-- Lista de artículos filtrados -->
-  <div class="articles-list">
-    <app-article-list [articles]="articles"></app-article-list>
+
+  <!-- Ordenar por Veracidad -->
+  <div class="filter-item">
+    <label for="order-veracity">Ordenar por Veracidad</label>
+    <select id="order-veracity" formControlName="orderField" class="order-dropdown">
+      <option value="veracity_asc">Veracidad ↑</option>
+      <option value="veracity_desc">Veracidad ↓</option>
+    </select>
   </div>
-  
+
+  <!-- Ordenar por Fecha -->
+  <div class="filter-item">
+    <label for="order-date">Ordenar por Fecha</label>
+    <select id="order-date" formControlName="orderDirection" class="order-dropdown">
+      <option value="date_asc">Fecha ↑</option>
+      <option value="date_desc">Fecha ↓</option>
+    </select>
+  </div>
+
+</div>
+
+<div class="section-divider">
+  <h2 class="section-subtitle">Explorador de Artículos</h2>
+  <hr class="section-line">
+</div>
+
+<!-- Lista de artículos filtrados -->
+<div class="articles-list">
+  <app-article-list [articles]="articles" [currentUser]="currentUser"></app-article-list>
+</div>
