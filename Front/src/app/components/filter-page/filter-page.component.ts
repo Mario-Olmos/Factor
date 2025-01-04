@@ -6,6 +6,7 @@ import { Article } from '../../models/article.model';
 import { User } from '../../models/user.model';
 import { AuthService } from '../../services/auth.service';
 import { ChangeDetectorRef } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-filter-page',
@@ -24,10 +25,10 @@ export class FilterPageComponent implements OnInit {
     private fb: FormBuilder,
     private articlesService: ArticlesService,
     private authService: AuthService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private route: ActivatedRoute
   ) {
 
-    // Inicializar formulario
     this.filterForm = this.fb.group({
       theme: [''],
       orderField: [''],
@@ -36,6 +37,7 @@ export class FilterPageComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
     this.authService.getCurrentUser().subscribe(user => {
       this.currentUser = user;
     });
@@ -44,7 +46,16 @@ export class FilterPageComponent implements OnInit {
       this.themes = themes;
     });
 
-    this.fetchFilteredArticles();
+    // Manejar parámetros de la URL
+    this.route.queryParams.subscribe(params => {
+      const theme = params['theme'];
+
+      this.filterForm.patchValue({
+        theme: theme
+      });
+
+      this.fetchFilteredArticles(); // Cargar los artículos iniciales
+    });
   }
 
   // Llamar al servicio de artículos con los filtros actuales
@@ -52,8 +63,8 @@ export class FilterPageComponent implements OnInit {
     const filters = this.filterForm.value;
 
     const theme = filters.theme || undefined;
-    const orderField = filters.orderField || 'asc'; // Ordenar por fecha por defecto
-    const orderDirection = filters.orderDirection || 'desc'; // Orden descendente por defecto
+    const orderField = filters.orderField || 'asc';
+    const orderDirection = filters.orderDirection || 'desc';
 
     this.articlesService.getArticles(
       1, // Página inicial
@@ -63,12 +74,10 @@ export class FilterPageComponent implements OnInit {
       orderField,
       orderDirection
     ).subscribe((articles: any[]) => {
-      this.articles = articles.map(article => {
-        return {
-          ...article,
-          userVote: article.userVote,
-        };
-      });
+      this.articles = articles.map(article => ({
+        ...article,
+        userVote: article.userVote,
+      }));
       this.cdr.detectChanges();
     },
       (error) => {

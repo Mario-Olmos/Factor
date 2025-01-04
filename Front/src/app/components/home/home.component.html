@@ -14,7 +14,7 @@
     </div>
     <div class="row home-row">
         <div class="col-md-4" *ngFor="let tema of themes">
-            <div class="card mb-4">
+            <div class="card mb-4" (click)="navigateToExplore(tema)">
                 <div class="card-body">
                     <h5 class="card-title">{{ tema.name }}</h5>
                 </div>
@@ -29,5 +29,4 @@
 
     <!-- Componente ArticleList-->
     <app-article-list [articles]="articles" [currentUser]="currentUser"></app-article-list>
-
 </div>

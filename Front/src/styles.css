@@ -7,7 +7,7 @@ body {
 /* ESTILO GLOBAL PARA FORMULARIOS */
 /**********************************/
 form {
-    max-width: 400px;
+    max-width: 600px;
     margin: 0 auto;
     padding: 20px;
     background-color: #F2EED7;
@@ -18,10 +18,20 @@ form {
     align-items: center;
 }
 
+.form-group {
+    width: 100%;
+}
+
+input[type="file"] {
+    display: none;
+}
+
 input[type="text"],
 input[type="email"],
 input[type="password"],
-input[type="date"] {
+input[type="file"],
+input[type="date"],
+textarea[id="description"] {
     width: 100%;
     padding: 12px;
     margin: 10px 0;
@@ -31,6 +41,25 @@ input[type="date"] {
     background-color: #FEFAE0;
     color: black;
     transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.custom-file-upload {
+    margin-top: 15px;
+    width: 100%;
+    display: inline-block;
+    padding: 12px;
+    font-size: 16px;
+    background-color: #FEFAE0;
+    color: black;
+    border: 1px solid #444;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.custom-file-upload:hover {
+    background-color: #F0E6C9;
 }
 
 button[type="submit"] {
@@ -52,7 +81,8 @@ button[type="submit"]:hover {
 }
 
 .container {
-    margin-top: 50px;
+    margin-top: 50px; 
+    margin-bottom: 50px;  
     color: #fff;
 }
 

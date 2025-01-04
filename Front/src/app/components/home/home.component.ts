@@ -4,6 +4,7 @@ import { AuthService } from '../../services/auth.service';
 import { Theme } from '../../models/theme.model';
 import { Article } from '../../models/article.model';
 import { User } from '../../models/user.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -19,12 +20,12 @@ export class HomeComponent implements OnInit {
   currentPage!: number;
   articlesPerPage = 10;
   themeLimit = 6;
-  days = 200;
+  days = 300;
   tema = undefined; 
   ordenarPorFecha: 'asc' | 'desc' = 'desc'; 
   ordenarPorVeracidad: 'asc' | 'desc' = 'desc';
   
-  constructor(private articlesService: ArticlesService, private authService: AuthService) { }
+  constructor(private articlesService: ArticlesService, private authService: AuthService, private router: Router) { }
 
   ngOnInit(): void {
     this.currentPage = 1;
@@ -66,5 +67,12 @@ export class HomeComponent implements OnInit {
         console.error('Error al cargar los artículos', error);
       }
     );
+  }
+
+  // Redirigir a la página explorar con el tema como parámetro
+  navigateToExplore(tema: Theme): void { 
+    this.router.navigate(['/explorador'], {
+      queryParams: { theme: tema._id}
+    });
   }
 }

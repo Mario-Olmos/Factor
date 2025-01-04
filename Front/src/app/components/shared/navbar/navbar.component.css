@@ -2,6 +2,7 @@
   background-color: #626F47;
   color: #F2EED7;
   padding: 1rem;
+  max-height: 275px;
 }
 
 .navbar-brand {
