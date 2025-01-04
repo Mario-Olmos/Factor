@@ -16,7 +16,7 @@ const routes: Routes = [
   { path: 'theme', component: ThemeComponent , canActivate: [AuthGuard] },
   { path: 'uploadArticle', component: UploadArticleComponent , canActivate: [AuthGuard] },
   { path: 'article/:id', component: ArticuloDetailComponent, canActivate: [AuthGuard] },
-  { path: 'explore', component: FilterPageComponent, canActivate: [AuthGuard] },
+  { path: 'explorador', component: FilterPageComponent, canActivate: [AuthGuard] },
   { path: '', redirectTo: '/home', pathMatch: 'full' } // Ruta predeterminada
 ];
 
