@@ -142,14 +142,14 @@ exports.voteVeracidad = async (voterId, targetUserId, voteValue) => {
 //Devolver info del usuario a partir de su id
 exports.getUserInfoById = async (userId) => {
     try {
-        const user = await User.findById(userId, 'nombre apellidos imagenPerfil'); 
+        const user = await User.findById(userId, 'nombre apellidos imagenPerfil');
         if (!user) {
             throw new Error('Usuario no encontrado');
         }
         return {
             nombre: user.nombre,
             apellidos: user.apellidos,
-            imagenPerfil: user.imagenPerfil || null, 
+            imagenPerfil: user.imagenPerfil || null,
         };
     } catch (error) {
         console.error(`Error al obtener información del usuario con ID ${userId}:`, error);
@@ -160,13 +160,42 @@ exports.getUserInfoById = async (userId) => {
 //Devolver info del usuario a partir de su id
 exports.getUserById = async (req, res) => {
     try {
-        const { id }= req.params;
+        const { id } = req.params;
         const user = await User.findById(id);
         if (!user) {
-          return res.status(404).json({ message: 'Usuario no encontrado' });
+            return res.status(404).json({ message: 'Usuario no encontrado' });
         }
         res.status(200).json({ user });
-      } catch (error) {
+    } catch (error) {
         res.status(500).json({ message: 'Error interno del servidor', error: error.message });
-      }
+    }
+};
+
+exports.updateUserProfile = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const { nombre, apellidos, imagenPerfil, email, fechaNacimiento, acreditaciones } = req.body;
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
+
+        if (nombre) user.nombre = nombre;
+        if (apellidos) user.apellidos = apellidos;
+        if (imagenPerfil) user.imagenPerfil = imagenPerfil;
+        if (email) user.email = email;
+        if (fechaNacimiento) user.fechaNacimiento = fechaNacimiento;
+
+        if (acreditaciones && Array.isArray(acreditaciones)) {
+            user.acreditaciones = acreditaciones;
+        }
+
+        const updatedUser = await user.save();
+
+        return res.status(200).json({ message: 'Perfil actualizado correctamente', user: updatedUser });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Error interno del servidor', error: error.message });
+    }
 };

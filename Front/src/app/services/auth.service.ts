@@ -60,4 +60,9 @@ export class AuthService {
   getUserById(userId: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/profile/getUser/${userId}`);
   }
+
+  //Método para actualizar el perfil 
+  updateProfile(user: any, userId: string): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/profile/update/${userId}`, user);
+  }
 }

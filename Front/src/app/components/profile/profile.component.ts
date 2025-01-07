@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { User } from '../../models/user.model';
 import { Article } from '../../models/article.model';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { ArticlesService } from '../../services/articles.service';
 
@@ -17,23 +18,34 @@ export class ProfileComponent implements OnInit {
   articles: Article[] = [];
   errorMessage: string = '';
   currentUser: User | null = null;
-  activeTab: string = 'info'; 
+  activeTab: string = 'info';
+  isEditing: boolean = false;
+  profileForm: FormGroup;
 
   constructor(
     private route: ActivatedRoute,
     private authService: AuthService,
     private articlesService: ArticlesService
-  ) { }
+  ) {
+    this.profileForm = new FormGroup({
+      nombre: new FormControl('', Validators.required),
+      apellidos: new FormControl('', Validators.required),
+      email: new FormControl('', [Validators.required, Validators.email]),
+      fechaNacimiento: new FormControl(''),
+      imagenPerfil: new FormControl(''),
+      acreditaciones: new FormControl([]),  // Inicializa el campo de acreditaciones vacío
+    });
+  }
 
   ngOnInit(): void {
     this.authService.getCurrentUser().subscribe({
       next: (user) => {
         this.currentUser = user;
-  
+
         // Comprobamos si la ruta tiene el parámetro `id` o es `/perfil/me`
         this.route.params.subscribe((params) => {
-          const requestedUserId = params['id']; 
-  
+          const requestedUserId = params['id'];
+
           if (!requestedUserId || requestedUserId === 'me') {
             this.userId = this.currentUser!.userId;
             this.isOwnProfile = true;
@@ -42,7 +54,7 @@ export class ProfileComponent implements OnInit {
             this.userId = requestedUserId;
             this.isOwnProfile = false;
           }
-  
+
           console.log(`Perfil cargado: ${this.isOwnProfile ? 'propio' : 'otro usuario'}`);
           this.loadUserProfile();
         });
@@ -53,7 +65,6 @@ export class ProfileComponent implements OnInit {
       },
     });
   }
-  
 
   setActiveTab(tab: string): void {
     this.activeTab = tab;
@@ -74,7 +85,50 @@ export class ProfileComponent implements OnInit {
   }
 
   editProfile(): void {
-    // Lógica para editar el perfil (puede abrir un modal o redirigir a otra página).
-    console.log('Editar perfil');
+    this.isEditing = !this.isEditing;
+    if (this.isEditing) {
+      this.updateForm();
+    }
+  }
+
+  updateForm(): void {
+    this.profileForm.patchValue({
+      nombre: this.user.nombre,
+      apellidos: this.user.apellidos,
+      email: this.user.email,
+      fechaNacimiento: this.user.fechaNacimiento,
+      imagenPerfil: this.user.imagenPerfil,
+      acreditaciones: this.user.acreditaciones
+    });
+  }
+
+  addAccreditation(): void {
+    const acreditaciones = this.profileForm.get('acreditaciones')!.value;
+    acreditaciones.push({ title: '', institution: '', year: 0 });
+    this.profileForm.get('acreditaciones')!.setValue(acreditaciones);
+  }
+
+  removeAccreditation(index: number): void {
+    const acreditaciones = this.profileForm.get('acreditaciones')!.value;
+    acreditaciones.splice(index, 1);
+    this.profileForm.get('acreditaciones')!.setValue(acreditaciones);
+  }
+
+  saveProfile(): void {
+    if (this.profileForm.valid) {
+      console.log(this.profileForm.value);
+      // Guardamos los cambios del formulario en el objeto `user`
+      this.authService.updateProfile(this.profileForm.value, this.user._id).subscribe({
+        next: (data) => {
+          this.user = data.user;
+          this.isEditing = false;
+        },
+        error: (error) => {
+          console.error('Error al guardar los cambios:', error);
+        }
+      });
+    } else {
+      console.error('Formulario no válido');
+    }
   }
 }

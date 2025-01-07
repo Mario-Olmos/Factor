@@ -1,32 +1,66 @@
 <div class="profile-container">
-    <!-- Sección principal del perfil -->
     <div class="profile-header">
-        <img [src]="user.imagenPerfil || 'assets/images/default-avatar.png'" alt="Foto de perfil"
-            class="profile-image" />
-        <div class="profile-details">
-            <h1>{{ user.nombre }} {{ user.apellidos }}</h1>
-            <p class="profile-reputation">
-                <strong>Reputación:</strong> {{ user.reputacion }}
-            </p>
-            <p class="profile-email">
-                <strong>Email:</strong> {{ user.email }}
-            </p>
-            <p *ngIf="user.fechaNacimiento" class="profile-birthdate">
-                <strong>Fecha de nacimiento:</strong> {{ user.fechaNacimiento | date }}
-            </p>
+      <img [src]="user.imagenPerfil || 'assets/images/default-avatar.png'" alt="Foto de perfil" class="profile-image" />
+      <div class="profile-details">
+        <h1>{{ user.nombre }} {{ user.apellidos }}</h1>
+        <p class="profile-reputation">
+          <strong>Reputación:</strong> {{ user.reputacion }}
+        </p>
+        <p class="profile-email">
+          <strong>Email:</strong> {{ user.email }}
+        </p>
+        <p *ngIf="user.fechaNacimiento" class="profile-birthdate">
+          <strong>Fecha de nacimiento:</strong> {{ user.fechaNacimiento | date }}
+        </p>
+      </div>
+      <button *ngIf="isOwnProfile" class="edit-profile-btn" (click)="editProfile()">
+        Editar perfil
+      </button>
+    </div>
+  
+    <form [formGroup]="profileForm" *ngIf="isEditing">
+      <div class="form-group">
+        <label for="nombre">Nombre:</label>
+        <input id="nombre" formControlName="nombre" class="form-control" />
+      </div>
+      <div class="form-group">
+        <label for="apellidos">Apellidos:</label>
+        <input id="apellidos" formControlName="apellidos" class="form-control" />
+      </div>
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input id="email" formControlName="email" class="form-control" />
+      </div>
+      <div class="form-group">
+        <label for="fechaNacimiento">Fecha de nacimiento:</label>
+        <input id="fechaNacimiento" formControlName="fechaNacimiento" type="date" class="form-control" />
+      </div>
+      <div class="form-group">
+        <label for="imagenPerfil">Imagen de perfil:</label>
+        <input id="imagenPerfil" formControlName="imagenPerfil" type="text" class="form-control" />
+      </div>
+  
+      <div class="acreditaciones">
+        <h3>Acreditaciones</h3>
+        <div *ngFor="let acreditacion of profileForm.get('acreditaciones')!.value; let i = index">
+          <div class="form-group">
+            <input formControlName="title" placeholder="Título" />
+            <input formControlName="institution" placeholder="Institución" />
+            <input formControlName="year" type="number" placeholder="Año" />
+          </div>
+          <button (click)="removeAccreditation(i)">Eliminar</button>
         </div>
-        <button *ngIf="isOwnProfile" class="edit-profile-btn" (click)="editProfile()">
-            Editar perfil
-        </button>
+        <button (click)="addAccreditation()">Añadir acreditación</button>
+      </div>
+  
+      <button type="button" (click)="saveProfile()">Guardar</button>
+    </form>
+  
+    <div *ngIf="!isEditing">
+      <!-- Mostrar la vista solo lectura -->
+      <p>Nombre: {{ user.nombre }}</p>
+      <p>Apellidos: {{ user.apellidos }}</p>
+      <!-- Otros detalles... -->
     </div>
-
-    <!-- Pestañas de información -->
-    <div class="profile-tabs">
-        <button class="tab-button" [class.active]="activeTab === 'info'" (click)="setActiveTab('info')">
-            Información
-        </button>
-        <button class="tab-button" [class.active]="activeTab === 'articles'" (click)="setActiveTab('articles')">
-            Artículos
-        </button>
-    </div>
-</div>
+  </div>
+  
