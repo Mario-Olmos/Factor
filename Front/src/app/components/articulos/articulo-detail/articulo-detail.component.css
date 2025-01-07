@@ -147,3 +147,23 @@
 .theme-level3 {
   background-color: #FF9800;
 }
+
+.article-actions {
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  font-size: xx-large;
+}
+
+.like-btn,
+.dislike-btn {
+    background: transparent;
+    border: none;
+    display: inline-flex;
+    justify-content: center;
+    color: grey;
+}
+
+.material-icons {
+  font-size: xx-large;
+}

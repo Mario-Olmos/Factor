@@ -14,23 +14,23 @@ interface TokenValidationResponse {
 })
 export class AuthService {
   private currentUser = new BehaviorSubject<User | null>(null);
-  private apiUrl = 'http://localhost:3000/api/auth'; 
+  private apiUrl = 'http://localhost:3000/api'; 
 
   constructor(private http: HttpClient) {}
 
   // Método de login
   login(credentials: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/login`, credentials, { withCredentials: true });
+    return this.http.post(`${this.apiUrl}/auth/login`, credentials, { withCredentials: true });
   }
 
   // Método de registro
   register(userData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register`, userData);
+    return this.http.post(`${this.apiUrl}/auth/register`, userData);
   }
 
   // Método para validar el token y actualizar el BehaviorSubject
   validateToken(): Observable<TokenValidationResponse> {
-    return this.http.get<TokenValidationResponse>(`${this.apiUrl}/validate-token`, { withCredentials: true }).pipe(
+    return this.http.get<TokenValidationResponse>(`${this.apiUrl}/auth/validate-token`, { withCredentials: true }).pipe(
       map(response => {
         if (response.authenticated && response.user) {
           this.currentUser.next(response.user); // Usuario autenticado, actualiza el BehaviorSubject
@@ -49,10 +49,20 @@ export class AuthService {
 
   // Método de logout
   logout(): Observable<any> {
-    return this.http.post(`${this.apiUrl}/logout`, {}, { withCredentials: true }).pipe(
+    return this.http.post(`${this.apiUrl}/auth/logout`, {}, { withCredentials: true }).pipe(
       map(() => {
         this.currentUser.next(null); // Reinicia el BehaviorSubject
       })
     );
+  }
+
+  //Método para obtener los datos de un usuario
+  getUserById(userId: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/profile/getUser/${userId}`);
+  }
+
+  //Método para actualizar el perfil 
+  updateProfile(user: any, userId: string): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/profile/update/${userId}`, user);
   }
 }

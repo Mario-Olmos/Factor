@@ -11,4 +11,6 @@ router.use('/articles', require('./api/articles'));
 
 router.use('/uploads', require('./api/uploads'));
 
+router.use('/profile', require('./api/profile'));
+
 module.exports = router;

@@ -4,7 +4,9 @@ const userController = require('../../controllers/userController');
 
 // Rutas para /api/profile
 
-router.post('/register', userController.register);
-router.post('/login', userController.login);
+router.get('/getUser/:id', userController.getUserById);
+
+// Ruta para actualizar el perfil de un usuario
+router.put('/update/:userId', userController.updateUserProfile);
 
 module.exports = router;

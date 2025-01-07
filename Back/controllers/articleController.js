@@ -189,6 +189,7 @@ exports.darLike = async (req, res) => {
 exports.getArticleById = async (req, res) => {
     try {
         const { id } = req.params;
+        const { userId } = req.query;
 
         // Encuentra el artículo por ID
         const article = await Article.findById(id);
@@ -199,10 +200,17 @@ exports.getArticleById = async (req, res) => {
 
         const themeHierarchy = await getThemeHierarchyById(article.theme);
         const authorInfo = await getUserInfoById(article.author);
+        const userVoteObj = article.votes.find(vote => vote.user.toString() === userId);
+        const userVote = userVoteObj ? userVoteObj.voteType : null;
+        const upVotes = article.votes.filter(vote => vote.voteType === 'upvote').length;
+        const downVotes = article.votes.filter(vote => vote.voteType === 'downvote').length;
         const articleWithThemes = {
             ...article.toObject(),
             themes: themeHierarchy,
-            authorInfo: authorInfo 
+            authorInfo: authorInfo,
+            userVote: userVote,
+            upVotes: upVotes,
+            downVotes: downVotes
         };
 
         res.json(articleWithThemes);

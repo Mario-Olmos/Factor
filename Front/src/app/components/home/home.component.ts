@@ -4,6 +4,7 @@ import { AuthService } from '../../services/auth.service';
 import { Theme } from '../../models/theme.model';
 import { Article } from '../../models/article.model';
 import { User } from '../../models/user.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -19,12 +20,12 @@ export class HomeComponent implements OnInit {
   currentPage!: number;
   articlesPerPage = 10;
   themeLimit = 6;
-  days = 200;
+  days = 300;
   tema = undefined; 
   ordenarPorFecha: 'asc' | 'desc' = 'desc'; 
   ordenarPorVeracidad: 'asc' | 'desc' = 'desc';
   
-  constructor(private articlesService: ArticlesService, private authService: AuthService) { }
+  constructor(private articlesService: ArticlesService, private authService: AuthService, private router: Router) { }
 
   ngOnInit(): void {
     this.currentPage = 1;
@@ -39,7 +40,7 @@ export class HomeComponent implements OnInit {
         this.themes = themes;
       },
       (error) => {
-        console.error('Error al cargar los temas', error);
+        this.showErrorMessage('Error al cargar los temas');
       }
     );
 
@@ -63,8 +64,35 @@ export class HomeComponent implements OnInit {
         this.currentPage++;
       },
       (error) => {
-        console.error('Error al cargar los artículos', error);
+        this.showErrorMessage('Error al cargar los Artículos');
       }
     );
+  }
+
+  // Redirigir a la página explorar con el tema como parámetro
+  navigateToExplore(tema: Theme): void { 
+    this.router.navigate(['/explorador'], {
+      queryParams: { theme: tema._id}
+    });
+  }
+
+  // Muestra el mensaje de éxito temporalmente
+  private showSuccessMessage(message: string): void {
+    this.successMessage = message;
+    this.clearMessagesAfterDelay();
+  }
+
+  // Muestra el mensaje de error temporalmente
+  private showErrorMessage(message: string): void {
+    this.errorMessage = message;
+    this.clearMessagesAfterDelay();
+  }
+
+  // Limpia los mensajes de éxito y error después de un tiempo
+  private clearMessagesAfterDelay(): void {
+    setTimeout(() => {
+      this.successMessage = '';
+      this.errorMessage = '';
+    }, 2000); 
   }
 }

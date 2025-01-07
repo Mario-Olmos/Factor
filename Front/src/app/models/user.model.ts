@@ -1,3 +1,5 @@
+import { Acreditacion } from './acreditacion.model';
+
 export interface User {
   userId: string;
   rol: string;
@@ -6,4 +8,7 @@ export interface User {
   nombre: string;
   apellidos: string;
   imagenPerfil?: string;
+  email: string;
+  fechaNacimiento: Date;
+  acreditaciones: Acreditacion[]
 }
