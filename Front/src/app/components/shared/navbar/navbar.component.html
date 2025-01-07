@@ -19,7 +19,7 @@
           <a routerLink="/uploadArticle" class="nav-link">Subir Artículo</a>
         </li>
         <li class="nav-item" *ngIf="isLoggedIn">
-          <a routerLink="/theme" class="nav-link">Perfil</a>
+          <a routerLink="/perfil/me" class="nav-link">Perfil</a>
         </li>
         <li class="nav-item" *ngIf="isLoggedIn">
           <a (click)="logout()" class="nav-link">Logout</a>

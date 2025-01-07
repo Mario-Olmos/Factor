@@ -42,15 +42,15 @@ export class ArticuloDetailComponent implements OnInit {
     // Obtiene el ID del artículo de la URL y carga los datos
     const articleId = this.route.snapshot.paramMap.get('id');
     if (articleId) {
-      this.loadArticle(articleId);
+      this.loadArticle(articleId, this.currentUser!.userId);
     } else {
       this.errorMessage = 'ID del artículo no válido.';
     }
   }
 
   //Cargamos información del artículo
-  private loadArticle(articleId: string): void {
-    this.articlesService.getArticleById(articleId).subscribe(
+  private loadArticle(articleId: string, userId: string): void {
+    this.articlesService.getArticleById(articleId, userId).subscribe(
       (article: any) => {
         
         if (article.createdAt) {
@@ -61,7 +61,9 @@ export class ArticuloDetailComponent implements OnInit {
         this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(
           `http://localhost:3000/api${this.article?.pdfUrl}`
         );
+        console.log(this.currentUser);
         console.log(this.pdfSrc);
+        console.log(this.article);
       },
       (error: any) => {
         console.error('Error al cargar el artículo:', error);
@@ -79,6 +81,36 @@ export class ArticuloDetailComponent implements OnInit {
     } else {
       return '#4CAF50'; 
     }
+  }
+
+  puedeVotar(): boolean {
+    return this.currentUser!.reputacion >= 50;
+  }
+
+  darLike(articleId: String): void {
+    if (!this.puedeVotar()) {
+      alert('No tienes suficiente reputación para votar');
+      return;
+    }
+    const likeObject = {
+      articleId,
+      user: this.currentUser?.userId,
+      voteType: 'upvote'
+    };
+    this.articlesService.darLike(likeObject).subscribe();
+  }
+
+  darDislike(articleId: String): void {
+    if (!this.puedeVotar()) {
+      alert('No tienes suficiente reputación para votar');
+      return;
+    }
+    const dislikeObject = {
+      articleId,
+      user: this.currentUser?.userId,
+      voteType: 'downvote'
+    };
+    this.articlesService.darDislike(dislikeObject).subscribe();
   }
 
   toggleFullScreen() {

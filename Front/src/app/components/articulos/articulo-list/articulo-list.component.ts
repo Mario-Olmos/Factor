@@ -12,6 +12,8 @@ import { User } from '../../../models/user.model';
 export class ArticuloListComponent implements OnChanges{
   @Input() articles: Article[] = [];
   @Input() currentUser!: User | null;
+  successMessage: string = '';
+  errorMessage: string = '';
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['articles']) {
@@ -32,7 +34,7 @@ export class ArticuloListComponent implements OnChanges{
 
   darLike(articleId: String): void {
     if (!this.puedeVotar()) {
-      alert('No tienes suficiente reputación para votar');
+      this.showErrorMessage('No tienes suficiente reputación para votar!');
       return;
     }
     const likeObject = {
@@ -40,12 +42,23 @@ export class ArticuloListComponent implements OnChanges{
       user: this.currentUser?.userId,
       voteType: 'upvote'
     };
-    this.articlesService.darLike(likeObject).subscribe();
+    this.articlesService.darLike(likeObject).subscribe(
+      (response: any) => {
+        this.showSuccessMessage(response.message || '¡Voto positivo registrado con éxito!');
+      },
+      (error: any) => {
+        if (error.status === 400 && error.error.message === 'Ya has votado este artículo') {
+          this.showErrorMessage('Ya has votado este artículo. No puedes votar de nuevo.');
+        } else {
+          this.showErrorMessage(error.error.message || 'Ocurrió un error al registrar tu voto.');
+        }
+      }
+    );
   }
 
   darDislike(articleId: String): void {
     if (!this.puedeVotar()) {
-      alert('No tienes suficiente reputación para votar');
+      this.showErrorMessage('No tienes suficiente reputación para votar!');
       return;
     }
     const dislikeObject = {
@@ -53,7 +66,18 @@ export class ArticuloListComponent implements OnChanges{
       user: this.currentUser?.userId,
       voteType: 'downvote'
     };
-    this.articlesService.darDislike(dislikeObject).subscribe();
+    this.articlesService.darDislike(dislikeObject).subscribe(
+      (response: any) => {
+        this.showSuccessMessage(response.message || '¡Voto negativo registrado con éxito!');
+      },
+      (error: any) => {
+        if (error.status === 400 && error.error.message === 'Ya has votado este artículo') {
+          this.showErrorMessage('Ya has votado este artículo. No puedes votar de nuevo.');
+        } else {
+          this.showErrorMessage(error.error.message || 'Ocurrió un error al registrar tu voto.');
+        }
+      }
+    );
   }
 
   getVeracityColor(veracity: number): string {
@@ -64,5 +88,24 @@ export class ArticuloListComponent implements OnChanges{
     } else {
       return '#4CAF50';
     }
+  }
+
+  private showSuccessMessage(message: string): void {
+    this.successMessage = message;
+    this.clearMessagesAfterDelay();
+  }
+
+  // Muestra el mensaje de error temporalmente
+  private showErrorMessage(message: string): void {
+    this.errorMessage = message;
+    this.clearMessagesAfterDelay();
+  }
+
+  // Limpia los mensajes de éxito y error después de un tiempo
+  private clearMessagesAfterDelay(): void {
+    setTimeout(() => {
+      this.successMessage = '';
+      this.errorMessage = '';
+    }, 2000); 
   }
 }

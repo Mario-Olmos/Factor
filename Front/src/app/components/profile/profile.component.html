@@ -1,0 +1,32 @@
+<div class="profile-container">
+    <!-- Sección principal del perfil -->
+    <div class="profile-header">
+        <img [src]="user.imagenPerfil || 'assets/images/default-avatar.png'" alt="Foto de perfil"
+            class="profile-image" />
+        <div class="profile-details">
+            <h1>{{ user.nombre }} {{ user.apellidos }}</h1>
+            <p class="profile-reputation">
+                <strong>Reputación:</strong> {{ user.reputacion }}
+            </p>
+            <p class="profile-email">
+                <strong>Email:</strong> {{ user.email }}
+            </p>
+            <p *ngIf="user.fechaNacimiento" class="profile-birthdate">
+                <strong>Fecha de nacimiento:</strong> {{ user.fechaNacimiento | date }}
+            </p>
+        </div>
+        <button *ngIf="isOwnProfile" class="edit-profile-btn" (click)="editProfile()">
+            Editar perfil
+        </button>
+    </div>
+
+    <!-- Pestañas de información -->
+    <div class="profile-tabs">
+        <button class="tab-button" [class.active]="activeTab === 'info'" (click)="setActiveTab('info')">
+            Información
+        </button>
+        <button class="tab-button" [class.active]="activeTab === 'articles'" (click)="setActiveTab('articles')">
+            Artículos
+        </button>
+    </div>
+</div>

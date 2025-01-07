@@ -40,7 +40,7 @@ export class HomeComponent implements OnInit {
         this.themes = themes;
       },
       (error) => {
-        console.error('Error al cargar los temas', error);
+        this.showErrorMessage('Error al cargar los temas');
       }
     );
 
@@ -64,7 +64,7 @@ export class HomeComponent implements OnInit {
         this.currentPage++;
       },
       (error) => {
-        console.error('Error al cargar los artículos', error);
+        this.showErrorMessage('Error al cargar los Artículos');
       }
     );
   }
@@ -74,5 +74,25 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['/explorador'], {
       queryParams: { theme: tema._id}
     });
+  }
+
+  // Muestra el mensaje de éxito temporalmente
+  private showSuccessMessage(message: string): void {
+    this.successMessage = message;
+    this.clearMessagesAfterDelay();
+  }
+
+  // Muestra el mensaje de error temporalmente
+  private showErrorMessage(message: string): void {
+    this.errorMessage = message;
+    this.clearMessagesAfterDelay();
+  }
+
+  // Limpia los mensajes de éxito y error después de un tiempo
+  private clearMessagesAfterDelay(): void {
+    setTimeout(() => {
+      this.successMessage = '';
+      this.errorMessage = '';
+    }, 2000); 
   }
 }

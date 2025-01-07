@@ -33,9 +33,6 @@
             <img [src]="article.authorInfo.imagenPerfil || 'assets/images/default-avatar.png'" alt="Foto del autor"
                 class="author-image">
             <h3 class="author-name">{{ article.authorInfo.nombre }} {{ article.authorInfo.apellidos }}</h3>
-            <!--<p><strong>Reputación:</strong> {{ article.authorInfo.reputacion }}</p>
-            <p><strong>Última publicación:</strong> {{ article.authorInfo.fechaUltimaPublicacion | date }}</p>
-            <p><strong>Acreditaciones:</strong></p>-->
             <!--<ul>
                 <li *ngFor="let acc of article.authorInfo.acreditaciones">
                     {{ acc.title }} - {{ acc.institution }} ({{ acc.year }})
@@ -45,6 +42,19 @@
     </div>
 
     <div class="article-footer">
+        <div class="article-actions">
+            <button class="like-btn" (click)="darLike(article._id)"
+                [ngClass]="{'liked': article.userVote === 'upvote'}" [disabled]="!puedeVotar()">
+                <span class="material-icons">thumb_up</span>
+            </button>
+            <span class="vote-counter">{{ article.upVotes }}</span>
+
+            <button class="dislike-btn" (click)="darDislike(article._id)"
+                [ngClass]="{'disliked': article.userVote === 'downvote'}" [disabled]="!puedeVotar()">
+                <span class="material-icons">thumb_down</span>
+            </button>
+            <span class="vote-counter">{{ article.downVotes }}</span>
+        </div> 
         <div class="themes">
             <span class="theme theme-level1">{{ article.themes.nivel1 }}</span>
             <span class="theme theme-level2">{{ article.themes.nivel2 }}</span>

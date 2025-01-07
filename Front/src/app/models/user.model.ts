@@ -6,4 +6,6 @@ export interface User {
   nombre: string;
   apellidos: string;
   imagenPerfil?: string;
+  email: string;
+  fechaNacimiento: Date
 }
