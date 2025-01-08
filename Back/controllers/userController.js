@@ -174,7 +174,7 @@ exports.getUserById = async (req, res) => {
 exports.updateUserProfile = async (req, res) => {
     try {
         const { userId } = req.params;
-        const { nombre, apellidos, imagenPerfil, email, fechaNacimiento, acreditaciones } = req.body;
+        const { nombre, apellidos, email, fechaNacimiento, acreditaciones } = req.body;
 
         const user = await User.findById(userId);
         if (!user) {
@@ -183,19 +183,34 @@ exports.updateUserProfile = async (req, res) => {
 
         if (nombre) user.nombre = nombre;
         if (apellidos) user.apellidos = apellidos;
-        if (imagenPerfil) user.imagenPerfil = imagenPerfil;
         if (email) user.email = email;
         if (fechaNacimiento) user.fechaNacimiento = fechaNacimiento;
 
+        // Si se sube un archivo (req.file) a través de Multer
+        if (req.file) {
+            // Guardamos la ruta en el campo imagenPerfil
+            // Ejemplo: /uploads/profiles/nombre-del-archivo.jpg
+            user.imagenPerfil = `api/uploads/profiles/${req.file.filename}`;
+        }
+
+        // Acreditaciones
         if (acreditaciones && Array.isArray(acreditaciones)) {
             user.acreditaciones = acreditaciones;
         }
 
         const updatedUser = await user.save();
+        return res.status(200).json({
+            message: 'Perfil actualizado correctamente',
+            user: updatedUser
+        });
 
-        return res.status(200).json({ message: 'Perfil actualizado correctamente', user: updatedUser });
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: 'Error interno del servidor', error: error.message });
+        console.error('Error en updateUserProfile:', error);
+        return res.status(500).json({
+            message: 'Error interno del servidor',
+            error: error.message
+        });
     }
 };
+
+

@@ -4,14 +4,8 @@
 
     <!-- Título -->
     <div class="form-group mb-3">
-      <input 
-        type="text" 
-        id="title" 
-        formControlName="title" 
-        class="form-control" 
-        placeholder="Título del artículo" 
-        required 
-      />
+      <input type="text" id="title" formControlName="title" class="form-control" placeholder="Título del artículo"
+        required />
       <div *ngIf="articleForm.get('title')?.invalid && articleForm.get('title')?.touched" class="error">
         <small>El título es requerido.</small>
       </div>
@@ -19,14 +13,8 @@
 
     <!-- Descripción -->
     <div class="form-group mb-3">
-      <textarea 
-        id="description" 
-        formControlName="description" 
-        class="form-control" 
-        placeholder="Descripción del artículo" 
-        rows="6"
-        required
-      ></textarea>
+      <textarea id="description" formControlName="description" class="form-control"
+        placeholder="Descripción del artículo" rows="6" required></textarea>
       <div *ngIf="articleForm.get('description')?.invalid && articleForm.get('description')?.touched" class="error">
         <small>La descripción es requerida.</small>
       </div>
@@ -68,14 +56,8 @@
       <label for="pdf" class="custom-file-upload">
         Seleccionar archivo
       </label>
-      <input 
-        type="file" 
-        id="pdf" 
-        (change)="onFileChange($event)" 
-        class="form-control" 
-        accept="application/pdf" 
-        required 
-      />
+      <input type="file" id="pdf" (change)="onFileChange($event)" class="form-control" accept="application/pdf"
+        required />
       <div *ngIf="pdfError" class="error">
         <small>Por favor, selecciona un archivo PDF válido.</small>
       </div>
@@ -87,11 +69,7 @@
     </div>
 
     <!-- Botón de envío -->
-    <button 
-      type="submit" 
-      class="button" 
-      [disabled]="articleForm.invalid || !pdfFile"
-    >
+    <button type="submit" class="button" [disabled]="articleForm.invalid || !pdfFile">
       Subir Artículo
     </button>
 
