@@ -45,5 +45,8 @@
             </p>
             <p><strong>Fecha de publicación:</strong> {{ article.createdAt | date }}</p>
         </div>
+        <button class="profile-btn" [routerLink]="['/perfil', article.authorInfo.userId]">
+            Ver perfil
+        </button>
     </div>
 </div>

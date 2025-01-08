@@ -65,4 +65,6 @@ export class AuthService {
   updateProfile(user: any, userId: string): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/profile/update/${userId}`, user);
   }
+
+  
 }

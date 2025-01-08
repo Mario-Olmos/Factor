@@ -25,7 +25,8 @@ export class ProfileComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private authService: AuthService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private articlesService: ArticlesService
   ) { };
 
   ngOnInit(): void {
@@ -109,15 +110,31 @@ export class ProfileComponent implements OnInit {
   }
 
   loadUserProfile(): void {
-
+    // a) Cargamos al usuario del perfil
     this.authService.getUserById(this.userId).subscribe({
       next: (data) => {
         this.user = data.user;
-        this.initForm();
+        this.initForm(); // por si tienes lógica para inicializar tu formulario
+
+        // b) Cargamos los artículos (authorId = this.userId, viewerId = this.currentUser.userId)
+        this.loadArticlesByUser();
       },
       error: (error) => {
-        this.errorMessage = 'Error al cargar el perfil del usuario.';
-        console.error(error);
+        console.error('Error al cargar el perfil del usuario:', error);
+      }
+    });
+  }
+
+  loadArticlesByUser(): void {
+    const authorId = this.userId;
+    const viewerId = this.currentUser!.userId;
+
+    this.articlesService.getArticlesByUser(authorId, viewerId).subscribe({
+      next: (articles) => {
+        this.articles = articles;
+      },
+      error: (error) => {
+        console.error('Error al cargar los artículos del usuario:', error);
       }
     });
   }
@@ -131,7 +148,7 @@ export class ProfileComponent implements OnInit {
     });
 
     const acreditacionesArray = this.acreditaciones;
-    acreditacionesArray.clear(); // Limpiar el FormArray antes de rellenarlo
+    acreditacionesArray.clear(); 
 
     this.user.acreditaciones.forEach(ac => {
       acreditacionesArray.push(this.createAccreditationGroup(ac));

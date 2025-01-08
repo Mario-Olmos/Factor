@@ -220,5 +220,59 @@ exports.getArticleById = async (req, res) => {
     }
 };
 
+exports.getArticlesByUser = async (req, res) => {
+    try {
+        const { authorId, viewerId } = req.query;
+
+        let articlesQuery = Article.find({ author: authorId }).lean();
+        const articles = await articlesQuery;
+
+        const articlesWithDetails = await Promise.all(
+            articles.map(async (article) => {
+
+                let userVote = null;
+                if (viewerId) {
+                    const userVoteObj = article.votes.find(
+                        (vote) => vote.user.toString() === viewerId
+                    );
+                    userVote = userVoteObj ? userVoteObj.voteType : null;
+                }
+
+                const upVotes = article.votes.filter(
+                    (vote) => vote.voteType === 'upvote'
+                ).length;
+                const downVotes = article.votes.filter(
+                    (vote) => vote.voteType === 'downvote'
+                ).length;
+
+                let themes = null;
+                if (article.theme) {
+                    themes = await getThemeHierarchyById(article.theme);
+                }
+
+                const authorInfo = await getUserInfoById(article.author);
+
+                return {
+                    ...article,
+                    userVote,
+                    upVotes,
+                    downVotes,
+                    themes,     
+                    authorInfo,   
+                    votes: undefined
+                };
+            })
+        );
+
+        return res.status(200).json(articlesWithDetails);
+
+    } catch (error) {
+        console.error('Error al obtener artículos por usuario:', error);
+        return res
+            .status(500)
+            .json({ message: 'Error al obtener artículos por usuario', error: error.message });
+    }
+};
+
 
 
