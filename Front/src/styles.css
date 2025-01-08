@@ -464,7 +464,7 @@ p {
 /*****************************************/
 /* ESTILO GLOBAL PARA PERFIL */
 /*****************************************/
-/* Contenedor principal del perfil */
+/* --- Contenedor principal --- */
 .profile-container {
     max-width: 800px;
     margin: 40px auto;
@@ -474,25 +474,21 @@ p {
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Tarjeta principal que agrupa imagen e info */
+/* --- Tarjeta principal con imagen e info --- */
 .profile-main-card {
     display: flex;
     align-items: flex-start;
-    /* Alinear la imagen al inicio verticalmente */
     gap: 20px;
     margin-bottom: 20px;
-    background-color: #ffffff;
+    background-color: #FEFAE0;
     border-radius: 8px;
     padding: 20px;
 }
 
-/* Contenedor exclusivo de la imagen */
 .profile-image-container {
     flex: 0 0 auto;
-    /* Para que no se expanda */
 }
 
-/* Imagen de perfil */
 .profile-image {
     width: 150px;
     height: 150px;
@@ -501,16 +497,13 @@ p {
     object-fit: cover;
 }
 
-/* Contenedor de la información */
 .profile-info-container {
     flex: 1;
-    /* Espacio interno para separarlo un poco de la imagen */
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
 
-/* Nombre del perfil */
 .profile-name {
     font-size: 26px;
     font-weight: bold;
@@ -518,32 +511,52 @@ p {
     margin: 0 0 10px 0;
 }
 
-/* Detalles */
+/* --- Datos en modo solo lectura, verticalmente alineados --- */
 .profile-details {
-    font-size: 16px;
-    color: #555;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
 }
 
 .profile-details p {
-    margin-bottom: 8px;
+    margin: 0;
+    color: #555;
 }
 
-/* Contenedor de acreditaciones (cuando NO se está editando) */
+/* --- Acreditaciones en solo lectura --- */
 .profile-acreditaciones-container {
-    background-color: #fff;
+    background-color: #FEFAE0;
     padding: 20px;
     border-radius: 8px;
+    margin-bottom: 20px;
 }
 
 .profile-acreditaciones-container h3 {
     margin-top: 0;
 }
 
+/* Separador claro entre acreditaciones */
 .acreditacion {
-    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    /* Alineación a la izquierda */
+    padding: 10px 0;
+    border-bottom: 1px solid #ccc;
 }
 
-/* Botón de editar perfil */
+.acreditacion:last-child {
+    border-bottom: none;
+    /* Evita la última raya */
+}
+
+.acreditacion p {
+    margin: 0 0 8px 0;
+    /* Espacio entre líneas */
+}
+
+/* --- Botón de editar perfil (solo lectura) --- */
 .edit-profile-btn-container {
     text-align: center;
     margin-top: 20px;
@@ -562,73 +575,86 @@ p {
     background: #004da0;
 }
 
-/* Formulario de edición */
+/* --- Formulario de edición --- */
 .edit-form {
     background: #fff;
     padding: 20px;
     border-radius: 8px;
     margin-top: 20px;
+    /* Para que todos los campos y acreditaciones tengan el mismo ancho */
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
 }
 
 .form-group {
+    display: flex;
+    flex-direction: column;
     margin-bottom: 15px;
+    width: 100%;
+    /* Ocupa todo el ancho del contenedor */
 }
 
 .form-group label {
     font-weight: bold;
-    margin-bottom: 5px;
+    margin-bottom: 4px;
 }
 
 .form-control {
     width: 100%;
     padding: 8px;
-    margin-top: 5px;
     border: 1px solid #ccc;
     border-radius: 5px;
 }
 
-/* Acreditaciones dentro del formulario */
+/* --- Acreditaciones dentro del formulario (modo edición) --- */
 .acreditaciones {
     margin-top: 20px;
 }
 
+.acreditaciones h3 {
+    margin-bottom: 10px;
+}
+
 .acreditacion-item {
-    border: 1px solid #ccc;
+    background-color: #f9f9f9;
     padding: 15px;
     border-radius: 5px;
     margin-bottom: 15px;
-    background-color: #f9f9f9;
 }
 
 .acreditacion-fields {
-    display: grid;
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
     gap: 10px;
+    width: 100%;
+    /* Para forzar que ocupe todo el ancho */
 }
 
-.acreditacion-fields label {
-    font-weight: bold;
+/* Form-groups dentro de las acreditaciones */
+.acreditacion-fields .form-group {
+    margin-bottom: 0;
+    /* Menos espacio vertical entre campos */
+    width: 100%;
 }
 
+/* Botones de las acreditaciones (Agregar/Eliminar) */
 .add-btn,
-.remove-btn,
-.save-btn,
-.cancel-btn {
-    display: inline-block;
-    margin-top: 10px;
-    background-color: #007bff;
+.remove-btn {
+    background-color: #798645;
     color: white;
     padding: 8px 16px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    margin-top: 10px;
+    width: 100%;
 }
 
 .add-btn:hover {
-    background-color: #0056b3;
+    background-color: #626F47;
 }
 
-/* Botón para eliminar acreditaciones */
 .remove-btn {
     background-color: #dc3545;
 }
@@ -637,21 +663,80 @@ p {
     background-color: #c82333;
 }
 
-/* Botón para guardar cambios */
+/* --- Botones finales (Guardar/Cancelar) --- */
+.edit-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    justify-content: flex-end;
+    /* Botones a la derecha (opcional) */
+}
+
 .save-btn {
-    background-color: #0066cc;
+    background-color: #798645;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 .save-btn:hover {
-    background-color: #004da0;
+    background-color: #626F47;
 }
 
-/* Botón para cancelar edición */
 .cancel-btn {
     background-color: #6c757d;
-    margin-left: 10px;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 .cancel-btn:hover {
     background-color: #5a6268;
+}
+
+/* --- Responsividad opcional (para que imagen e info se apilen en pantallas pequeñas) --- */
+@media (max-width: 600px) {
+    .profile-main-card {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .profile-image {
+        margin-bottom: 20px;
+    }
+}
+
+/* Pestañas (profile-tabs) */
+.profile-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    /* separación respecto al contenido */
+    justify-content: flex-start;
+    /* o center, según prefieras */
+}
+
+.profile-tabs button {
+    background: #eee;
+    width: 100%;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+
+.profile-tabs button:hover {
+    background: #ddd;
+}
+
+/* Estilo para la pestaña activa */
+.profile-tabs button.active {
+    background: #798645;
+    color: white;
 }
