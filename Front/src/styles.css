@@ -570,9 +570,9 @@ p {
     width: 150px;
     height: 150px;
     border-radius: 50%;
-    border: 2px solid #444;
     object-fit: cover;
 }
+
 
 .profile-info-container {
     flex: 1;

@@ -4,7 +4,7 @@
   <!-- Bloque que siempre se ve: foto + datos básicos -->
   <div class="profile-main-card">
     <div class="profile-image-container">
-      <img [src]="user.imagenPerfil || 'assets/images/default-avatar.png'" alt="Foto de perfil" class="profile-image" />
+      <img [src]="getFullImageUrl(user.imagenPerfil)" class="profile-image"/>
     </div>
 
     <div class="profile-info-container">
@@ -68,10 +68,12 @@
         <input id="fechaNacimiento" formControlName="fechaNacimiento" type="date" class="form-control" />
       </div>
 
-      <div class="form-group">
+      <div>
         <label for="imagenPerfil">Imagen de perfil:</label>
-        <input id="imagenPerfil" type="file" (change)="onImageSelected($event)" class="form-control" accept="image/*" />
+        <input id="imagenPerfil" type="file" (change)="onImageSelected($event)" accept="image/*"
+          style="display: block;" />
       </div>
+
 
       <!-- Acreditaciones (edición) -->
       <div class="acreditaciones">
