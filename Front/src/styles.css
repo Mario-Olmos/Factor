@@ -67,7 +67,7 @@ button[type="submit"] {
     padding: 12px;
     margin-top: 10px;
     background-color: #626F47;
-    color: #000000;
+    color: white;
     border: none;
     border-radius: 5px;
     font-size: 16px;
@@ -226,6 +226,8 @@ p {
     border-radius: 10px;
     padding: 20px;
     margin-bottom: 60px;
+    margin-right: 30px;
+    margin-left: 30px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease-in-out;
     display: flex;
@@ -269,7 +271,7 @@ p {
 .article-actions {
     display: flex;
     gap: 10px;
-    margin: 25px 35px;
+    margin: 25px;
     align-items: center;
 }
 
@@ -296,21 +298,20 @@ p {
 }
 
 .view-btn {
-    background-color: #4caf50;
+    background-color: #798645;
     border: none;
     color: white;
-    padding: 10px 15px;
+    padding: 10px 50px;
     text-align: center;
     text-decoration: none;
-    margin-left: 33%;
-    font-size: 14px;
-    width: 75px;
+    font-size: 16px;
     border-radius: 5px;
     transition: background-color 0.3s;
+    margin: 0px 35%;
 }
 
 .view-btn:hover {
-    background-color: #45a049;
+    background-color: #626F47;
 }
 
 .themes {
@@ -346,31 +347,36 @@ p {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    font-size: large;
     gap: 10px;
     background-color: #FEFAE0;
-    padding: 15px;
+    padding: 10px;
     border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-size: 16px;
 }
 
 .profile-btn {
-    background-color: #0066cc;
+    background-color: #798645;
     color: white;
     padding: 6px 12px;
     border: none;
     border-radius: 4px;
-    margin-top: 8px;
+    margin: 10px;
     cursor: pointer;
-  }
-  
-  .profile-btn:hover {
-    background-color: #004da0;
-  }
+    font-size: 16px;
+}
+
+.profile-btn:hover {
+    background-color: #626F47;
+}
+
+.profile-container .view-btn {
+    margin: 0px 20%;
+}
 
 .author-image {
-    width: 100px;
-    height: 100px;
+    width: 160px;
+    height: 160px;
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid #ccc;
@@ -380,7 +386,7 @@ p {
 .veracity-circle {
     position: absolute;
     top: 10px;
-    left: 20px;
+    left: 5px;
     transform: translateY(-50%);
     width: 50px;
     height: 50px;
@@ -457,20 +463,77 @@ p {
 /*****************************************/
 /* ESTILO GLOBAL PARA BARRA FILTRADO */
 /*****************************************/
+/* --- Contenedor general de la barra de filtros --- */
 .filter-container {
     display: flex;
     flex-wrap: wrap;
+    align-items: flex-end;
+    /* Alinea las partes inferiores de cada item */
     gap: 15px;
-    justify-content: space-between;
     background-color: #F2EED7;
+    /* Crema */
     padding: 15px;
     border: 2px solid #e0e0e0;
     border-radius: 8px;
+    margin-bottom: 20px;
+    /* Espacio debajo de la barra */
 }
 
+/* --- Cada elemento de la barra de filtros (label + select) --- */
 .filter-item {
-    flex: 1 1 calc(33% - 15px);
-    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    min-width: 140px;
+    flex: 1;
+}
+
+/* Opcional: estilo diferente para el ítem del botón */
+.filter-item-button {
+    align-items: flex-end;
+}
+
+/* --- Label para cada select --- */
+.filter-item label {
+    font-weight: bold;
+    margin-bottom: 6px;
+    font-size: 14px;
+    color: #333;
+}
+
+.theme-dropdown,
+.order-dropdown {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    transition: border-color 0.3s;
+    appearance: none;
+    cursor: pointer;
+}
+
+.theme-dropdown:focus,
+.order-dropdown:focus {
+    outline: none;
+    border-color: #798645;
+    /* Verde suave */
+}
+
+/* --- Botón "Buscar" --- */
+.filter-btn {
+    background-color: #798645;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.filter-btn:hover {
+    background-color: #626F47;
 }
 
 
@@ -480,7 +543,7 @@ p {
 /*****************************************/
 /* --- Contenedor principal --- */
 .profile-container {
-    max-width: 800px;
+    max-width: 1000px;
     margin: 40px auto;
     padding: 20px;
     background: #F2EED7;
@@ -555,7 +618,6 @@ p {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    /* Alineación a la izquierda */
     padding: 10px 0;
     border-bottom: 1px solid #ccc;
 }
@@ -683,7 +745,6 @@ p {
     gap: 10px;
     margin-top: 20px;
     justify-content: flex-end;
-    /* Botones a la derecha (opcional) */
 }
 
 .save-btn {
@@ -729,9 +790,7 @@ p {
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
-    /* separación respecto al contenido */
     justify-content: flex-start;
-    /* o center, según prefieras */
 }
 
 .profile-tabs button {
@@ -753,4 +812,8 @@ p {
 .profile-tabs button.active {
     background: #798645;
     color: white;
+}
+
+.profile-container .author-info {
+    display: none !important;
 }
