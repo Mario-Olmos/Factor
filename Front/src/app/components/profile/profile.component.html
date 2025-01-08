@@ -1,11 +1,17 @@
+<!-- Contenedor principal -->
 <div class="profile-container">
-    <div class="profile-header">
+
+  <!-- Bloque que siempre se ve: foto + datos básicos -->
+  <div class="profile-main-card">
+    <div class="profile-image-container">
       <img [src]="user.imagenPerfil || 'assets/images/default-avatar.png'" alt="Foto de perfil" class="profile-image" />
+    </div>
+
+    <div class="profile-info-container">
+      <h1 class="profile-name">{{ user.nombre }} {{ user.apellidos }}</h1>
+
+      <!-- Datos fijos (solo lectura): email, fecha de nacimiento, etc. -->
       <div class="profile-details">
-        <h1>{{ user.nombre }} {{ user.apellidos }}</h1>
-        <p class="profile-reputation">
-          <strong>Reputación:</strong> {{ user.reputacion }}
-        </p>
         <p class="profile-email">
           <strong>Email:</strong> {{ user.email }}
         </p>
@@ -13,54 +19,116 @@
           <strong>Fecha de nacimiento:</strong> {{ user.fechaNacimiento | date }}
         </p>
       </div>
-      <button *ngIf="isOwnProfile" class="edit-profile-btn" (click)="editProfile()">
+    </div>
+  </div>
+
+  <!-- Pestañas -->
+  <div class="profile-tabs">
+    <button [class.active]="activeTab === 'info'" (click)="setActiveTab('info')">
+      Información
+    </button>
+    <button [class.active]="activeTab === 'articles'" (click)="setActiveTab('articles')">
+      Artículos
+    </button>
+  </div>
+
+  <!-- Contenido de la pestaña "Información" -->
+  <div *ngIf="activeTab === 'info'">
+    <!-- Acreditaciones en modo solo lectura (si no está editando) -->
+    <div class="profile-acreditaciones-container" *ngIf="user.acreditaciones.length > 0 && !isEditing">
+      <h3>Acreditaciones</h3>
+      <div class="acreditacion" *ngFor="let acreditacion of user.acreditaciones">
+        <p><strong>Título:</strong> {{ acreditacion.title }}</p>
+        <p><strong>Institución:</strong> {{ acreditacion.institution }}</p>
+        <p><strong>Año:</strong> {{ acreditacion.year }}</p>
+      </div>
+    </div>
+
+    <!-- Botón de editar perfil (solo si es nuestro perfil y no estamos editando) -->
+    <div class="edit-profile-btn-container" *ngIf="isOwnProfile && !isEditing">
+      <button class="edit-profile-btn" (click)="editProfile()">
         Editar perfil
       </button>
     </div>
-  
-    <form [formGroup]="profileForm" *ngIf="isEditing">
+
+    <!-- Formulario de edición -->
+    <form [formGroup]="profileForm" *ngIf="isEditing" class="edit-form" novalidate>
       <div class="form-group">
         <label for="nombre">Nombre:</label>
-        <input id="nombre" formControlName="nombre" class="form-control" />
+        <input id="nombre" formControlName="nombre" class="form-control" type="text" />
       </div>
+
       <div class="form-group">
         <label for="apellidos">Apellidos:</label>
-        <input id="apellidos" formControlName="apellidos" class="form-control" />
+        <input id="apellidos" formControlName="apellidos" class="form-control" type="text" />
       </div>
-      <div class="form-group">
-        <label for="email">Email:</label>
-        <input id="email" formControlName="email" class="form-control" />
-      </div>
+
       <div class="form-group">
         <label for="fechaNacimiento">Fecha de nacimiento:</label>
         <input id="fechaNacimiento" formControlName="fechaNacimiento" type="date" class="form-control" />
       </div>
+
       <div class="form-group">
         <label for="imagenPerfil">Imagen de perfil:</label>
-        <input id="imagenPerfil" formControlName="imagenPerfil" type="text" class="form-control" />
+        <input id="imagenPerfil" type="file" (change)="onImageSelected($event)" class="form-control" accept="image/*" />
       </div>
-  
+
+      <!-- Acreditaciones (edición) -->
       <div class="acreditaciones">
         <h3>Acreditaciones</h3>
-        <div *ngFor="let acreditacion of profileForm.get('acreditaciones')!.value; let i = index">
-          <div class="form-group">
-            <input formControlName="title" placeholder="Título" />
-            <input formControlName="institution" placeholder="Institución" />
-            <input formControlName="year" type="number" placeholder="Año" />
+        <div formArrayName="acreditaciones" *ngFor="let acreditacion of acreditaciones.controls; let i = index"
+          class="acreditacion-item">
+          <div [formGroupName]="i" class="acreditacion-fields">
+            <div class="form-group">
+              <label for="title-{{ i }}">Título:</label>
+              <input id="title-{{ i }}" formControlName="title" class="form-control" type="text" placeholder="Título" />
+            </div>
+
+            <div class="form-group">
+              <label for="institution-{{ i }}">Institución:</label>
+              <input id="institution-{{ i }}" formControlName="institution" class="form-control" type="text"
+                placeholder="Institución" />
+            </div>
+
+            <div class="form-group">
+              <label for="year-{{ i }}">Año:</label>
+              <input id="year-{{ i }}" formControlName="year" class="form-control" type="number" placeholder="Año" />
+            </div>
+
+            <button type="button" class="remove-btn" (click)="removeAccreditation(i)">
+              Eliminar
+            </button>
           </div>
-          <button (click)="removeAccreditation(i)">Eliminar</button>
         </div>
-        <button (click)="addAccreditation()">Añadir acreditación</button>
+
+        <button type="button" class="add-btn" (click)="addAccreditation()">
+          Añadir acreditación
+        </button>
       </div>
-  
-      <button type="button" (click)="saveProfile()">Guardar</button>
+
+      <!-- Botones para guardar o cancelar edición -->
+      <div class="edit-buttons">
+        <button type="button" class="save-btn" (click)="saveProfile()">
+          Guardar
+        </button>
+        <button type="button" class="cancel-btn" (click)="editProfile()">
+          Cancelar
+        </button>
+      </div>
     </form>
-  
-    <div *ngIf="!isEditing">
-      <!-- Mostrar la vista solo lectura -->
-      <p>Nombre: {{ user.nombre }}</p>
-      <p>Apellidos: {{ user.apellidos }}</p>
-      <!-- Otros detalles... -->
+  </div> <!-- Fin de pestaña "Información" -->
+
+  <!-- Pestaña "Artículos" -->
+  <div *ngIf="activeTab === 'articles'">
+    <h2>Artículos de {{ user.nombre }} {{ user.apellidos }}</h2>
+
+    <div *ngIf="articles && articles.length > 0; else noArticlesBlock">
+      <app-article-list [articles]="articles" [currentUser]="currentUser">
+      </app-article-list>
     </div>
+    <ng-template #noArticlesBlock>
+      <p>No hay artículos publicados.</p>
+    </ng-template>
   </div>
-  
+
+</div>

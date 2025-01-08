@@ -52,7 +52,7 @@ export class ArticlesService {
       limit: limit.toString(),
       userId
     };
-  
+
     if (tema) {
       params.tema = tema;
     }
@@ -62,10 +62,10 @@ export class ArticlesService {
     if (ordenarPorVeracidad) {
       params.ordenarPorVeracidad = ordenarPorVeracidad;
     }
-  
+
     return this.http.get<any[]>(`${this.apiUrl}/articles/getArticles`, { params });
   }
-  
+
 
   //Método para dar "Like"
   darLike(likeObject: any): Observable<any> {
@@ -82,7 +82,16 @@ export class ArticlesService {
     const params: any = {
       userId
     };
-    return this.http.get<any>(`${this.apiUrl}/articles/${articleId}`, {params});
+    return this.http.get<any>(`${this.apiUrl}/articles/${articleId}`, { params });
+  }
+
+  //Método get para traer los artículos de un usuario
+  getArticlesByUser(authorId: string, viewerId: string) {
+    const params: any = {
+      authorId,
+      viewerId
+    }
+    return this.http.get<Article[]>(`${this.apiUrl}/articles/getArticlesByUser`, { params });
   }
 
 }
