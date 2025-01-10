@@ -1,5 +1,6 @@
 const Article = require('../models/Article');
 const { getThemeHierarchyById } = require('./themeController');
+const { getAllDescendantThemeIds } = require('../controllers/themeController');
 const { getUserInfoById } = require('./userController');
 const User = require('../models/User');
 const path = require('path');
@@ -76,9 +77,10 @@ exports.obtenerArticulosFeed = async (req, res) => {
             createdAt: { $gte: fechaLimite }
         };
 
-        // Si se proporciona un tema, se filtra por tema
+        // Si se proporciona un tema, obtenemos todos sus descendientes
         if (tema) {
-            query.theme = tema;
+            const allThemeIds = await getAllDescendantThemeIds(tema);
+            query.theme = { $in: allThemeIds };
         }
 
         // Obtener los artículos dentro del período reciente y con veracidad positiva
@@ -257,8 +259,8 @@ exports.getArticlesByUser = async (req, res) => {
                     userVote,
                     upVotes,
                     downVotes,
-                    themes,     
-                    authorInfo,   
+                    themes,
+                    authorInfo,
                     votes: undefined
                 };
             })

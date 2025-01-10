@@ -31,7 +31,7 @@
                     [ngClass]="{'disliked': article?.userVote === 'downvote'}" [disabled]="!puedeVotar()">
                     <span class="material-icons">thumb_down</span>
                 </button>
-                <span class="vote-counter">{{ article.downVotes }}</span>   
+                <span class="vote-counter">{{ article.downVotes }}</span>
                 <button class="view-btn" [routerLink]="['/article', article?._id]">Ver</button>
             </div>
 
@@ -42,6 +42,10 @@
                 class="author-image">
             <p>
                 <strong>{{ article.authorInfo.nombre }} {{ article.authorInfo.apellidos }}</strong>
+                <span class="reputation-badge"
+                    [ngStyle]="{'background-color': getReputationColor(article.authorInfo.reputacion)}">
+                    {{ getReputationDescription(article.authorInfo.reputacion) }}
+                </span>
             </p>
             <p><strong>Fecha de publicación:</strong> {{ article.createdAt | date }}</p>
             <button class="profile-btn" [routerLink]="['/perfil', article.author]">

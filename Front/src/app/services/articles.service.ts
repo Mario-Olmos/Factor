@@ -38,7 +38,7 @@ export class ArticlesService {
     });
   }
 
-  //Método para cargar los artículos de la app (provisional, luego será el feed el que los devuelva)
+  //Método para cargar los artículos de la app, tiene parámetros para cargar los artículos del feed y del explorador
   getArticles(
     page: number,
     limit: number,
@@ -66,7 +66,6 @@ export class ArticlesService {
     return this.http.get<any[]>(`${this.apiUrl}/articles/getArticles`, { params });
   }
 
-
   //Método para dar "Like"
   darLike(likeObject: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/articles/meGusta`, likeObject);
@@ -77,7 +76,7 @@ export class ArticlesService {
     return this.http.post(`${this.apiUrl}/articles/meGusta`, likeObject);
   }
 
-  //Método get para el detalle del artículo
+  //Método get para el detalle del artículo por su id
   getArticleById(articleId: string, userId: string): Observable<Article> {
     const params: any = {
       userId
