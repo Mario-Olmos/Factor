@@ -124,3 +124,27 @@ exports.getThemeHierarchyById = async (themeId) => {
     }
 };
 
+
+//Método BFS o búsqueda en anchura, (devuelve todos los temas de tercer nivel a partir de uno de 1 o 2 nivel)
+exports.getAllDescendantThemeIds = async(rootThemeId) =>{
+
+    let queue = [rootThemeId];
+
+    let allIds = new Set();
+  
+    while (queue.length > 0) {
+      const currentId = queue.shift(); 
+      const currentTheme = await Theme.findById(currentId).lean();
+      if (!currentTheme) continue;
+  
+      allIds.add(currentTheme._id.toString());
+  
+      if (currentTheme.subthemes && currentTheme.subthemes.length > 0) {
+        for (const st of currentTheme.subthemes) {
+          queue.push(st);
+        }
+      }
+    }
+    return Array.from(allIds);
+  }
+

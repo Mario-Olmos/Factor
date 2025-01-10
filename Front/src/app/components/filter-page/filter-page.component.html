@@ -7,13 +7,13 @@
 
       <!-- Primer nivel -->
       <ng-container *ngFor="let theme of themes">
-        <option [disabled]="true" class="theme-dd-level1">
+        <option [value]="theme._id" class="theme-dd-level1">
           {{ theme.name }}
         </option>
 
         <!-- Segundo nivel -->
         <ng-container *ngFor="let subtheme of theme.subthemes">
-          <option [disabled]="true" class="theme-dd-level2">
+          <option [value]="subtheme._id" class="theme-dd-level2">
             &nbsp;&nbsp;{{ subtheme.name }}
           </option>
 
@@ -25,6 +25,7 @@
           </ng-container>
         </ng-container>
       </ng-container>
+
     </select>
   </div>
 

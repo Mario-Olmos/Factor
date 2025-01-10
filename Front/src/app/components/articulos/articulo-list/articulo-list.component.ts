@@ -9,7 +9,7 @@ import { User } from '../../../models/user.model';
   templateUrl: './articulo-list.component.html',
   styleUrls: ['./articulo-list.component.css']
 })
-export class ArticuloListComponent implements OnChanges{
+export class ArticuloListComponent implements OnChanges {
   @Input() articles: Article[] = [];
   @Input() currentUser!: User | null;
   successMessage: string = '';
@@ -18,7 +18,7 @@ export class ArticuloListComponent implements OnChanges{
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['articles']) {
       console.log('Artículos recibidos en ArticleListComponent:', this.articles);
-      
+
     }
 
     if (changes['currentUser']) {
@@ -90,6 +90,28 @@ export class ArticuloListComponent implements OnChanges{
     }
   }
 
+  // Método para obtener la descripción según la reputación
+  getReputationDescription(reputation: number): string {
+    if (reputation < 50) {
+      return 'Explorador';
+    } else if (reputation < 75) {
+      return 'Contribuyente Activo';
+    } else {
+      return 'Autor Elite';
+    }
+  }
+
+  // Método para obtener el color según la reputación
+  getReputationColor(reputation: number): string {
+    if (reputation < 50) {
+      return '#FF4D4D'; // Rojo
+    } else if (reputation < 75) {
+      return '#FFC107'; // Amarillo
+    } else {
+      return '#4CAF50'; // Verde
+    }
+  }
+
   private showSuccessMessage(message: string): void {
     this.successMessage = message;
     this.clearMessagesAfterDelay();
@@ -106,6 +128,6 @@ export class ArticuloListComponent implements OnChanges{
     setTimeout(() => {
       this.successMessage = '';
       this.errorMessage = '';
-    }, 2000); 
+    }, 2000);
   }
 }

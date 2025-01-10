@@ -46,7 +46,6 @@ export class FilterPageComponent implements OnInit {
       this.themes = themes;
     });
 
-    // Manejar parámetros de la URL
     this.route.queryParams.subscribe(params => {
       const theme = params['theme'];
 
