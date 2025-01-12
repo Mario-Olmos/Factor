@@ -32,17 +32,27 @@ export class ArticuloListComponent implements OnChanges {
     return this.currentUser!.reputacion >= 50;
   }
 
-  darLike(articleId: String): void {
+  darLike(articleId: string): void {
+    if (!this.currentUser) {
+      alert('Debes estar logueado para votar.');
+      return;
+    }
+
     if (!this.puedeVotar()) {
       this.showErrorMessage('No tienes suficiente reputación para votar!');
       return;
     }
-    const likeObject = {
-      articleId,
-      user: this.currentUser?.userId,
+
+    const pesoVoto = this.calcularPesoVoto(this.currentUser.reputacion);
+
+    const payload = {
+      articleId: articleId,
+      pesoVoto: pesoVoto,
+      user: this.currentUser.userId, // Asegúrate de que este es el campo correcto
       voteType: 'upvote'
     };
-    this.articlesService.darLike(likeObject).subscribe(
+
+    this.articlesService.darLike(payload).subscribe(
       (response: any) => {
         this.showSuccessMessage(response.message || '¡Voto positivo registrado con éxito!');
       },
@@ -56,18 +66,28 @@ export class ArticuloListComponent implements OnChanges {
     );
   }
 
-  darDislike(articleId: String): void {
+  darDislike(articleId: string): void {
+    if (!this.currentUser) {
+      alert('Debes estar logueado para votar.');
+      return;
+    }
+
     if (!this.puedeVotar()) {
       this.showErrorMessage('No tienes suficiente reputación para votar!');
       return;
     }
-    const dislikeObject = {
-      articleId,
-      user: this.currentUser?.userId,
+
+    const pesoVoto = this.calcularPesoVoto(this.currentUser.reputacion);
+
+    const payload = {
+      articleId: articleId,
+      pesoVoto: pesoVoto,
+      user: this.currentUser.userId, // Asegúrate de que este es el campo correcto
       voteType: 'downvote'
     };
-    this.articlesService.darDislike(dislikeObject).subscribe(
-      (response: any) => {
+
+    this.articlesService.darLike(payload).subscribe(
+      (response: any) => { // Considera renombrar darLike a vote o similar para evitar confusiones
         this.showSuccessMessage(response.message || '¡Voto negativo registrado con éxito!');
       },
       (error: any) => {
@@ -78,6 +98,10 @@ export class ArticuloListComponent implements OnChanges {
         }
       }
     );
+  }
+
+  calcularPesoVoto(reputacion: number): number {
+    return reputacion >= 100 ? 1 : reputacion / 500;
   }
 
   getVeracityColor(veracity: number): string {

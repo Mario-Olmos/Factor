@@ -36,6 +36,7 @@ export class UploadArticleComponent implements OnInit{
     this.articlesService.getThemes().subscribe(
       (themes: Theme[]) => {
         this.themes = themes;
+        console.log(this.themes);
       },
       (error) => {
         console.error('Error al cargar las temáticas', error);

@@ -67,13 +67,13 @@ export class ArticlesService {
   }
 
   //Método para dar "Like"
-  darLike(likeObject: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/articles/meGusta`, likeObject);
+  darLike(payload: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/articles/meGusta`, payload);
   }
 
   //Método para dar "Dislike"
-  darDislike(likeObject: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/articles/meGusta`, likeObject);
+  darDislike(payload: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/articles/meGusta`, payload);
   }
 
   //Método get para el detalle del artículo por su id

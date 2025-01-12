@@ -13,6 +13,7 @@ export interface Article {
   downVotes: number;
   userVote: string;
   authorInfo: User;
+  source: string;
   themes: {
     nivel1: string | null;
     nivel2: string | null;
