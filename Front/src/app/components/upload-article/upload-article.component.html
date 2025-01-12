@@ -20,6 +20,15 @@
       </div>
     </div>
 
+    <!-- Fuente -->
+    <div class="form-group mb-3">
+      <input type="text" id="source" formControlName="source" class="form-control" placeholder="Fuente del artículo"
+        required />
+      <div *ngIf="articleForm.get('source')?.invalid && articleForm.get('source')?.touched" class="error">
+        <small>La fuente es requerida.</small>
+      </div>
+    </div>
+
     <!-- Tema -->
     <div class="form-group mb-3">
       <select id="theme" class="form-control" formControlName="theme" required>

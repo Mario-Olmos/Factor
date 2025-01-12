@@ -1,3 +1,10 @@
+<!-- Popup de notificación -->
+<div class="popup-notification" *ngIf="successMessage || errorMessage">
+    <div [ngClass]="{'popup-success': successMessage, 'popup-error': errorMessage}">
+        {{ successMessage || errorMessage }}
+    </div>
+</div>
+
 <div class="article-detail-container" *ngIf="article; else loading">
     <!-- Cabecera del artículo -->
     <div class="article-header">
@@ -43,8 +50,8 @@
 
     <div class="article-footer">
         <div class="article-actions">
-            <button class="like-btn" (click)="darLike(article._id)"
-                [ngClass]="{'liked': article.userVote === 'upvote'}" [disabled]="!puedeVotar()">
+            <button class="like-btn" (click)="darLike(article._id)" [ngClass]="{'liked': article.userVote === 'upvote'}"
+                [disabled]="!puedeVotar()">
                 <span class="material-icons">thumb_up</span>
             </button>
             <span class="vote-counter">{{ article.upVotes }}</span>
@@ -54,7 +61,7 @@
                 <span class="material-icons">thumb_down</span>
             </button>
             <span class="vote-counter">{{ article.downVotes }}</span>
-        </div> 
+        </div>
         <div class="themes">
             <span class="theme theme-level1">{{ article.themes.nivel1 }}</span>
             <span class="theme theme-level2">{{ article.themes.nivel2 }}</span>
@@ -63,6 +70,15 @@
         <p *ngIf="article?.createdAt" class="article-date">
             <strong>Fecha de publicación:</strong> {{ article.createdAt | date }}
         </p>
+        <div class="article-source" *ngIf="article.source">
+            <p>
+                <strong>Fuente:</strong>
+                <a [href]="article.source" target="_blank" rel="noopener noreferrer">
+                    {{ getSourceDisplayName(article.source) }}
+                    <span class="material-icons">open_in_new</span>
+                </a>
+            </p>
+        </div>
     </div>
 </div>
 

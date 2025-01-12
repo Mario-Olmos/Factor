@@ -26,6 +26,7 @@ export class UploadArticleComponent implements OnInit{
       title: ['', Validators.required],
       description: [''],
       theme: ['', Validators.required],
+      source: ['', Validators.required]
     });
 
     this.authService.getCurrentUser().subscribe(user => {
@@ -35,6 +36,7 @@ export class UploadArticleComponent implements OnInit{
     this.articlesService.getThemes().subscribe(
       (themes: Theme[]) => {
         this.themes = themes;
+        console.log(this.themes);
       },
       (error) => {
         console.error('Error al cargar las temáticas', error);
@@ -75,6 +77,7 @@ export class UploadArticleComponent implements OnInit{
       formData.append('title', this.articleForm.get('title')?.value);
       formData.append('description', this.articleForm.get('description')?.value);
       formData.append('theme', this.articleForm.get('theme')?.value);
+      formData.append('source', this.articleForm.get('source')?.value);
       if (this.pdfFile) {
         formData.append('pdf', this.pdfFile);
       }

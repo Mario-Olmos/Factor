@@ -20,7 +20,6 @@ const articleSchema = new mongoose.Schema({
         required: true,
     },
     authorReputationAtCreation: { 
-        // Guardamos la reputación del autor al momento de publicar
         type: Number,
         required: true,
     },
@@ -29,9 +28,13 @@ const articleSchema = new mongoose.Schema({
         required: true,
     },
     veracity: {
-        // Valor inicial de la veracidad que puede modificarse con votos
         type: Number,
         default: 0, 
+    },  
+    source: {
+        type: String,
+        required: true, 
+        trim: true,
     },
     createdAt: {
         type: Date,

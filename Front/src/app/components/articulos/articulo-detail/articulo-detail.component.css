@@ -9,42 +9,42 @@
   font-size: 40px;
 }
 
-.article-header, 
+.article-header,
 .article-footer {
-  display: flex; 
-  flex-direction: column; 
-  gap: 10px; 
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   top: 40px;
-  position: relative; 
-  padding-bottom: 20px; 
-  border-bottom: none; 
+  position: relative;
+  padding-bottom: 20px;
+  border-bottom: none;
 }
 
 .veracity-circle {
-  position: absolute; 
+  position: absolute;
   top: 20px;
   right: 10px;
   left: 180px;
   width: 90px;
   height: 90px;
-  border-radius: 50%; 
-  display: flex; 
+  border-radius: 50%;
+  display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2.5rem; 
+  font-size: 2.5rem;
   font-weight: bold;
   color: #fff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 
 .article-description {
-  text-align: justify; 
-  line-height: 1.6; 
-  margin: 50px 15px; 
-  font-family: 'Georgia', 'Times New Roman', serif; 
-  font-size: 1.3rem; 
-  color: #333; 
+  text-align: justify;
+  line-height: 1.6;
+  margin: 50px 15px;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 1.3rem;
+  color: #333;
 }
 
 .content-wrapper {
@@ -54,19 +54,20 @@
 
 /* Área del visor PDF */
 .pdf-viewer {
-  flex: 3; 
+  flex: 3;
   background-color: #f8f8f8;
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 10px;
-  height: 700px; 
-  overflow: auto; /* En caso de contenido desbordado */
+  height: 700px;
+  overflow: auto;
+  /* En caso de contenido desbordado */
 }
 
 .pdf-viewer iframe {
-  width: 100%; 
-  height: 100%; 
-  border: none; 
+  width: 100%;
+  height: 100%;
+  border: none;
 }
 
 .iframe-container {
@@ -76,24 +77,24 @@
 }
 
 .fullscreen-button button {
-  background: none; 
-  border: none; 
+  background: none;
+  border: none;
   cursor: pointer;
-  font-size: 24px; 
-  color: white; 
+  font-size: 24px;
+  color: white;
   position: absolute;
   top: 13px;
   right: 115px;
-  z-index: 10; 
+  z-index: 10;
 }
 
 .fullscreen-button button:hover {
-  color: #007bff; 
+  color: #007bff;
 }
 
 /* Columna lateral derecha */
 .author-details {
-  flex: 1; 
+  flex: 1;
   background-color: #fafafa;
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -102,7 +103,7 @@
   flex-direction: column;
   align-items: center;
   gap: 15px;
-  height: auto; 
+  height: auto;
 }
 
 .author-image {
@@ -121,8 +122,8 @@
 
 .themes {
   display: flex;
-  justify-content: center; 
-  align-items: center; 
+  justify-content: center;
+  align-items: center;
   gap: 10px;
   margin: 10px 0;
 }
@@ -157,13 +158,41 @@
 
 .like-btn,
 .dislike-btn {
-    background: transparent;
-    border: none;
-    display: inline-flex;
-    justify-content: center;
-    color: grey;
+  background: transparent;
+  border: none;
+  display: inline-flex;
+  justify-content: center;
+  color: grey;
 }
 
 .material-icons {
   font-size: xx-large;
+}
+
+/* Sección de Fuente */
+.article-source {
+  margin-top: 20px;
+  padding-top: 10px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.article-source p {
+  font-size: 1em;
+  color: #555;
+}
+
+.article-source a {
+  color: #1976d2;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+.article-source a:hover {
+  text-decoration: underline;
+}
+
+.article-source .material-icons {
+  font-size: 18px;
+  margin-left: 4px;
 }
