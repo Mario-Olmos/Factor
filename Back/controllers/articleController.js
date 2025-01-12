@@ -9,9 +9,21 @@ const path = require('path');
 //Método para subir un artículo
 exports.uploadArticle = async (req, res) => {
     try {
-        const { title, description, author, theme } = req.body;
+        const { title, description, author, theme, source } = req.body;
 
         const user = await User.findById(author);
+
+        if (!source) {
+            return res.status(400).json({
+                message: 'La fuente es requerida.'
+            });
+        }
+
+        if (!user) {
+            return res.status(404).json({
+                message: 'Usuario no encontrado.'
+            });
+        }
 
         if (user.reputacion < 20) {
             return res.status(403).json({
@@ -30,6 +42,7 @@ exports.uploadArticle = async (req, res) => {
             author,
             theme,
             authorReputationAtCreation: user.reputacion,
+            source
         });
 
         if (user.reputacion >= 50) {
