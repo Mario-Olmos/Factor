@@ -4,7 +4,7 @@
   <!-- Bloque que siempre se ve: foto + datos básicos -->
   <div class="profile-main-card">
     <div class="profile-image-container">
-      <img [src]="getFullImageUrl(user.imagenPerfil)" class="profile-image"/>
+      <img [src]="getFullImageUrl(user.imagenPerfil)" class="profile-image" />
     </div>
 
     <div class="profile-info-container">
@@ -125,7 +125,7 @@
     <h2>Artículos de {{ user.nombre }} {{ user.apellidos }}</h2>
 
     <div *ngIf="articles && articles.length > 0; else noArticlesBlock">
-      <app-article-list [articles]="articles" [currentUser]="currentUser">
+      <app-article-list [articles]="articles" [currentUser]="currentUser" [isOwnProfile]="isOwnProfile">
       </app-article-list>
     </div>
     <ng-template #noArticlesBlock>

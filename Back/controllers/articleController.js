@@ -4,6 +4,7 @@ const { getAllDescendantThemeIds } = require('../controllers/themeController');
 const { getUserInfoById } = require('./userController');
 const User = require('../models/User');
 const path = require('path');
+const fs = require('fs');
 
 
 //Método para subir un artículo
@@ -53,7 +54,7 @@ exports.uploadArticle = async (req, res) => {
 
         if (user.reputacion >= 50) {
             // Impulso inicial (máximo de 10)
-            newArticle.veracity = math.min(7, ((user.reputacion / 100) * 10));
+            newArticle.veracity = Math.min(7, ((user.reputacion / 100) * 10));
         }
 
         await newArticle.save();
@@ -158,8 +159,6 @@ exports.obtenerArticulosFeed = async (req, res) => {
 };
 
 
-
-
 //Método para dar like a un artículo
 exports.darLike = async (req, res) => {
     try {
@@ -251,6 +250,8 @@ exports.getArticleById = async (req, res) => {
     }
 };
 
+
+//Get de artículos por usuario
 exports.getArticlesByUser = async (req, res) => {
     try {
         const { authorId, viewerId } = req.query;
@@ -305,6 +306,40 @@ exports.getArticlesByUser = async (req, res) => {
     }
 };
 
+
+exports.eliminarArticulo = async (req, res) => {
+    try {
+        const { articleId, userId } = req.query;
+
+        const articulo = await Article.findById(articleId);
+        if (!articulo) {
+            return res.status(404).json({ message: 'Artículo no encontrado.' });
+        }
+
+        if (articulo.author.toString() !== userId) {
+            return res.status(403).json({ message: 'No tienes permiso para eliminar este artículo.' });
+        }
+
+        // Eliminar el archivo PDF asociado al artículo
+        const pdfPath = path.join(__dirname, '..', articulo.pdfUrl);
+        fs.unlink(pdfPath, (err) => {
+            if (err) {
+                console.error('Error al eliminar el archivo PDF:', err);
+            }
+        });
+
+        await Article.findByIdAndDelete(articleId);
+
+        res.status(200).json({ message: 'Artículo eliminado con éxito.' });
+
+    } catch (error) {
+        console.error('Error al eliminar el artículo:', error);
+        res.status(500).json({ message: 'Error interno del servidor.', error: error.message });
+    }
+};
+
+
+//Función con las reglas de publicación por reputación
 function puedePublicar(user) {
     const ahora = new Date();
     const ultimaPublicacion = user.fechaUltimaPublicacion;
@@ -332,6 +367,7 @@ function puedePublicar(user) {
     return tiempoDesdeUltimaPublicacion >= unMes;
 };
 
+//Función con las reglas de votación por reputación
 function puedeVotar(user) {
     const ahora = new Date();
     const ultimoVoto = user.fechaUltimoVoto;

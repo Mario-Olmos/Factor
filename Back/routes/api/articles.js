@@ -10,4 +10,6 @@ router.get('/getArticlesByUser', articleController.getArticlesByUser);
 
 router.get('/:id', articleController.getArticleById);
 
+router.delete('/deleteArticle', articleController.eliminarArticulo);
+
 module.exports = router;
