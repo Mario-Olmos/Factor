@@ -12,6 +12,7 @@ import { User } from '../../../models/user.model';
 export class ArticuloListComponent implements OnChanges {
   @Input() articles: Article[] = [];
   @Input() currentUser!: User | null;
+  @Input() isOwnProfile: boolean = false;
   successMessage: string = '';
   errorMessage: string = '';
 
@@ -96,6 +97,24 @@ export class ArticuloListComponent implements OnChanges {
         } else {
           this.showErrorMessage(error.error.message || 'Ocurrió un error al registrar tu voto.');
         }
+      }
+    );
+  }
+
+  confirmDelete(articleId: string): void {
+    const confirmacion = confirm('¿Estás seguro de que deseas eliminar este artículo? Esta acción no se puede deshacer.');
+    if (confirmacion) {
+      this.eliminarArticulo(articleId, this.currentUser!.userId);
+    }
+  }
+
+  eliminarArticulo(articleId: string, userId: string): void {
+    this.articlesService.eliminarArticulo(articleId, userId).subscribe(
+      (response: any) => {
+        this.showSuccessMessage(response.message || 'Artículo eliminado con éxito.');
+      },
+      (error: any) => {
+        this.showErrorMessage('Ocurrió un error al eliminar el artículo.');
       }
     );
   }

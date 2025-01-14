@@ -93,4 +93,13 @@ export class ArticlesService {
     return this.http.get<Article[]>(`${this.apiUrl}/articles/getArticlesByUser`, { params });
   }
 
+  //Método delete para eliminar el artículo de un usuario
+  eliminarArticulo(articleId: string, userId: string): Observable<any> {
+    const params: any = {
+      articleId,
+      userId
+    }
+    return this.http.delete<any>(`${this.apiUrl}/articles/deleteArticle`, {params});
+  }
+
 }

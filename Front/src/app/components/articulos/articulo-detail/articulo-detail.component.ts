@@ -157,8 +157,17 @@ export class ArticuloDetailComponent implements OnInit {
   }
 
   calcularPesoVoto(reputacion: number): number {
-    return reputacion >= 100 ? 1 : reputacion / 500;
-  }
+    const basePeso = 0.01; // Peso mínimo
+    const maxPeso = 1;      // Peso máximo
+
+    if (reputacion <= 50) {
+        // Crecimiento lineal desde 0.01 hasta 0.3
+        return basePeso + (0.29 * (reputacion / 50));
+    } else {
+        // Crecimiento con raíz cuadrada desde 0.3 hasta 1
+        return 0.3 + (0.7 * Math.sqrt((reputacion - 50) / 50));
+    }
+}
 
   toggleFullScreen() {
     const iframeElement = this.pdfIframe.nativeElement;
