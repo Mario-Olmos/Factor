@@ -275,6 +275,17 @@ p {
     align-items: center;
 }
 
+.article-actions .remove-btn{
+    margin: 0px 50% 0px 0px;
+    border: none;
+    color: white;
+    padding: 10px 30px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
 .like-btn,
 .dislike-btn {
     background: transparent;
@@ -371,7 +382,7 @@ p {
 }
 
 .profile-container .view-btn {
-    margin: 0px 20%;
+    margin: 0px 0px 0px 55%;
 }
 
 .author-image {

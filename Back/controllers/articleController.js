@@ -12,36 +12,56 @@ exports.uploadArticle = async (req, res) => {
     try {
         const { title, description, author, theme, source } = req.body;
 
-        const user = await User.findById(author);
-
+        // Verificar campos requeridos
         if (!source) {
-            return res.status(400).json({
-                message: 'La fuente es requerida.'
-            });
+            if (req.file && req.file.path) {
+                fs.unlink(req.file.path, () => {});
+            }
+            return res.status(400).json({ message: 'La fuente es requerida.' });
         }
 
+        const user = await User.findById(author);
         if (!user) {
-            return res.status(404).json({
-                message: 'Usuario no encontrado.'
-            });
+            if (req.file && req.file.path) {
+                fs.unlink(req.file.path, () => {});
+            }
+            return res.status(404).json({ message: 'Usuario no encontrado.' });
         }
 
         if (user.reputacion < 15) {
-            return res.status(403).json({
-                message: 'No tienes suficiente reputación para publicar un artículo'
-            });
+            if (req.file && req.file.path) {
+                fs.unlink(req.file.path, () => {});
+            }
+            return res.status(403).json({ message: 'No tienes suficiente reputación para publicar un artículo.' });
         }
 
-        if (!puedePublicar(user)) {
+        const publicationLimit = getPublicationLimit(user.reputacion);
+
+        const oneMonthAgo = new Date();
+        oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+
+        const publicacionesUltimoMes = await Article.countDocuments({
+            author: user._id,
+            createdAt: { $gte: oneMonthAgo }
+        });
+
+        console.log(publicacionesUltimoMes);
+
+        if (publicacionesUltimoMes >= publicationLimit) {
+            if (req.file && req.file.path) {
+                fs.unlink(req.file.path, () => {});
+            }
             return res.status(403).json({
                 message: 'Has alcanzado el límite de publicaciones permitidas para tu nivel de reputación.'
             });
         }
 
-        // URL del PDF subido
+        if (!req.file) {
+            return res.status(400).json({ message: 'El archivo PDF es requerido.' });
+        }
+
         const pdfUrl = `/uploads/pdf/${req.file.filename}`;
 
-        // Crear el artículo con la URL del PDF
         const newArticle = new Article({
             title,
             description,
@@ -52,9 +72,8 @@ exports.uploadArticle = async (req, res) => {
             source
         });
 
-        if (user.reputacion >= 50) {
-            // Impulso inicial (máximo de 10)
-            newArticle.veracity = Math.min(7, ((user.reputacion / 100) * 10));
+        if (user.reputacion >= 30) {
+            newArticle.veracity = Math.min(7, user.reputacion / 10);
         }
 
         await newArticle.save();
@@ -63,26 +82,19 @@ exports.uploadArticle = async (req, res) => {
         await user.save();
 
         res.status(201).json({
-            message: 'Artículo creado con éxito',
+            message: 'Artículo creado con éxito.',
             newArticle
         });
 
     } catch (err) {
         console.error('Error al crear el artículo:', err);
 
-        // Si hay un error, eliminar el archivo PDF del servidor
+        // Eliminar el archivo PDF si ocurre un error
         if (req.file && req.file.path) {
-            const filePath = path.join(__dirname, '..', req.file.path);
-            fs.unlink(filePath, (unlinkErr) => {
-                if (unlinkErr) {
-                    console.error('Error al eliminar el archivo:', unlinkErr);
-                } else {
-                    console.log('Archivo eliminado debido a error en BD');
-                }
-            });
+            fs.unlink(req.file.path, () => {});
         }
 
-        res.status(500).json({ error: 'Error subiendo el PDF o creando el artículo' });
+        res.status(500).json({ error: 'Error subiendo el PDF o creando el artículo.' });
     }
 };
 
@@ -164,31 +176,51 @@ exports.darLike = async (req, res) => {
     try {
         const { articleId, pesoVoto, user, voteType } = req.body;
 
+        if (!['upvote', 'downvote'].includes(voteType)) {
+            return res.status(400).json({ message: 'Tipo de voto inválido.' });
+        }
+
         const usuario = await User.findById(user);
         if (!usuario) {
-            return res.status(404).json({ message: 'Usuario no encontrado' });
+            return res.status(404).json({ message: 'Usuario no encontrado.' });
         }
 
         if (usuario.reputacion < 15) { 
-            return res.status(403).json({ message: 'No tienes suficiente reputación para votar' });
+            return res.status(403).json({ message: 'No tienes suficiente reputación para votar.' });
         }
 
-        if (!puedeVotar(usuario)) {
-            return res.status(403).json({ message: 'Has alcanzado el límite de votaciones permitidas para tu nivel de reputación.' });
+        const votingLimit = getVotingLimit(usuario.reputacion);
+
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+        // Contar las votaciones realizadas en la última semana
+        const votacionesUltimaSemana = await Article.countDocuments({
+            "votes.user": usuario._id,
+            "votes.votedAt": { $gte: oneWeekAgo }
+        });
+
+        console.log(votacionesUltimaSemana);
+        if (votacionesUltimaSemana >= votingLimit) {
+            return res.status(403).json({
+                message: 'Has alcanzado el límite de votaciones permitidas para tu nivel de reputación.'
+            });
         }
+
         const articulo = await Article.findById(articleId);
         if (!articulo) {
-            return res.status(404).json({ message: 'Artículo no encontrado' });
+            return res.status(404).json({ message: 'Artículo no encontrado.' });
         }
 
         const votoExistente = articulo.votes.find(vote => vote.user.toString() === usuario._id.toString());
 
         if (votoExistente) {
-            return res.status(400).json({ message: 'Ya has votado este artículo' });
+            return res.status(400).json({ message: 'Ya has votado este artículo.' });
         }
 
         const cambioVeracidad = voteType === 'upvote' ? pesoVoto : -pesoVoto;
 
+        // Actualizar el artículo: incrementar veracidad y añadir el voto
         const updatedArticle = await Article.findByIdAndUpdate(
             articleId,
             {
@@ -204,15 +236,18 @@ exports.darLike = async (req, res) => {
             { new: true }
         );
 
+        // Actualizar la fecha del último voto del usuario
         usuario.fechaUltimoVoto = new Date();
         await usuario.save();
 
-        return res.status(200).json({ message: 'Voto registrado correctamente', articulo: updatedArticle });
+        return res.status(200).json({ message: 'Voto registrado correctamente.', articulo: updatedArticle });
 
     } catch (error) {
-        return res.status(500).json({ message: 'Error interno del servidor', error: error.message });
+        console.error('Error al dar like/dislike:', error);
+        return res.status(500).json({ message: 'Error interno del servidor.', error: error.message });
     }
 };
+
 
 
 // Detalle del artículo
@@ -340,59 +375,20 @@ exports.eliminarArticulo = async (req, res) => {
 
 
 //Función con las reglas de publicación por reputación
-function puedePublicar(user) {
-    const ahora = new Date();
-    const ultimaPublicacion = user.fechaUltimaPublicacion;
-    let limitePublicaciones = 0;
-
-    if (user.reputacion >= 0 && user.reputacion <= 14) {
-        return false; // No puede publicar
-    } else if (user.reputacion >= 15 && user.reputacion <= 30) {
-        limitePublicaciones = 1; // 1 vez al mes
-    } else if (user.reputacion >= 31 && user.reputacion <= 50) {
-        limitePublicaciones = 2; // 2 veces al mes
-    } else if (user.reputacion >= 51 && user.reputacion <= 70) {
-        limitePublicaciones = 4; // 4 veces al mes
-    } else if (user.reputacion >= 71 && user.reputacion <= 100) {
-        return true; // Sin límite
-    }
-
-    if (!ultimaPublicacion) {
-        return true; // Nunca ha publicado
-    }
-
-    const unMes = 30 * 24 * 60 * 60 * 1000; // Milisegundos en un mes
-    const tiempoDesdeUltimaPublicacion = ahora - ultimaPublicacion;
-
-    return tiempoDesdeUltimaPublicacion >= unMes;
+const getPublicationLimit = (reputacion) => {
+    if (reputacion >= 71) return Infinity;
+    if (reputacion >= 51) return 4;
+    if (reputacion >= 31) return 2;
+    if (reputacion >= 15) return 1;
+    return 0;
 };
 
 //Función con las reglas de votación por reputación
-function puedeVotar(user) {
-    const ahora = new Date();
-    const ultimoVoto = user.fechaUltimoVoto;
-    let limiteVotos = 0;
-
-    if (user.reputacion >= 0 && user.reputacion <= 14) {
-        return false; // No puede votar
-    } else if (user.reputacion >= 15 && user.reputacion <= 30) {
-        limiteVotos = 1; // 1 vez a la semana
-    } else if (user.reputacion >= 31 && user.reputacion <= 50) {
-        limiteVotos = 3; // 3 veces a la semana
-    } else if (user.reputacion >= 51 && user.reputacion <= 70) {
-        limiteVotos = 5; // 5 veces a la semana
-    } else if (user.reputacion >= 71 && user.reputacion <= 100) {
-        return true; // Sin límite de votos
-    }
-
-    if (!ultimoVoto) {
-        return true; // Nunca ha votado
-    }
-
-    const unaSemana = 7 * 24 * 60 * 60 * 1000; // Milisegundos en una semana
-    const tiempoDesdeUltimoVoto = ahora - ultimoVoto;
-
-    return tiempoDesdeUltimoVoto >= unaSemana;
+const getVotingLimit = (reputacion) => {
+    if (reputacion >= 71) return Infinity;
+    if (reputacion >= 51) return 5;
+    if (reputacion >= 31) return 3;
+    if (reputacion >= 15) return 1;
+    return 0;
 };
-
 
