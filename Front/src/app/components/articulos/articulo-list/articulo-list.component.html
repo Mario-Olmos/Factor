@@ -22,13 +22,13 @@
 
             <div class="article-actions">
                 <button class="like-btn" (click)="darLike(article?._id ?? '')"
-                    [ngClass]="{'liked': article?.userVote === 'upvote'}" [disabled]="!puedeVotar()">
+                    [ngClass]="{'liked': article?.userVote === 'upvote'}">
                     <span class="material-icons">thumb_up</span>
                 </button>
                 <span class="vote-counter">{{ article.upVotes }}</span>
 
                 <button class="dislike-btn" (click)="darDislike(article?._id ?? '')"
-                    [ngClass]="{'disliked': article?.userVote === 'downvote'}" [disabled]="!puedeVotar()">
+                    [ngClass]="{'disliked': article?.userVote === 'downvote'}">
                     <span class="material-icons">thumb_down</span>
                 </button>
                 <span class="vote-counter">{{ article.downVotes }}</span>

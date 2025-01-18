@@ -1,9 +1,6 @@
 <!-- Popup de notificación -->
-<div class="popup-notification" *ngIf="successMessage || errorMessage">
-    <div [ngClass]="{'popup-success': successMessage, 'popup-error': errorMessage}">
-        {{ successMessage || errorMessage }}
-    </div>
-</div>
+<app-pop-up *ngIf="popupMessage" [message]="popupMessage" [type]="popupType" (closed)="onPopUpClosed()">
+</app-pop-up>
 
 <div class="article-detail-container" *ngIf="article; else loading">
     <!-- Cabecera del artículo -->
@@ -63,16 +60,18 @@
             </div>
         </div>
     </div>
+
+    <!-- Footer-->
     <div class="article-footer">
         <div class="article-actions">
-            <button class="like-btn" (click)="darLike(article._id)" [ngClass]="{'liked': article.userVote === 'upvote'}"
-                [disabled]="!puedeVotar()">
+            <button class="like-btn" (click)="darLike(article._id)"
+                [ngClass]="{'liked': article.userVote === 'upvote'}">
                 <span class="material-icons">thumb_up</span>
             </button>
             <span class="vote-counter">{{ article.upVotes }}</span>
 
             <button class="dislike-btn" (click)="darDislike(article._id)"
-                [ngClass]="{'disliked': article.userVote === 'downvote'}" [disabled]="!puedeVotar()">
+                [ngClass]="{'disliked': article.userVote === 'downvote'}">
                 <span class="material-icons">thumb_down</span>
             </button>
             <span class="vote-counter">{{ article.downVotes }}</span>
@@ -94,10 +93,6 @@
                 </a>
             </p>
         </div>
-    </div>
-
-    <div *ngIf="errorMessage" class="error">
-        {{ errorMessage }}
     </div>
 </div>
 
