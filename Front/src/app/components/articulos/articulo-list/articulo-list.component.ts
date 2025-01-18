@@ -1,8 +1,9 @@
-import { Component, Input, SimpleChanges, OnChanges } from '@angular/core';
+// articulo-list.component.ts
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Article } from '../../../models/article.model';
 import { ArticlesService } from '../../../services/articles.service';
-import { AuthService } from '../../../services/auth.service';
 import { User } from '../../../models/user.model';
+import { SharedService } from '../../../services/shared.service';
 
 @Component({
   selector: 'app-article-list',
@@ -13,13 +14,18 @@ export class ArticuloListComponent implements OnChanges {
   @Input() articles: Article[] = [];
   @Input() currentUser!: User | null;
   @Input() isOwnProfile: boolean = false;
+  
   successMessage: string = '';
   errorMessage: string = '';
+
+  constructor(
+    private articlesService: ArticlesService,
+    private sharedService: SharedService
+  ) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['articles']) {
       console.log('Artículos recibidos en ArticleListComponent:', this.articles);
-
     }
 
     if (changes['currentUser']) {
@@ -27,35 +33,34 @@ export class ArticuloListComponent implements OnChanges {
     }
   }
 
-  constructor(private articlesService: ArticlesService, private authService: AuthService) { }
-
-  puedeVotar(): boolean {
-    return this.currentUser!.reputacion >= 50;
-  }
-
-  darLike(articleId: string): void {
+  /**
+   * Maneja el voto positivo (like) en un artículo.
+   * @param articleId ID del artículo a votar.
+   */
+  public darLike(articleId: string): void {
     if (!this.currentUser) {
       alert('Debes estar logueado para votar.');
       return;
     }
 
-    if (!this.puedeVotar()) {
+    if (!this.puedeVotar(this.currentUser.reputacion)) {
       this.showErrorMessage('No tienes suficiente reputación para votar!');
       return;
     }
 
-    const pesoVoto = this.calcularPesoVoto(this.currentUser.reputacion);
+    const pesoVoto = this.sharedService.calcularPesoVoto(this.currentUser.reputacion);
 
     const payload = {
       articleId: articleId,
       pesoVoto: pesoVoto,
-      user: this.currentUser.userId, // Asegúrate de que este es el campo correcto
+      user: this.currentUser.userId, 
       voteType: 'upvote'
     };
 
     this.articlesService.darLike(payload).subscribe(
       (response: any) => {
         this.showSuccessMessage(response.message || '¡Voto positivo registrado con éxito!');
+        this.actualizarVotos(articleId, 'upvote', pesoVoto); 
       },
       (error: any) => {
         if (error.status === 400 && error.error.message === 'Ya has votado este artículo') {
@@ -67,29 +72,34 @@ export class ArticuloListComponent implements OnChanges {
     );
   }
 
-  darDislike(articleId: string): void {
+  /**
+   * Maneja el voto negativo (dislike) en un artículo.
+   * @param articleId ID del artículo a votar.
+   */
+  public darDislike(articleId: string): void {
     if (!this.currentUser) {
       alert('Debes estar logueado para votar.');
       return;
     }
 
-    if (!this.puedeVotar()) {
+    if (!this.puedeVotar(this.currentUser.reputacion)) {
       this.showErrorMessage('No tienes suficiente reputación para votar!');
       return;
     }
 
-    const pesoVoto = this.calcularPesoVoto(this.currentUser.reputacion);
+    const pesoVoto = this.sharedService.calcularPesoVoto(this.currentUser.reputacion);
 
     const payload = {
       articleId: articleId,
       pesoVoto: pesoVoto,
-      user: this.currentUser.userId, // Asegúrate de que este es el campo correcto
+      user: this.currentUser.userId,
       voteType: 'downvote'
     };
 
     this.articlesService.darLike(payload).subscribe(
-      (response: any) => { // Considera renombrar darLike a vote o similar para evitar confusiones
+      (response: any) => { 
         this.showSuccessMessage(response.message || '¡Voto negativo registrado con éxito!');
+        this.actualizarVotos(articleId, 'downvote', pesoVoto); 
       },
       (error: any) => {
         if (error.status === 400 && error.error.message === 'Ya has votado este artículo') {
@@ -101,17 +111,27 @@ export class ArticuloListComponent implements OnChanges {
     );
   }
 
-  confirmDelete(articleId: string): void {
+  /**
+   * Confirma y elimina un artículo.
+   * @param articleId ID del artículo a eliminar.
+   */
+  public confirmDelete(articleId: string): void {
     const confirmacion = confirm('¿Estás seguro de que deseas eliminar este artículo? Esta acción no se puede deshacer.');
-    if (confirmacion) {
-      this.eliminarArticulo(articleId, this.currentUser!.userId);
+    if (confirmacion && this.currentUser) {
+      this.eliminarArticulo(articleId, this.currentUser.userId);
     }
   }
 
-  eliminarArticulo(articleId: string, userId: string): void {
+  /**
+   * Elimina un artículo.
+   * @param articleId ID del artículo a eliminar.
+   * @param userId ID del usuario que elimina el artículo.
+   */
+  public eliminarArticulo(articleId: string, userId: string): void {
     this.articlesService.eliminarArticulo(articleId, userId).subscribe(
       (response: any) => {
         this.showSuccessMessage(response.message || 'Artículo eliminado con éxito.');
+        this.removerArticuloDelArray(articleId); 
       },
       (error: any) => {
         this.showErrorMessage('Ocurrió un error al eliminar el artículo.');
@@ -119,54 +139,71 @@ export class ArticuloListComponent implements OnChanges {
     );
   }
 
-  calcularPesoVoto(reputacion: number): number {
-    return reputacion >= 100 ? 1 : reputacion / 500;
-  }
-
-  getVeracityColor(veracity: number): string {
-    if (veracity < 5) {
-      return '#FF4D4D';
-    } else if (veracity < 7) {
-      return '#FFC107';
-    } else {
-      return '#4CAF50';
+  /**
+   * Actualiza los votos y la veracidad de un artículo en el array local.
+   * @param articleId ID del artículo a actualizar.
+   * @param tipoVoto Tipo de voto ('upvote' o 'downvote').
+   * @param pesoVoto Peso del voto calculado.
+   */
+  private actualizarVotos(articleId: string, tipoVoto: 'upvote' | 'downvote', pesoVoto: number): void {
+    const article = this.articles.find(a => a._id === articleId);
+    if (article && this.currentUser) {
+      if (tipoVoto === 'upvote') {
+        article.upVotes += 1;
+        article.userVote = 'upvote';
+        article.veracity += pesoVoto;
+      } else {
+        article.downVotes += 1;
+        article.userVote = 'downvote';
+        article.veracity -= pesoVoto;
+      }
+      this.articles = [...this.articles];
     }
   }
 
-  // Método para obtener la descripción según la reputación
-  getReputationDescription(reputation: number): string {
-    if (reputation < 50) {
-      return 'Explorador';
-    } else if (reputation < 75) {
-      return 'Contribuyente Activo';
-    } else {
-      return 'Autor Elite';
-    }
+  /**
+   * Remueve un artículo del array local.
+   * @param articleId ID del artículo a remover.
+   */
+  private removerArticuloDelArray(articleId: string): void {
+    this.articles = this.articles.filter(article => article._id !== articleId);
   }
 
-  // Método para obtener el color según la reputación
-  getReputationColor(reputation: number): string {
-    if (reputation < 50) {
-      return '#FF4D4D'; // Rojo
-    } else if (reputation < 75) {
-      return '#FFC107'; // Amarillo
-    } else {
-      return '#4CAF50'; // Verde
-    }
+
+  /**
+   * Métodos auxiliares
+   */
+  public getVeracityColor(veracity: number): string {
+    return this.sharedService.getVeracityColor(veracity);
   }
+
+  public getReputationDescription(reputation: number): string {
+    return this.sharedService.getReputationDescription(reputation);
+  }
+
+  public getReputationColor(reputation: number): string {
+    return this.sharedService.getReputationColor(reputation);
+  }
+
+  public puedeVotar(reputation: number): boolean {
+    return this.sharedService.puedeVotar(reputation);
+  }
+
+  // Métodos para mostrar mensajes
 
   private showSuccessMessage(message: string): void {
     this.successMessage = message;
     this.clearMessagesAfterDelay();
   }
 
-  // Muestra el mensaje de error temporalmente
   private showErrorMessage(message: string): void {
     this.errorMessage = message;
     this.clearMessagesAfterDelay();
   }
 
-  // Limpia los mensajes de éxito y error después de un tiempo
+  /**
+   * Limpia los mensajes de éxito y error después de 2 segundos.
+   */
   private clearMessagesAfterDelay(): void {
     setTimeout(() => {
       this.successMessage = '';

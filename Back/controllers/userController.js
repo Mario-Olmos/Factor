@@ -142,7 +142,7 @@ exports.voteVeracidad = async (voterId, targetUserId, voteValue) => {
 //Devolver info del usuario a partir de su id
 exports.getUserInfoById = async (userId) => {
     try {
-        const user = await User.findById(userId, 'nombre apellidos imagenPerfil reputacion');
+        const user = await User.findById(userId, 'nombre apellidos imagenPerfil reputacion email acreditaciones fechaNacimiento');
         if (!user) {
             throw new Error('Usuario no encontrado');
         }
@@ -150,7 +150,10 @@ exports.getUserInfoById = async (userId) => {
             nombre: user.nombre,
             apellidos: user.apellidos,
             imagenPerfil: user.imagenPerfil || null,
-            reputacion: user.reputacion
+            reputacion: user.reputacion,
+            email: user.email,
+            acreditaciones: user.acreditaciones,
+            fechaNacimiento: user.fechaNacimiento
         };
     } catch (error) {
         console.error(`Error al obtener información del usuario con ID ${userId}:`, error);

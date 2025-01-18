@@ -1,6 +1,5 @@
-export interface Acreditacion{
-    title: string;
-    institution: string;
-    year: number
-  }
-  
+export interface Acreditacion {
+  title: string;
+  institution: string;
+  year: number
+}

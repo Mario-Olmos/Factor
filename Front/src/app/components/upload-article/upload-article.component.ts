@@ -59,8 +59,8 @@ export class UploadArticleComponent implements OnInit{
   }
 
   // Verificar si el usuario puede publiccar
-  puedeVotar(): boolean {
-    if(this.currentUser!.reputacion < 20){
+  puedePublicar(): boolean {
+    if(this.currentUser!.reputacion < 15){
       return false;
     }else return true;
   }
@@ -68,7 +68,7 @@ export class UploadArticleComponent implements OnInit{
   // Envío del formulario
   onSubmit(): void {
     if (this.currentUser && this.articleForm.valid) {
-      if(!this.puedeVotar){
+      if(!this.puedePublicar){
         alert('No tienes suficiente reputación para publicar');
         return;
       }
@@ -86,6 +86,9 @@ export class UploadArticleComponent implements OnInit{
       this.articlesService.uploadArticle(formData).subscribe(
         response => {
           console.log('Artículo subido con éxito', response);
+          setTimeout(() => {
+            window.location.reload(); 
+          }, 2000);
         },
         error => {
           console.error('Error al subir el artículo', error);

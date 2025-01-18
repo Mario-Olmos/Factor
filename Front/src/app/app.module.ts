@@ -15,6 +15,7 @@ import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 import { ArticuloListComponent } from './components/articulos/articulo-list/articulo-list.component';
 import { FilterPageComponent } from './components/filter-page/filter-page.component';
 import { ProfileComponent } from './components/profile/profile.component';
+import { PopUpComponent } from './components/shared/pop-up/pop-up.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { ProfileComponent } from './components/profile/profile.component';
     ArticuloDetailComponent,
     ArticuloListComponent,
     FilterPageComponent,
-    ProfileComponent
+    ProfileComponent,
+    PopUpComponent
   ],
   imports: [
     BrowserModule,

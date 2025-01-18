@@ -122,39 +122,6 @@ p {
 
 
 /**********************************/
-/*       ESTILOS POP UPS          */
-/**********************************/
-.popup-notification {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    max-width: 300px;
-    padding: 10px;
-    text-align: center;
-    z-index: 1000;
-    opacity: 0.95;
-}
-
-.popup-notification .popup-success {
-    background-color: #F2EED7;
-    color: black;
-    border-left: 10px solid #798645;
-}
-
-.popup-notification .popup-error {
-    background-color: #F2EED7;
-    color: black;
-    border-left: 10px solid #d32f2f;
-}
-
-.popup-notification div {
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-
-/**********************************/
 /*          HOME GENERAL          */
 /**********************************/
 .home-container {
@@ -657,7 +624,6 @@ p {
 
 .acreditacion p {
     margin: 0 0 8px 0;
-    /* Espacio entre líneas */
 }
 
 /* --- Botón de editar perfil (solo lectura) --- */

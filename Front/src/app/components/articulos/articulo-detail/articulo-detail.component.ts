@@ -1,16 +1,17 @@
+// article-detail.component.ts
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Article } from '../../../models/article.model';
-import { User } from '../../../models/user.model';
 import { ActivatedRoute } from '@angular/router';
 import { ArticlesService } from '../../../services/articles.service';
 import { AuthService } from '../../../services/auth.service';
+import { User } from '../../../models/user.model';
+import { SharedService } from '../../../services/shared.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-
 
 @Component({
   selector: 'app-articulo-detail',
   templateUrl: './articulo-detail.component.html',
-  styleUrl: './articulo-detail.component.css'
+  styleUrls: ['./articulo-detail.component.css']
 })
 export class ArticuloDetailComponent implements OnInit {
   @ViewChild('pdfIframe') pdfIframe!: ElementRef;
@@ -20,11 +21,14 @@ export class ArticuloDetailComponent implements OnInit {
   pdfSrc!: any;
   successMessage: string = '';
 
+  popupMessage: string = '';
+  popupType: 'success' | 'error' | '' = '';
 
   constructor(
     private route: ActivatedRoute,
     private articlesService: ArticlesService,
     private authService: AuthService,
+    private sharedService: SharedService,
     private sanitizer: DomSanitizer
   ) { }
 
@@ -72,34 +76,23 @@ export class ArticuloDetailComponent implements OnInit {
       }
     );
   }
-
-  // Cambia el color de la veracidad en funcion a su valor
-  getVeracityColor(veracity: number): string {
-    if (veracity < 5) {
-      return '#FF4D4D';
-    } else if (veracity < 7) {
-      return '#FFC107';
-    } else {
-      return '#4CAF50';
-    }
-  }
-
-  puedeVotar(): boolean {
-    return this.currentUser!.reputacion >= 50;
-  }
-
-  darLike(articleId: string): void {
+  
+  /**
+   * Maneja el voto positivo (like) en un artículo.
+   * @param articleId ID del artículo a votar.
+   */
+  public darLike(articleId: string): void {
     if (!this.currentUser) {
       alert('Debes estar logueado para votar.');
       return;
     }
 
-    if (!this.puedeVotar()) {
+    if (!this.puedeVotar(this.currentUser.reputacion)) {
       this.showErrorMessage('No tienes suficiente reputación para votar!');
       return;
     }
 
-    const pesoVoto = this.calcularPesoVoto(this.currentUser.reputacion);
+    const pesoVoto = this.sharedService.calcularPesoVoto(this.currentUser.reputacion);
 
     const payload = {
       articleId: articleId,
@@ -111,6 +104,7 @@ export class ArticuloDetailComponent implements OnInit {
     this.articlesService.darLike(payload).subscribe(
       (response: any) => {
         this.showSuccessMessage(response.message || '¡Voto positivo registrado con éxito!');
+        this.actualizarVotos('upvote', pesoVoto); 
       },
       (error: any) => {
         if (error.status === 400 && error.error.message === 'Ya has votado este artículo') {
@@ -122,29 +116,34 @@ export class ArticuloDetailComponent implements OnInit {
     );
   }
 
-  darDislike(articleId: string): void {
+  /**
+   * Maneja el voto negativo (dislike) en un artículo.
+   * @param articleId ID del artículo a votar.
+   */
+  public darDislike(articleId: string): void {
     if (!this.currentUser) {
       alert('Debes estar logueado para votar.');
       return;
     }
 
-    if (!this.puedeVotar()) {
+    if (!this.puedeVotar(this.currentUser.reputacion)) {
       this.showErrorMessage('No tienes suficiente reputación para votar!');
       return;
     }
 
-    const pesoVoto = this.calcularPesoVoto(this.currentUser.reputacion);
+    const pesoVoto = this.sharedService.calcularPesoVoto(this.currentUser.reputacion);
 
     const payload = {
       articleId: articleId,
       pesoVoto: pesoVoto,
-      user: this.currentUser.userId, // Asegúrate de que este es el campo correcto
+      user: this.currentUser.userId,
       voteType: 'downvote'
     };
 
     this.articlesService.darLike(payload).subscribe(
-      (response: any) => { // Considera renombrar darLike a vote o similar para evitar confusiones
+      (response: any) => { 
         this.showSuccessMessage(response.message || '¡Voto negativo registrado con éxito!');
+        this.actualizarVotos( 'downvote', pesoVoto); 
       },
       (error: any) => {
         if (error.status === 400 && error.error.message === 'Ya has votado este artículo') {
@@ -156,18 +155,24 @@ export class ArticuloDetailComponent implements OnInit {
     );
   }
 
-  calcularPesoVoto(reputacion: number): number {
-    const basePeso = 0.01; // Peso mínimo
-    const maxPeso = 1;      // Peso máximo
-
-    if (reputacion <= 50) {
-        // Crecimiento lineal desde 0.01 hasta 0.3
-        return basePeso + (0.29 * (reputacion / 50));
+  /**
+   * Actualiza los votos y la veracidad del artículo.
+   * @param tipoVoto Tipo de voto ('upvote' o 'downvote').
+   * @param pesoVoto Peso del voto calculado.
+   */
+  private actualizarVotos(tipoVoto: 'upvote' | 'downvote', pesoVoto: number): void {
+    if (tipoVoto === 'upvote') {
+      this.article!.upVotes += 1;
+      this.article!.userVote = 'upvote';
+      this.article!.veracity += pesoVoto;
     } else {
-        // Crecimiento con raíz cuadrada desde 0.3 hasta 1
-        return 0.3 + (0.7 * Math.sqrt((reputacion - 50) / 50));
+      this.article!.downVotes += 1;
+      this.article!.userVote = 'downvote';
+      this.article!.veracity -= pesoVoto;
     }
-}
+
+    this.article = { ...this.article } as Article;
+  }
 
   toggleFullScreen() {
     const iframeElement = this.pdfIframe.nativeElement;
@@ -192,22 +197,40 @@ export class ArticuloDetailComponent implements OnInit {
     }
   }
 
+  /**
+   * Métodos auxiliares
+   */
+  public puedeVotar(reputation: number): boolean {
+    return this.sharedService.puedeVotar(reputation);
+  }
+
+  public getVeracityColor(veracity: number): string {
+    return this.sharedService.getVeracityColor(veracity);
+  }
+
+  public getReputationDescription(reputation: number): string {
+    return this.sharedService.getReputationDescription(reputation);
+  }
+
+  public getReputationColor(reputation: number): string {
+    return this.sharedService.getReputationColor(reputation);
+  }
+
+  /**
+   * Mensajes
+   */
   private showSuccessMessage(message: string): void {
-    this.successMessage = message;
-    this.clearMessagesAfterDelay();
+    this.popupMessage = message;
+    this.popupType = 'success';
   }
 
-  // Muestra el mensaje de error temporalmente
   private showErrorMessage(message: string): void {
-    this.errorMessage = message;
-    this.clearMessagesAfterDelay();
+    this.popupMessage = message;
+    this.popupType = 'error';
   }
 
-  // Limpia los mensajes de éxito y error después de un tiempo
-  private clearMessagesAfterDelay(): void {
-    setTimeout(() => {
-      this.successMessage = '';
-      this.errorMessage = '';
-    }, 2000);
+  public onPopUpClosed(): void {
+    this.popupMessage = '';
+    this.popupType = '';
   }
 }

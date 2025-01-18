@@ -1,9 +1,6 @@
 <!-- Popup de notificación -->
-<div class="popup-notification" *ngIf="successMessage || errorMessage">
-    <div [ngClass]="{'popup-success': successMessage, 'popup-error': errorMessage}">
-        {{ successMessage || errorMessage }}
-    </div>
-</div>
+<app-pop-up *ngIf="popupMessage" [message]="popupMessage" [type]="popupType" (closed)="onPopUpClosed()">
+</app-pop-up>
 
 <div class="article-detail-container" *ngIf="article; else loading">
     <!-- Cabecera del artículo -->
@@ -39,25 +36,42 @@
         <div class="author-details">
             <img [src]="article.authorInfo.imagenPerfil || 'assets/images/default-avatar.png'" alt="Foto del autor"
                 class="author-image">
-            <h3 class="author-name">{{ article.authorInfo.nombre }} {{ article.authorInfo.apellidos }}</h3>
-            <!--<ul>
-                <li *ngFor="let acc of article.authorInfo.acreditaciones">
-                    {{ acc.title }} - {{ acc.institution }} ({{ acc.year }})
-                </li>
-            </ul>-->
+            <div class="author-info">
+                <h3 class="author-name">{{ article.authorInfo.nombre }} {{ article.authorInfo.apellidos }}</h3>
+                <span class="reputation-badge"
+                    [ngStyle]="{'background-color': getReputationColor(article.authorInfo.reputacion)}">
+                    {{ getReputationDescription(article.authorInfo.reputacion) }}
+                </span>
+                <p class="author-email"><strong>Email:</strong> {{ article.authorInfo.email }}</p>
+                <p class="author-birthdate" *ngIf="article.authorInfo.fechaNacimiento">
+                    <strong>Fecha de nacimiento:</strong> {{ article.authorInfo.fechaNacimiento | date:'longDate' }}
+                </p>
+
+                <div class="profile-acreditaciones-container" *ngIf="article.authorInfo.acreditaciones.length > 0">
+                    <h3>Acreditaciones</h3>
+                    <div class="acreditacion" *ngFor="let acreditacion of article.authorInfo.acreditaciones">
+                        <p>{{ acreditacion.title }}</p>
+                    </div>
+                </div>
+
+                <button class="profile-btn" [routerLink]="['/perfil', article.author]">
+                    Ver perfil
+                </button>
+            </div>
         </div>
     </div>
 
+    <!-- Footer-->
     <div class="article-footer">
         <div class="article-actions">
-            <button class="like-btn" (click)="darLike(article._id)" [ngClass]="{'liked': article.userVote === 'upvote'}"
-                [disabled]="!puedeVotar()">
+            <button class="like-btn" (click)="darLike(article._id)"
+                [ngClass]="{'liked': article.userVote === 'upvote'}">
                 <span class="material-icons">thumb_up</span>
             </button>
             <span class="vote-counter">{{ article.upVotes }}</span>
 
             <button class="dislike-btn" (click)="darDislike(article._id)"
-                [ngClass]="{'disliked': article.userVote === 'downvote'}" [disabled]="!puedeVotar()">
+                [ngClass]="{'disliked': article.userVote === 'downvote'}">
                 <span class="material-icons">thumb_down</span>
             </button>
             <span class="vote-counter">{{ article.downVotes }}</span>
@@ -85,7 +99,3 @@
 <ng-template #loading>
     <p>Cargando artículo...</p>
 </ng-template>
-
-<div *ngIf="errorMessage" class="error">
-    {{ errorMessage }}
-</div>
