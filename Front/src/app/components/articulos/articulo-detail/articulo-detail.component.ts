@@ -84,6 +84,28 @@ export class ArticuloDetailComponent implements OnInit {
     }
   }
 
+  // Método para obtener la descripción según la reputación
+  getReputationDescription(reputation: number): string {
+    if (reputation < 50) {
+      return 'Explorador';
+    } else if (reputation < 75) {
+      return 'Contribuyente Activo';
+    } else {
+      return 'Autor Elite';
+    }
+  }
+
+  // Método para obtener el color según la reputación
+  getReputationColor(reputation: number): string {
+    if (reputation < 50) {
+      return '#FF4D4D'; // Rojo
+    } else if (reputation < 75) {
+      return '#FFC107'; // Amarillo
+    } else {
+      return '#4CAF50'; // Verde
+    }
+  }
+
   puedeVotar(): boolean {
     return this.currentUser!.reputacion >= 50;
   }

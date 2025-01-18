@@ -1,58 +1,14 @@
-.article-detail-container {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding: 20px;
-}
-
-.article-title {
-  font-size: 40px;
-}
-
-.article-header,
-.article-footer {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  top: 40px;
-  position: relative;
-  padding-bottom: 20px;
-  border-bottom: none;
-}
-
-.veracity-circle {
-  position: absolute;
-  top: 20px;
-  right: 10px;
-  left: 180px;
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: #fff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-
-.article-description {
-  text-align: justify;
-  line-height: 1.6;
-  margin: 50px 15px;
-  font-family: 'Georgia', 'Times New Roman', serif;
-  font-size: 1.3rem;
-  color: #333;
-}
-
+/*****************************************/
+/* CONTENT-WRAPPER */
+/*****************************************/
 .content-wrapper {
   display: flex;
   gap: 20px;
 }
 
-/* Área del visor PDF */
+/*****************************************/
+/* ESTILO VISOR PDF                      */
+/*****************************************/
 .pdf-viewer {
   flex: 3;
   background-color: #f8f8f8;
@@ -93,10 +49,12 @@
   color: #007bff;
 }
 
-/* Columna lateral derecha */
+/*****************************************/
+/* ESTILO ESPECÍFICO COLUMNA DE AUTOR    */
+/*****************************************/
 .author-details {
   flex: 1;
-  background-color: #fafafa;
+  background-color: #F2EED7;
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 15px;
@@ -107,18 +65,62 @@
   height: auto;
 }
 
-.author-image {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #ccc;
+.author-email,
+.author-birthdate {
+  font-size: 1rem;
+  color: #555;
 }
 
-.author-name {
-  font-size: 1.2rem;
+/*****************************************/
+/* ESTILO FOOTER Y HEADER ARTICLE DETAIL */
+/*****************************************/
+.article-detail-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+}
+
+.article-title {
+  font-size: 40px;
+}
+
+.veracity-circle {
+  position: absolute;
+  top: 20px;
+  right: 10px;
+  left: 180px;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
   font-weight: bold;
-  text-align: center;
+  color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+.article-description {
+  text-align: justify;
+  line-height: 1.6;
+  margin: 50px 15px;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 1.3rem;
+  color: #333;
+}
+
+.article-header,
+.article-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  top: 40px;
+  position: relative;
+  padding-bottom: 20px;
+  border-bottom: none;
 }
 
 .themes {
@@ -129,27 +131,6 @@
   margin: 10px 0;
 }
 
-.theme {
-  padding: 5px 10px;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  font-weight: bold;
-  color: white;
-  text-align: center;
-}
-
-.theme-level1 {
-  background-color: #4CAF50;
-}
-
-.theme-level2 {
-  background-color: #2196F3;
-}
-
-.theme-level3 {
-  background-color: #FF9800;
-}
-
 .article-actions {
   align-items: center;
   justify-content: center;
@@ -157,20 +138,10 @@
   font-size: xx-large;
 }
 
-.like-btn,
-.dislike-btn {
-  background: transparent;
-  border: none;
-  display: inline-flex;
-  justify-content: center;
-  color: grey;
-}
-
 .material-icons {
   font-size: xx-large;
 }
 
-/* Sección de Fuente */
 .article-source {
   margin-top: 20px;
   padding-top: 10px;
