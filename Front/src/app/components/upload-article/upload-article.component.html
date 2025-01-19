@@ -1,3 +1,7 @@
+<!-- Popup de notificación -->
+<app-pop-up *ngIf="popupMessage" [message]="popupMessage" [type]="popupType" (closed)="onPopUpClosed()">
+</app-pop-up>
+
 <div class="container">
   <h2 class="text-center mb-4">Subir un Nuevo Artículo</h2>
   <form (ngSubmit)="onSubmit()" [formGroup]="articleForm" enctype="multipart/form-data">

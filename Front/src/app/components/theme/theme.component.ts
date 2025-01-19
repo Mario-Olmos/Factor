@@ -10,14 +10,13 @@ import { ArticlesService } from '../../services/articles.service';
 })
 export class ThemeComponent implements OnInit {
   themeForm!: FormGroup;
-  successMessage: string | null = null;
-  errorMessage: string | null = null;
+  popupMessage: string = '';
+  popupType: 'success' | 'error' | '' = '';
 
   constructor(private fb: FormBuilder, private articlesService: ArticlesService) {
   }
 
   ngOnInit(): void {
-    // Inicializa el formulario
     this.themeForm = this.fb.group({
       name: ['', Validators.required], 
       parentTheme: ['']
@@ -29,14 +28,31 @@ export class ThemeComponent implements OnInit {
       const formValue = this.themeForm.value; 
       this.articlesService.uploadTheme(formValue).subscribe(
         response => {
-          this.successMessage = 'Tema/Subtema creado con éxito';
+          this.showSuccessMessage('Tema/Subtema creado con éxito');
           this.themeForm.reset();
         },
         error => {
-          this.errorMessage = 'Error al crear el tema/subtema';
-          console.error('Error:', error);
+          this.showErrorMessage('Error al crear el tema/subtema');
         }
       );
     }
+  }
+
+  /**
+   * Mensajes
+   */
+  private showSuccessMessage(message: string): void {
+    this.popupMessage = message;
+    this.popupType = 'success';
+  }
+
+  private showErrorMessage(message: string): void {
+    this.popupMessage = message;
+    this.popupType = 'error';
+  }
+
+  public onPopUpClosed(): void {
+    this.popupMessage = '';
+    this.popupType = '';
   }
 }

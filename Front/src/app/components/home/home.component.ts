@@ -15,8 +15,9 @@ export class HomeComponent implements OnInit {
   themes: Theme[] = [];
   articles: Article[] = [];
   currentUser: User | null = null;
-  successMessage: string = '';
-  errorMessage: string = '';
+  popupMessage: string = '';
+  popupType: 'success' | 'error' | '' = '';
+  
   currentPage!: number;
   articlesPerPage = 10;
   themeLimit = 6;
@@ -25,7 +26,11 @@ export class HomeComponent implements OnInit {
   ordenarPorFecha: 'asc' | 'desc' = 'desc'; 
   ordenarPorVeracidad: 'asc' | 'desc' = 'desc';
   
-  constructor(private articlesService: ArticlesService, private authService: AuthService, private router: Router) { }
+  constructor(
+    private articlesService: ArticlesService, 
+    private authService: AuthService, 
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
     this.currentPage = 1;
@@ -34,7 +39,7 @@ export class HomeComponent implements OnInit {
       this.currentUser = user;
     });
 
-    // Obtener los temas populares
+    // Obtener temas feed
     this.articlesService.getTrendyThemes(this.themeLimit, this.days).subscribe(
       (themes: Theme[]) => {
         this.themes = themes;
@@ -44,22 +49,21 @@ export class HomeComponent implements OnInit {
       }
     );
 
-    // Llamar al servicio para obtener artículos con los parámetros adecuados
+    // Obtener artículos feed
     this.articlesService.getArticles(
       this.currentPage,
       this.articlesPerPage,
       this.currentUser!.userId,
       this.tema,
       this.ordenarPorFecha,
-      this.ordenarPorVeracidad
+      this.ordenarPorVeracidad,
+      this.days
     ).subscribe(
       (articles: any[]) => {
-        this.articles = articles.map(article => {
-          return {
-            ...article,
-            userVote: article.userVote
-          };
-        });
+        this.articles = articles.map(article => ({
+          ...article,
+          userVote: article.userVote
+        }));
 
         this.currentPage++;
       },
@@ -69,30 +73,31 @@ export class HomeComponent implements OnInit {
     );
   }
 
-  // Redirigir a la página explorar con el tema como parámetro
-  navigateToExplore(tema: Theme): void { 
+  /**
+   * Redirige a la página de exploración con el tema seleccionado como parámetro.
+   * @param tema - Tema seleccionado para filtrar en la página de exploración.
+   */
+  public navigateToExplore(tema: Theme): void { 
     this.router.navigate(['/explorador'], {
-      queryParams: { theme: tema._id}
+      queryParams: { theme: tema._id }
     });
   }
 
-  // Muestra el mensaje de éxito temporalmente
+  /**
+   * Mensajes
+   */
   private showSuccessMessage(message: string): void {
-    this.successMessage = message;
-    this.clearMessagesAfterDelay();
+    this.popupMessage = message;
+    this.popupType = 'success';
   }
 
-  // Muestra el mensaje de error temporalmente
   private showErrorMessage(message: string): void {
-    this.errorMessage = message;
-    this.clearMessagesAfterDelay();
+    this.popupMessage = message;
+    this.popupType = 'error';
   }
 
-  // Limpia los mensajes de éxito y error después de un tiempo
-  private clearMessagesAfterDelay(): void {
-    setTimeout(() => {
-      this.successMessage = '';
-      this.errorMessage = '';
-    }, 2000); 
+  public onPopUpClosed(): void {
+    this.popupMessage = '';
+    this.popupType = '';
   }
 }

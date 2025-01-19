@@ -1,3 +1,7 @@
+<!-- Popup de notificación -->
+<app-pop-up *ngIf="popupMessage" [message]="popupMessage" [type]="popupType" (closed)="onPopUpClosed()">
+</app-pop-up>
+
 <!-- Contenedor principal -->
 <div class="profile-container">
 
@@ -118,7 +122,8 @@
         </button>
       </div>
     </form>
-  </div> <!-- Fin de pestaña "Información" -->
+  </div> 
+  <!-- Fin de pestaña "Información" -->
 
   <!-- Pestaña "Artículos" -->
   <div *ngIf="activeTab === 'articles'">

@@ -1,3 +1,7 @@
+<!-- Popup de notificación -->
+<app-pop-up *ngIf="popupMessage" [message]="popupMessage" [type]="popupType" (closed)="onPopUpClosed()">
+</app-pop-up>
+
 <div class="filter-container" [formGroup]="filterForm">
   <!-- Temática -->
   <div class="filter-item">

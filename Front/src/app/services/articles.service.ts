@@ -45,7 +45,8 @@ export class ArticlesService {
     userId: string,
     tema?: string,
     ordenarPorFecha?: 'asc' | 'desc',
-    ordenarPorVeracidad?: 'asc' | 'desc'
+    ordenarPorVeracidad?: 'asc' | 'desc',
+    days?: number
   ): Observable<any[]> {
     const params: any = {
       page: page.toString(),

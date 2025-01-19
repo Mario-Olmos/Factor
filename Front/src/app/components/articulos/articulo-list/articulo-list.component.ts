@@ -15,8 +15,8 @@ export class ArticuloListComponent implements OnChanges {
   @Input() currentUser!: User | null;
   @Input() isOwnProfile: boolean = false;
   
-  successMessage: string = '';
-  errorMessage: string = '';
+  popupMessage: string = '';
+  popupType: 'success' | 'error' | '' = '';
 
   constructor(
     private articlesService: ArticlesService,
@@ -39,7 +39,7 @@ export class ArticuloListComponent implements OnChanges {
    */
   public darLike(articleId: string): void {
     if (!this.currentUser) {
-      alert('Debes estar logueado para votar.');
+      this.showErrorMessage('Debes estar logueado para votar.');
       return;
     }
 
@@ -78,7 +78,7 @@ export class ArticuloListComponent implements OnChanges {
    */
   public darDislike(articleId: string): void {
     if (!this.currentUser) {
-      alert('Debes estar logueado para votar.');
+      this.showErrorMessage('Debes estar logueado para votar.');
       return;
     }
 
@@ -189,25 +189,21 @@ export class ArticuloListComponent implements OnChanges {
     return this.sharedService.puedeVotar(reputation);
   }
 
-  // Métodos para mostrar mensajes
-
+  /**
+   * Mensajes
+   */
   private showSuccessMessage(message: string): void {
-    this.successMessage = message;
-    this.clearMessagesAfterDelay();
+    this.popupMessage = message;
+    this.popupType = 'success';
   }
 
   private showErrorMessage(message: string): void {
-    this.errorMessage = message;
-    this.clearMessagesAfterDelay();
+    this.popupMessage = message;
+    this.popupType = 'error';
   }
 
-  /**
-   * Limpia los mensajes de éxito y error después de 2 segundos.
-   */
-  private clearMessagesAfterDelay(): void {
-    setTimeout(() => {
-      this.successMessage = '';
-      this.errorMessage = '';
-    }, 2000);
+  public onPopUpClosed(): void {
+    this.popupMessage = '';
+    this.popupType = '';
   }
 }
