@@ -6,6 +6,8 @@ import { Injectable } from '@angular/core';
 })
 export class SharedService {
 
+  BACKEND_URL = 'http://localhost:3000/';
+
   constructor() { }
 
   /**
@@ -78,5 +80,15 @@ export class SharedService {
    */
   public puedeVotar(reputacion: number): boolean {
     return reputacion >= 15;
+  }
+
+  /**
+   * Obtiene la imagen del perfil del usuario o le establece el avatar por defecto.
+   * @param rel Ruta relativa de la imagen.
+   * @returns URL completa de la imagen de perfil o del avatar.
+   */
+  public getFullImageUrl(rel: string | undefined): string {
+    if (!rel) return 'assets/images/default-avatar.png';
+    return this.BACKEND_URL + rel;
   }
 }

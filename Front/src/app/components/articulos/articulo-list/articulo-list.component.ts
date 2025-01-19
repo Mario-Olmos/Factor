@@ -189,6 +189,11 @@ export class ArticuloListComponent implements OnChanges {
     return this.sharedService.puedeVotar(reputation);
   }
 
+  public getFullImageUrl(rel: string | undefined):string{
+    return this.sharedService.getFullImageUrl(rel);
+  }
+
+  
   /**
    * Mensajes
    */

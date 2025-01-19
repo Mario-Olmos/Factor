@@ -1,10 +1,5 @@
 <div class="popup-notification" *ngIf="isVisible">
-  <div [ngClass]="{'popup-success': type === 'success', 'popup-error': type === 'error', 'popup-large': isLarge}">
-    <p>{{ message }}</p>
-    <!-- Mostrar botones solo si es una confirmación grande -->
-    <div *ngIf="isLarge" class="popup-buttons">
-      <button (click)="onConfirm()" class="confirm-button">Sí</button>
-      <button (click)="onCancel()" class="cancel-button">No</button>
-    </div>
+  <div [ngClass]="{'popup-success': type === 'success', 'popup-error': type === 'error'}">
+    {{ message }}
   </div>
 </div>

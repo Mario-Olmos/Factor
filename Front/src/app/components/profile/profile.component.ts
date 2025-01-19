@@ -5,6 +5,7 @@ import { Article } from '../../models/article.model';
 import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { ArticlesService } from '../../services/articles.service';
+import { SharedService } from '../../services/shared.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -21,10 +22,9 @@ export class ProfileComponent implements OnInit {
   activeTab: string = 'info';
   isEditing: boolean = false;
   profileForm!: FormGroup;
-  BACKEND_URL = 'http://localhost:3000/';
   popupMessage: string = '';
   popupType: 'success' | 'error' | '' = '';
-  selectedFile: File | null = null; 
+  selectedFile: File | null = null;
   showDeleteConfirmation: boolean = false;
   deleteConfirmationMessage: string = 'Se va a eliminar su cuenta, por favor seleccione si quiere mantener sus artículos en la plataforma.';
 
@@ -33,6 +33,7 @@ export class ProfileComponent implements OnInit {
     private authService: AuthService,
     private fb: FormBuilder,
     private articlesService: ArticlesService,
+    private sharedService: SharedService,
     private router: Router
   ) { }
 
@@ -93,16 +94,6 @@ export class ProfileComponent implements OnInit {
         this.showErrorMessage('Error al cargar los artículos del usuario:');
       }
     });
-  }
-
-  /**
-   * Obtiene la imagen del perfil del usuario o le establece el avatar por defecto.
-   * @param rel Ruta relativa de la imagen.
-   * @returns URL completa de la imagen de perfil o del avatar.
-   */
-  public getFullImageUrl(rel: string | undefined): string {
-    if (!rel) return 'assets/images/default-avatar.png';
-    return this.BACKEND_URL + rel;
   }
 
   /**
@@ -235,7 +226,7 @@ export class ProfileComponent implements OnInit {
         }
       });
 
-    // CASO B: El usuario SÍ seleccionó imagen => Envío FormData (multipart/form-data)
+      // CASO B: El usuario SÍ seleccionó imagen => Envío FormData (multipart/form-data)
     } else {
       const formData = new FormData();
       formData.append('nombre', this.profileForm.value.nombre);
@@ -268,6 +259,15 @@ export class ProfileComponent implements OnInit {
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   }
+
+
+  /**
+   * Métodos auxiliares
+   */
+  public getFullImageUrl(rel: string | undefined):string{
+    return this.sharedService.getFullImageUrl(rel);
+  }
+
 
   /**
    * Logout
@@ -314,7 +314,7 @@ export class ProfileComponent implements OnInit {
     if (confirm) {
       this.deleteAccount(false);
     } else {
-      this.deleteAccount(true); 
+      this.deleteAccount(true);
     }
   }
 
@@ -329,14 +329,13 @@ export class ProfileComponent implements OnInit {
       return;
     }
 
-    this.authService.deleteAccount(this.currentUser.userId, deleteArticles).subscribe({
+    this.authService.deleteAccount(deleteArticles).subscribe({
       next: (resp) => {
         this.showSuccessMessage('Cuenta eliminada con éxito.');
-        // Redirigir al usuario después de la eliminación
         setTimeout(() => {
           this.authService.logout();
           this.router.navigate(['/login']);
-        }, 2000);
+        }, 3000);
       },
       error: (err) => {
         console.error('Error al eliminar la cuenta:', err);
