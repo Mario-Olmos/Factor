@@ -1,5 +1,20 @@
 const mongoose = require('mongoose');
 
+const authorInfoSchema = new mongoose.Schema({
+    nombre: { type: String, required: true },
+    apellidos: { type: String, required: true },
+    email: { type: String, required: true },
+    reputacion: { type: Number, required: true },
+    fechaNacimiento: { type: Date, required: true },
+    acreditaciones: [
+        {
+            title: { type: String, required: true },
+            institution: { type: String, required: true },
+            year: { type: Number, required: true },
+        }
+    ]
+}, { _id: false }); 
+
 const articleSchema = new mongoose.Schema({
     title: {
         type: String,
@@ -19,7 +34,7 @@ const articleSchema = new mongoose.Schema({
         ref: 'User',
         required: true,
     },
-    authorReputationAtCreation: { 
+    authorReputationAtCreation: {
         type: Number,
         required: true,
     },
@@ -29,11 +44,11 @@ const articleSchema = new mongoose.Schema({
     },
     veracity: {
         type: Number,
-        default: 0, 
-    },  
+        default: 0,
+    },
     source: {
         type: String,
-        required: true, 
+        required: true,
         trim: true,
     },
     createdAt: {
@@ -61,11 +76,12 @@ const articleSchema = new mongoose.Schema({
                 default: Date.now,
             }
         }
-    ]
+    ],
+    authorInfo: { type: authorInfoSchema, default: null } 
 });
 
 // Middleware para actualizar la fecha de "updatedAt" cada vez que se guarda un artículo
-articleSchema.pre('save', function(next) {
+articleSchema.pre('save', function (next) {
     this.updatedAt = Date.now();
     next();
 });

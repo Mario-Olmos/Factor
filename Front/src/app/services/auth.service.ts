@@ -2,21 +2,21 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { User } from '../models/user.model';
+import { UserProfile } from '../models/user.model';
 
 interface TokenValidationResponse {
   authenticated: boolean;
-  user?: User;
+  user?: UserProfile;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private currentUser = new BehaviorSubject<User | null>(null);
-  private apiUrl = 'http://localhost:3000/api'; 
+  private currentUser = new BehaviorSubject<{ username: string } | null>(null);
+  private apiUrl = 'http://localhost:3000/api';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // Método de login
   login(credentials: any): Observable<any> {
@@ -37,15 +37,15 @@ export class AuthService {
         } else {
           this.currentUser.next(null); // Token inválido o usuario no autenticado
         }
-        return response; 
+        return response;
       })
     );
   }
 
   // Método para obtener el usuario actual como observable
-  getCurrentUser(): Observable<User | null> {
+  getCurrentUser() {
     return this.currentUser.asObservable();
-  }
+}
 
   // Método de logout
   logout(): Observable<any> {
@@ -63,6 +63,13 @@ export class AuthService {
 
   updateProfile(data: any, userId: string): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/profile/update/${userId}`, data);
+  }
+
+  deleteAccount(deleteArticles: boolean) {
+    const params: any = {
+      deleteArticles
+    }
+    return this.http.delete(`${this.apiUrl}/profile/delete`, { params });
   }
 
 }

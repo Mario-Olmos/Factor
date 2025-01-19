@@ -45,7 +45,8 @@ export class ArticlesService {
     userId: string,
     tema?: string,
     ordenarPorFecha?: 'asc' | 'desc',
-    ordenarPorVeracidad?: 'asc' | 'desc'
+    ordenarPorVeracidad?: 'asc' | 'desc',
+    days?: number
   ): Observable<any[]> {
     const params: any = {
       page: page.toString(),
@@ -99,7 +100,17 @@ export class ArticlesService {
       articleId,
       userId
     }
-    return this.http.delete<any>(`${this.apiUrl}/articles/deleteArticle`, {params});
+    return this.http.delete<any>(`${this.apiUrl}/articles/deleteArticle`, { params });
+  }
+
+  public deleteArticlesByUser(authorId: string): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/articles`, {
+      params: { authorId }
+    });
+  }
+
+  public anonymizeArticles(authorId: string): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/articles/anonymize`, { authorId });
   }
 
 }

@@ -19,8 +19,6 @@ export class ArticuloDetailComponent implements OnInit {
   errorMessage: string = '';
   article: Article | null = null;
   pdfSrc!: any;
-  successMessage: string = '';
-
   popupMessage: string = '';
   popupType: 'success' | 'error' | '' = '';
 
@@ -53,7 +51,11 @@ export class ArticuloDetailComponent implements OnInit {
     }
   }
 
-  //Cargamos información del artículo
+  /**
+   * Cargamos información del artículo.
+   * @param articleId ID del artículo a votar.
+   * @param userId Id del autor del artículo.
+   */
   private loadArticle(articleId: string, userId: string): void {
     this.articlesService.getArticleById(articleId, userId).subscribe(
       (article: any) => {
@@ -72,7 +74,7 @@ export class ArticuloDetailComponent implements OnInit {
       },
       (error: any) => {
         console.error('Error al cargar el artículo:', error);
-        this.errorMessage = 'No se pudo cargar el artículo.';
+        this.showErrorMessage('No se pudo cargar el artículo.');
       }
     );
   }
@@ -83,7 +85,7 @@ export class ArticuloDetailComponent implements OnInit {
    */
   public darLike(articleId: string): void {
     if (!this.currentUser) {
-      alert('Debes estar logueado para votar.');
+      this.showErrorMessage('Debes estar logueado para votar.');
       return;
     }
 
@@ -122,7 +124,7 @@ export class ArticuloDetailComponent implements OnInit {
    */
   public darDislike(articleId: string): void {
     if (!this.currentUser) {
-      alert('Debes estar logueado para votar.');
+      this.showErrorMessage('Debes estar logueado para votar.');
       return;
     }
 
@@ -174,7 +176,10 @@ export class ArticuloDetailComponent implements OnInit {
     this.article = { ...this.article } as Article;
   }
 
-  toggleFullScreen() {
+  /**
+   * Configuramos la pantalla completa para diferentes navegadores
+   */
+  public toggleFullScreen() {
     const iframeElement = this.pdfIframe.nativeElement;
 
     if (iframeElement.requestFullscreen) {
@@ -188,7 +193,11 @@ export class ArticuloDetailComponent implements OnInit {
     }
   }
 
-  getSourceDisplayName(sourceUrl: string): string {
+  /**
+   * Configuramos la url de la fuente del artículo
+   * @param sourceUrl String url de la fuente del artículo
+   */
+  public getSourceDisplayName(sourceUrl: string): string {
     try {
       const url = new URL(sourceUrl);
       return url.hostname.replace('www.', '');

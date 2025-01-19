@@ -26,6 +26,11 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    username: {
+        type: String,
+        required: true,
+        unique: true,
+    },
     email: {
         type: String,
         required: true,
@@ -39,11 +44,6 @@ const UserSchema = new mongoose.Schema({
         type: Date,
         required: true,
     },
-    rol: {
-        type: String,
-        enum: ['Usuario'],
-        default: 'Usuario'
-    },
     reputacion: { type: Number, default: 30 },
     fechaUltimaPublicacion: { type: Date, default: null },
     fechaUltimoVoto: { type: Date, default: null },
@@ -51,5 +51,10 @@ const UserSchema = new mongoose.Schema({
     imagenPerfil: { type: String, default: null }, 
 }, { timestamps: true });
 
+UserSchema.methods.toJSON = function() {
+    const userObject = this.toObject();
+    delete userObject.password;
+    return userObject;
+};
 
 module.exports = mongoose.model('User', UserSchema);

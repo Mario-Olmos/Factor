@@ -1,3 +1,7 @@
+<!-- Popup de notificación -->
+<app-pop-up *ngIf="popupMessage" [message]="popupMessage" [type]="popupType" (closed)="onPopUpClosed()">
+</app-pop-up>
+
 <!-- theme.component.html -->
 <div class="container">
     <h2>Insertar Temática o Subtemática</h2>
@@ -14,8 +18,5 @@
   
       <button type="submit" [disabled]="themeForm.invalid">Crear Tema</button>
     </form>
-  
-    <p *ngIf="successMessage" style="color:green;">{{ successMessage }}</p>
-    <p *ngIf="errorMessage" style="color:red;">{{ errorMessage }}</p>
   </div>
   

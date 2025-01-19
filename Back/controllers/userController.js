@@ -1,12 +1,35 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-
+const { v4: uuidv4 } = require('uuid');
 
 // Endpoint para validar el token
 exports.validateToken = async (req, res) => {
-    if (req.user) {
-        res.json({ authenticated: true, user: req.user });
+    if (req.user && req.user.userId) {
+        try {
+            const user = await User.findById(req.user.userId).select('username reputacion nombre apellidos email fechaNacimiento acreditaciones imagenPerfil');
+
+            if (!user) {
+                return res.json({ authenticated: false, message: 'Usuario no encontrado' });
+            }
+
+            res.json({
+                authenticated: true, user:
+                {
+                    username: user.username,
+                    reputacion: user.reputacion,
+                    nombre: user.nombre,
+                    apellidos: user.apellidos,
+                    email: user.email,
+                    fechaNacimiento: user.fechaNacimiento,
+                    acreditaciones: user.acreditaciones,
+                    imagenPerfil: user.imagenPerfil
+                }
+            });
+        } catch (error) {
+            console.error('Error al validar el token:', error);
+            res.status(500).json({ authenticated: false, message: 'Error interno del servidor' });
+        }
     } else {
         res.json({ authenticated: false, message: 'Usuario no autenticado' });
     }
@@ -25,6 +48,20 @@ exports.logout = (req, res) => {
 };
 
 
+const generateUniqueUsername = async (nombre, apellidos) => {
+    const baseUsername = `${nombre}${apellidos}`.toLowerCase().replace(/\s+/g, '');
+    const uniqueCode = uuidv4().split('-')[0];
+    const username = `${baseUsername}${uniqueCode}`;
+
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+        return generateUniqueUsername(nombre, apellidos);
+    }
+
+    return username;
+};
+
+
 // Controlador para registrar un nuevo usuario
 exports.register = async (req, res) => {
     const { nombre, apellidos, email, password, fechaNacimiento } = req.body;
@@ -37,13 +74,14 @@ exports.register = async (req, res) => {
             return res.status(400).json({ message: 'El usuario ya existe' });
         }
 
-        // Hashear la contraseña
+        const username = await generateUniqueUsername(nombre, apellidos);
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Crear un nuevo usuario
         const newUser = new User({
             nombre,
             apellidos,
+            username,
             email,
             password: hashedPassword,
             fechaNacimiento,
@@ -54,12 +92,12 @@ exports.register = async (req, res) => {
 
         // Generar un token JWT
         const token = jwt.sign(
-            { userId: newUser._id, email: newUser.email, reputacion: newUser.reputacion },
+            { userId: newUser._id, email: newUser.email, username: newUser.username },
             process.env.JWT_SECRET,
             { expiresIn: '1h' }
         );
 
-        res.status(201).json({ token, user: newUser });
+        res.status(201).json({ token, user: newUser.toJSON() });
     } catch (err) {
         res.status(500).json({ message: 'Error al registrar usuario', error: err.message });
     }
@@ -72,7 +110,6 @@ exports.login = async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        // Comprobar si el usuario existe
         const user = await User.findOne({ email });
 
         if (!user) {
@@ -86,7 +123,7 @@ exports.login = async (req, res) => {
         }
         // Generar un token JWT
         const token = jwt.sign(
-            { userId: user._id, email: user.email, reputacion: user.reputacion },
+            { userId: user._id, email: user.email, username: user.username },
             process.env.JWT_SECRET,
             { expiresIn: '1h' }
         );
@@ -100,11 +137,16 @@ exports.login = async (req, res) => {
             path: '/'
         });
 
-        const userResponse = user.toObject();
-        delete userResponse.password;
-        delete userResponse.acreditaciones;
-        delete userResponse.rol;
-        delete userResponse.fechaNacimiento;
+        const userResponse = {
+            username: user.username,
+            nombre: user.nombre,
+            apellidos: user.apellidos,
+            reputacion: user.reputacion,
+            imagenPerfil: user.imagenPerfil,
+            email: user.email,
+            fechaNacimiento: user.fechaNacimiento,
+            acreditaciones: user.acreditaciones
+        };
 
         res.status(200).json({ user: userResponse });
 
@@ -114,86 +156,62 @@ exports.login = async (req, res) => {
 };
 
 
-//Voto a un artículo del usuario que afecta en su valoración
-exports.voteVeracidad = async (voterId, targetUserId, voteValue) => {
+//Devolver info del usuario a partir de su username (interfaz UserArticle para los artículos)
+exports.getUserInfoById = async (username) => {
     try {
-        const voter = await User.findById(voterId);
-        const targetUser = await User.findById(targetUserId);
-
-        if (!voter || !targetUser) {
-            throw new Error('Voter or target user not found');
-        }
-
-        // Calcular el peso del voto basado en la veracidad del votante
-        const voteWeight = voteValue * (voter.veracidad.puntuacion / (voter.veracidad.votos || 1));
-
-        // Actualizar la puntuación y el contador de votos del usuario objetivo
-        targetUser.veracidad.puntuacion += voteWeight;
-        targetUser.veracidad.votos += 1;
-
-        await targetUser.save();
-        return targetUser;
-    } catch (err) {
-        throw err;
-    }
-};
-
-
-//Devolver info del usuario a partir de su id
-exports.getUserInfoById = async (userId) => {
-    try {
-        const user = await User.findById(userId, 'nombre apellidos imagenPerfil reputacion email acreditaciones fechaNacimiento');
+        const user = await User.findOne({ username }, 'username nombre apellidos imagenPerfil reputacion acreditaciones');
         if (!user) {
             throw new Error('Usuario no encontrado');
         }
         return {
-            nombre: user.nombre,
-            apellidos: user.apellidos,
-            imagenPerfil: user.imagenPerfil || null,
-            reputacion: user.reputacion,
-            email: user.email,
-            acreditaciones: user.acreditaciones,
-            fechaNacimiento: user.fechaNacimiento
+            user
         };
     } catch (error) {
-        console.error(`Error al obtener información del usuario con ID ${userId}:`, error);
+        console.error(`Error al obtener información del usuario con username: ${username}`, error);
         throw error;
     }
 };
 
-//Devolver info del usuario a partir de su id
+//Devolver info del usuario a partir de su username en la url (interfaz UserArticle para el perfil)
 exports.getUserById = async (req, res) => {
     try {
-        const { id } = req.params;
-        const user = await User.findById(id);
+        const { username } = req.params;
+        const user = await User.findOne({ username }, 'username nombre apellidos imagenPerfil reputacion acreditaciones');
         if (!user) {
             return res.status(404).json({ message: 'Usuario no encontrado' });
         }
-        res.status(200).json({ user });
+
+        res.status(200).json({
+            user
+        });
     } catch (error) {
         res.status(500).json({ message: 'Error interno del servidor', error: error.message });
     }
 };
 
+//Actualizar perfil del usuario
 exports.updateUserProfile = async (req, res) => {
     try {
-        const { userId } = req.params;
-        const { nombre, apellidos, email, fechaNacimiento, acreditaciones } = req.body;
+        const user = await User.findById(req.user.userId);
+        const { nombre, apellidos, fechaNacimiento, acreditaciones } = req.body;
 
-        const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ message: 'Usuario no encontrado' });
         }
 
         if (nombre) user.nombre = nombre;
         if (apellidos) user.apellidos = apellidos;
-        if (email) user.email = email;
-        if (fechaNacimiento) user.fechaNacimiento = fechaNacimiento;
+        if (fechaNacimiento) {
+            const fecha = new Date(fechaNacimiento);
+            if (isNaN(fecha.getTime())) {
+                return res.status(400).json({ message: 'Fecha de nacimiento inválida' });
+            }
+            user.fechaNacimiento = fecha;
+        }
 
         // Si se sube un archivo (req.file) a través de Multer
         if (req.file) {
             // Guardamos la ruta en el campo imagenPerfil
-            // Ejemplo: /uploads/profiles/nombre-del-archivo.jpg
             user.imagenPerfil = `api/uploads/profiles/${req.file.filename}`;
         }
 
@@ -202,10 +220,21 @@ exports.updateUserProfile = async (req, res) => {
             user.acreditaciones = acreditaciones;
         }
 
-        const updatedUser = await user.save();
+        await user.save();
+
         return res.status(200).json({
             message: 'Perfil actualizado correctamente',
-            user: updatedUser
+            user:
+            {
+                username: user.username,
+                reputacion: user.reputacion,
+                nombre: user.nombre,
+                email: user.email,
+                fechaNacimiento: user.fechaNacimiento,
+                apellidos: user.apellidos,
+                acreditaciones: user.acreditaciones,
+                imagenPerfil: user.imagenPerfil
+            }
         });
 
     } catch (error) {
@@ -214,6 +243,46 @@ exports.updateUserProfile = async (req, res) => {
             message: 'Error interno del servidor',
             error: error.message
         });
+    }
+};
+
+//Eliminar cuenta del usuario y sus artículos si así lo desea
+exports.deleteUser = async (req, res) => {
+    try {
+        const { deleteArticles } = req.query;
+
+        // Seleccionar solo los campos necesarios
+        const user = await User.findById(req.user.userId).select('nombre apellidos email reputacion fechaNacimiento acreditaciones').lean();
+        if (!user) {
+            return res.status(404).json({ message: 'Usuario no encontrado.' });
+        }
+
+        if (deleteArticles === 'true') {
+            await Article.deleteMany({ author: user._id });
+        } else {
+            await Article.updateMany(
+                { author: user._id },
+                {
+                    $set: {
+                        author: null,
+                        authorInfo: {
+                            nombre: user.nombre,
+                            apellidos: user.apellidos,
+                            reputacion: user.reputacion,
+                            acreditaciones: user.acreditaciones || [],
+                            imagenPerfil: user.imagenPerfil
+                        }
+                    }
+                }
+            );
+        }
+
+        await User.findByIdAndDelete(user._id);
+
+        return res.status(200).json({ message: 'Cuenta eliminada con éxito.' });
+    } catch (error) {
+        console.error('Error al eliminar la cuenta:', error);
+        return res.status(500).json({ message: 'Error al eliminar la cuenta.', error: error.message });
     }
 };
 

@@ -14,12 +14,12 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./filter-page.component.css']
 })
 export class FilterPageComponent implements OnInit {
-  themes: Theme[] = [];
-  articles: Article[] = [];
-  filterForm: FormGroup;
-  currentUser: User | null = null;
-  successMessage: string = '';
-  errorMessage: string = '';
+  public themes: Theme[] = [];
+  public articles: Article[] = [];
+  public filterForm: FormGroup;
+  public currentUser: User | null = null;
+  public popupMessage: string = '';
+  public popupType: 'success' | 'error' | '' = '';
 
   constructor(
     private fb: FormBuilder,
@@ -53,48 +53,81 @@ export class FilterPageComponent implements OnInit {
         theme: theme
       });
 
-      this.fetchFilteredArticles(); // Cargar los artículos iniciales
+      this.fetchFilteredArticles();
     });
   }
 
-  // Llamar al servicio de artículos con los filtros actuales
-  fetchFilteredArticles(): void {
-    const filters = this.filterForm.value;
+  /**
+   * Llama al servicio de artículos para obtener una lista de artículos filtrados según los criterios actuales.
+   * @returns void
+   */
+  private fetchFilteredArticles(): void {
+    const { theme, orderField, orderDirection } = this.filterForm.value;
 
-    const theme = filters.theme || undefined;
-    const orderField = filters.orderField || 'asc';
-    const orderDirection = filters.orderDirection || 'desc';
+    const validOrders: ('asc' | 'desc')[] = ['asc', 'desc'];
+    const validatedOrderField: 'asc' | 'desc' = validOrders.includes(orderField) ? orderField as 'asc' | 'desc' : 'asc';
+    const validatedOrderDirection: 'asc' | 'desc' = validOrders.includes(orderDirection) ? orderDirection as 'asc' | 'desc' : 'desc';
 
     this.articlesService.getArticles(
       1, // Página inicial
       10, // Límite de artículos por página
       this.currentUser!.userId,
-      theme,
-      orderField,
-      orderDirection
-    ).subscribe((articles: any[]) => {
-      this.articles = articles.map(article => ({
-        ...article,
-        userVote: article.userVote,
-      }));
-      this.cdr.detectChanges();
-    },
-      (error) => {
+      theme || undefined,
+      validatedOrderField,
+      validatedOrderDirection
+    ).subscribe(
+      (articles: Article[]) => {
+        this.articles = articles.map(article => ({
+          ...article,
+          userVote: article.userVote,
+        }));
+        this.cdr.detectChanges();
+      },
+      (error: any) => {
         console.error('Error al cargar los artículos', error);
+        this.showErrorMessage('Error al cargar los artículos.');
       }
     );
   }
 
-  onFilterChange(): void {
+  /**
+   * Método llamado cuando cambia algún filtro en el formulario.
+   * Obtiene nuevamente los artículos filtrados con los nuevos criterios.
+   * @returns void
+   */
+  public onFilterChange(): void {
     this.fetchFilteredArticles();
   }
 
-  // Cambiar el orden de los artículos
-  setOrder(field: string, direction: 'asc' | 'desc'): void {
+  /**
+   * Cambia el orden de los artículos según el campo y la dirección especificados.
+   * @param field Campo por el cual ordenar los artículos.
+   * @param direction Dirección de ordenación ('asc' o 'desc').
+   * @returns void
+   */
+  public setOrder(field: string, direction: 'asc' | 'desc'): void {
     this.filterForm.patchValue({
       orderField: field,
       orderDirection: direction
     });
     this.fetchFilteredArticles();
+  }
+
+  /**
+   * Mensajes
+   */
+  private showSuccessMessage(message: string): void {
+    this.popupMessage = message;
+    this.popupType = 'success';
+  }
+
+  private showErrorMessage(message: string): void {
+    this.popupMessage = message;
+    this.popupType = 'error';
+  }
+
+  public onPopUpClosed(): void {
+    this.popupMessage = '';
+    this.popupType = '';
   }
 }

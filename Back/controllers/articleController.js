@@ -102,11 +102,14 @@ exports.uploadArticle = async (req, res) => {
 //Método para obetener los artículos del feed, con el voto del usuario logeado y jerarquía de temas
 exports.obtenerArticulosFeed = async (req, res) => {
     try {
-        const { page = 1, limit = 10, userId, tema, ordenarPorFecha, ordenarPorVeracidad } = req.query;
-        const diasRecientes = 200;
+        const { page = 1, limit = 10, userId, tema, ordenarPorFecha, ordenarPorVeracidad, days } = req.query;
         const fechaLimite = new Date();
-        fechaLimite.setDate(fechaLimite.getDate() - diasRecientes);
-
+        if(days){
+            fechaLimite.setDate(fechaLimite.getDate() - days);
+        }else{
+            fechaLimite.setDate(fechaLimite.getDate() - 100);
+        }
+        
         let query = {
             veracity: { $gt: -1 },
             createdAt: { $gte: fechaLimite }

@@ -1,8 +1,24 @@
+<!-- Popup de notificación -->
+<app-pop-up *ngIf="popupMessage" [message]="popupMessage" [type]="popupType" (closed)="onPopUpClosed()">
+</app-pop-up>
+
 <!-- Contenedor principal -->
 <div class="profile-container">
 
   <!-- Bloque que siempre se ve: foto + datos básicos -->
   <div class="profile-main-card">
+    <div class="profile-settings">
+      <button class="settings-button">
+        <span class="material-icons">settings</span>
+      </button>
+      <div class="settings-dropdown">
+        <ul>
+          <li (click)="logout()">Logout</li>
+          <li (click)="confirmDeleteAccount()">Eliminar Cuenta</li>
+        </ul>
+      </div>
+    </div>
+    
     <div class="profile-image-container">
       <img [src]="getFullImageUrl(user.imagenPerfil)" class="profile-image" />
     </div>
@@ -118,7 +134,8 @@
         </button>
       </div>
     </form>
-  </div> <!-- Fin de pestaña "Información" -->
+  </div> 
+  <!-- Fin de pestaña "Información" -->
 
   <!-- Pestaña "Artículos" -->
   <div *ngIf="activeTab === 'articles'">
