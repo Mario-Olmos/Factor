@@ -39,19 +39,26 @@
         </div>
 
         <div class="author-info">
-            <img [src]="article?.authorInfo?.imagenPerfil || 'assets/images/default-avatar.png'" alt="Foto del autor"
+            <img [src]="getFullImageUrl(article?.authorInfo?.imagenPerfil)" alt="Foto del autor"
                 class="author-image">
             <p>
-                <strong>{{ article.authorInfo.nombre }} {{ article.authorInfo.apellidos }}</strong>
+                <strong>{{ article.authorInfo?.nombre || 'Cuenta eliminada' }} {{ article.authorInfo?.apellidos || '' }}</strong>
                 <span class="reputation-badge"
-                    [ngStyle]="{'background-color': getReputationColor(article.authorInfo.reputacion)}">
-                    {{ getReputationDescription(article.authorInfo.reputacion) }}
+                    [ngStyle]="{'background-color': getReputationColor(article.authorInfo?.reputacion)}">
+                    {{ getReputationDescription(article.authorInfo?.reputacion) }}
                 </span>
             </p>
             <p><strong>Fecha de publicación:</strong> {{ article.createdAt | date }}</p>
-            <button class="profile-btn" [routerLink]="['/perfil', article.author]">
-                Ver perfil
-            </button>
-        </div>
+            
+            <!-- Condicional para mostrar el botón "Ver perfil" o el mensaje de cuenta eliminada -->
+            <ng-container *ngIf="article.authorInfo; else deletedAuthor">
+                <button class="profile-btn" [routerLink]="['/perfil', article.author]">
+                    Ver perfil
+                </button>
+            </ng-container>
+            
+            <ng-template #deletedAuthor>
+                <p class="deleted-author-message">La cuenta del autor ha sido eliminada.</p>
+            </ng-template>
     </div>
 </div>

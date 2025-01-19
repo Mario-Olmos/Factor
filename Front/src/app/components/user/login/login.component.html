@@ -1,10 +1,6 @@
 <!-- Popup de notificación -->
-<div class="popup-notification" *ngIf="successMessage || errorMessage">
-  <div [ngClass]="{'popup-success': successMessage, 'popup-error': errorMessage}">
-    {{ successMessage || errorMessage }}
-  </div>
-</div>
-
+<app-pop-up *ngIf="popupMessage" [message]="popupMessage" [type]="popupType" (closed)="onPopUpClosed()">
+</app-pop-up>
 
 <div class="container">
   <h2>Inicio de Sesión</h2>

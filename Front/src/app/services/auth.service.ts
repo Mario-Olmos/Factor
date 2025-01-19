@@ -65,4 +65,10 @@ export class AuthService {
     return this.http.put<any>(`${this.apiUrl}/profile/update/${userId}`, data);
   }
 
+  public deleteAccount(userId: string, deleteArticles: boolean): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/users/${userId}`, {
+      params: { deleteArticles: deleteArticles.toString() }
+    });
+  }
+
 }

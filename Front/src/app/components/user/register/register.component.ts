@@ -10,8 +10,8 @@ import { Router } from '@angular/router';
 })
 export class RegisterComponent implements OnInit {
   registerForm!: FormGroup;
-  successMessage: string = '';
-  errorMessage: string = '';
+  popupMessage: string = '';
+  popupType: 'success' | 'error' | '' = '';
 
   constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) { }
 
@@ -19,6 +19,9 @@ export class RegisterComponent implements OnInit {
     this.initializeForm();
   }
 
+  /**
+   * Método para inicializar el formulario.
+   */
   private initializeForm(): void {
     this.registerForm = this.fb.group({
       nombre: ['', [Validators.required, Validators.minLength(2)]],
@@ -31,7 +34,10 @@ export class RegisterComponent implements OnInit {
     console.log(this.registerForm);
   }
 
-  onRegister(): void {
+  /**
+   * Método para registrarse.
+   */
+  public onRegister(): void {
     if (this.registerForm.invalid) {
       this.showErrorMessage('Por favor, complete correctamente todos los campos');
       return;
@@ -40,8 +46,6 @@ export class RegisterComponent implements OnInit {
     this.authService.register(this.registerForm.value).subscribe(
       () => {
         this.showSuccessMessage('Registro exitoso');
-
-        // Mostrar el mensaje por 3 segundos y luego redirigir al login
         setTimeout(() => {
           this.router.navigate(['/login']);
         }, 2000);
@@ -52,39 +56,44 @@ export class RegisterComponent implements OnInit {
     );
   }
 
-  hasError(controlName: string, errorName: string): boolean {
+  /**
+   * Método para registrarse.
+   * @param controlName Nombre el elemento del formulario.
+   * @param errorName Tipo de error en el formulario.
+   */
+  public hasError(controlName: string, errorName: string): boolean {
     return this.registerForm.get(controlName)!.hasError(errorName) && this.registerForm.get(controlName)!.touched;
   }
 
-  // Validación fecha de nacimiento (mayor de 18 años)
-  ageValidator(control: any): { [key: string]: boolean } | null {
+  /**
+   * Método para registrarse.
+   * @param control Fecha de nacimiento introducida.
+   */
+  private ageValidator(control: any): { [key: string]: boolean } | null {
     const inputDate = new Date(control.value);
     const currentDate = new Date();
     const age = currentDate.getFullYear() - inputDate.getFullYear();
     if (age < 18 || (age === 18 && currentDate < new Date(inputDate.setFullYear(inputDate.getFullYear() + 18)))) {
-      return { 'underage': true }; // Si es menor de 18
+      return { 'underage': true }; 
     }
     return null;
   }
 
-  // Muestra el mensaje de éxito temporalmente
+  /**
+   * Mensajes
+   */
   private showSuccessMessage(message: string): void {
-    this.successMessage = message;
-    this.clearMessagesAfterDelay();
+    this.popupMessage = message;
+    this.popupType = 'success';
   }
 
-  // Muestra el mensaje de error temporalmente
   private showErrorMessage(message: string): void {
-    this.errorMessage = message;
-    this.clearMessagesAfterDelay();
+    this.popupMessage = message;
+    this.popupType = 'error';
   }
 
-  // Limpia los mensajes de éxito y error después de un tiempo
-  private clearMessagesAfterDelay(): void {
-    setTimeout(() => {
-      this.successMessage = '';
-      this.errorMessage = '';
-    }, 2000); 
+  public onPopUpClosed(): void {
+    this.popupMessage = '';
+    this.popupType = '';
   }
-
 }

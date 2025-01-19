@@ -10,8 +10,8 @@ import { AuthService } from '../../../services/auth.service';
 })
 export class LoginComponent {
   loginForm: FormGroup;
-  successMessage: string = '';
-  errorMessage: string = '';
+  popupMessage: string = '';
+  popupType: 'success' | 'error' | '' = '';
 
   constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
     this.loginForm = this.fb.group({
@@ -20,7 +20,10 @@ export class LoginComponent {
     });
   }
 
-  onLogin(): void {
+  /**
+   * Metodo para iniciar sesión.
+   */
+  public onLogin(): void {
     if (this.loginForm.invalid) {
       this.showErrorMessage('Por favor, complete correctamente todos los campos');
       return;
@@ -29,8 +32,6 @@ export class LoginComponent {
     this.authService.login(this.loginForm.value).subscribe(
       () => {
         this.showSuccessMessage('Inicio de sesión exitoso');
-
-        // Mostrar el mensaje por 3 segundos y luego redirigir
         setTimeout(() => {
           this.router.navigate(['/']);
         }, 2000);
@@ -41,23 +42,21 @@ export class LoginComponent {
     );
   }
 
-  // Muestra el mensaje de éxito temporalmente
+  /**
+   * Mensajes
+   */
   private showSuccessMessage(message: string): void {
-    this.successMessage = message;
-    this.clearMessagesAfterDelay();
+    this.popupMessage = message;
+    this.popupType = 'success';
   }
 
-  // Muestra el mensaje de error temporalmente
   private showErrorMessage(message: string): void {
-    this.errorMessage = message;
-    this.clearMessagesAfterDelay();
+    this.popupMessage = message;
+    this.popupType = 'error';
   }
 
-  // Limpia los mensajes de éxito y error después de un tiempo
-  private clearMessagesAfterDelay(): void {
-    setTimeout(() => {
-      this.successMessage = '';
-      this.errorMessage = '';
-    }, 2000); 
+  public onPopUpClosed(): void {
+    this.popupMessage = '';
+    this.popupType = '';
   }
 }

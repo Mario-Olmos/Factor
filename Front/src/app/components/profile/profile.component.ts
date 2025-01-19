@@ -5,6 +5,7 @@ import { Article } from '../../models/article.model';
 import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { ArticlesService } from '../../services/articles.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-profile',
@@ -24,12 +25,15 @@ export class ProfileComponent implements OnInit {
   popupMessage: string = '';
   popupType: 'success' | 'error' | '' = '';
   selectedFile: File | null = null; 
+  showDeleteConfirmation: boolean = false;
+  deleteConfirmationMessage: string = 'Se va a eliminar su cuenta, por favor seleccione si quiere mantener sus artículos en la plataforma.';
 
   constructor(
     private route: ActivatedRoute,
     private authService: AuthService,
     private fb: FormBuilder,
-    private articlesService: ArticlesService
+    private articlesService: ArticlesService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -266,6 +270,15 @@ export class ProfileComponent implements OnInit {
   }
 
   /**
+   * Logout
+   */
+  logout() {
+    this.authService.logout().subscribe(() => {
+      this.router.navigate(['/login']);
+    });
+  }
+
+  /**
    * Mensajes
    */
   private showSuccessMessage(message: string): void {
@@ -281,5 +294,54 @@ export class ProfileComponent implements OnInit {
   public onPopUpClosed(): void {
     this.popupMessage = '';
     this.popupType = '';
+  }
+
+  /**
+   * Muestra la confirmación para eliminar la cuenta.
+   * @returns void
+   */
+  public confirmDeleteAccount(): void {
+    this.showDeleteConfirmation = true;
+  }
+
+  /**
+   * Maneja la respuesta del usuario en la confirmación de eliminación de cuenta.
+   * @param confirm - `true` si el usuario confirma la eliminación, `false` si cancela.
+   * @returns void
+   */
+  public handleDeleteAccount(confirm: boolean): void {
+    this.showDeleteConfirmation = false;
+    if (confirm) {
+      this.deleteAccount(false);
+    } else {
+      this.deleteAccount(true); 
+    }
+  }
+
+  /**
+   * Elimina la cuenta del usuario y, opcionalmente, sus artículos.
+   * @param deleteArticles - `true` para eliminar todos los artículos del usuario, `false` para mantenerlos.
+   * @returns void
+   */
+  private deleteAccount(deleteArticles: boolean): void {
+    if (!this.currentUser) {
+      this.showErrorMessage('Usuario no autenticado.');
+      return;
+    }
+
+    this.authService.deleteAccount(this.currentUser.userId, deleteArticles).subscribe({
+      next: (resp) => {
+        this.showSuccessMessage('Cuenta eliminada con éxito.');
+        // Redirigir al usuario después de la eliminación
+        setTimeout(() => {
+          this.authService.logout();
+          this.router.navigate(['/login']);
+        }, 2000);
+      },
+      error: (err) => {
+        console.error('Error al eliminar la cuenta:', err);
+        this.showErrorMessage('Error al eliminar la cuenta.');
+      }
+    });
   }
 }

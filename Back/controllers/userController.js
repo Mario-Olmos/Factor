@@ -217,4 +217,30 @@ exports.updateUserProfile = async (req, res) => {
     }
 };
 
+exports.deleteUser = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const { deleteArticles } = req.query;
+
+        if (deleteArticles === 'true') {
+            // Eliminar todos los artículos del usuario
+            await Article.deleteMany({ author: userId });
+        } else {
+            // Anonimizar los artículos del usuario
+            await Article.updateMany(
+                { author: userId },
+                { $set: { author: null, authorInfo: { name: 'Cuenta eliminada', ... } } }
+            );
+        }
+
+        // Eliminar el usuario
+        await User.findByIdAndDelete(userId);
+
+        return res.status(200).json({ message: 'Cuenta eliminada con éxito.' });
+    } catch (error) {
+        console.error('Error al eliminar la cuenta:', error);
+        return res.status(500).json({ message: 'Error al eliminar la cuenta.', error: error.message });
+    }
+};
+
 

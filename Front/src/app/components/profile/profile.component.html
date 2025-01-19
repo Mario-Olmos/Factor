@@ -7,6 +7,18 @@
 
   <!-- Bloque que siempre se ve: foto + datos básicos -->
   <div class="profile-main-card">
+    <div class="profile-settings">
+      <button class="settings-button">
+        <span class="material-icons">settings</span>
+      </button>
+      <div class="settings-dropdown">
+        <ul>
+          <li (click)="logout()">Logout</li>
+          <li (click)="confirmDeleteAccount()">Eliminar Cuenta</li>
+        </ul>
+      </div>
+    </div>
+    
     <div class="profile-image-container">
       <img [src]="getFullImageUrl(user.imagenPerfil)" class="profile-image" />
     </div>
