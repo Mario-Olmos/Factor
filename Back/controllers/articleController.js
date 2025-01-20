@@ -10,46 +10,42 @@ const fs = require('fs');
 //Método para subir un artículo
 exports.uploadArticle = async (req, res) => {
     try {
-        const { title, description, author, theme, source } = req.body;
+        const { title, description, theme, source } = req.body;
+        const user = await User.findById(req.user.userId);
 
-        // Verificar campos requeridos
         if (!source) {
             if (req.file && req.file.path) {
-                fs.unlink(req.file.path, () => {});
+                fs.unlink(req.file.path, () => { });
             }
             return res.status(400).json({ message: 'La fuente es requerida.' });
         }
 
-        const user = await User.findById(author);
         if (!user) {
             if (req.file && req.file.path) {
-                fs.unlink(req.file.path, () => {});
+                fs.unlink(req.file.path, () => { });
             }
             return res.status(404).json({ message: 'Usuario no encontrado.' });
         }
 
         if (user.reputacion < 15) {
             if (req.file && req.file.path) {
-                fs.unlink(req.file.path, () => {});
+                fs.unlink(req.file.path, () => { });
             }
             return res.status(403).json({ message: 'No tienes suficiente reputación para publicar un artículo.' });
         }
 
         const publicationLimit = getPublicationLimit(user.reputacion);
-
         const oneMonthAgo = new Date();
         oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-
         const publicacionesUltimoMes = await Article.countDocuments({
             author: user._id,
             createdAt: { $gte: oneMonthAgo }
         });
-
         console.log(publicacionesUltimoMes);
 
         if (publicacionesUltimoMes >= publicationLimit) {
             if (req.file && req.file.path) {
-                fs.unlink(req.file.path, () => {});
+                fs.unlink(req.file.path, () => { });
             }
             return res.status(403).json({
                 message: 'Has alcanzado el límite de publicaciones permitidas para tu nivel de reputación.'
@@ -59,14 +55,13 @@ exports.uploadArticle = async (req, res) => {
         if (!req.file) {
             return res.status(400).json({ message: 'El archivo PDF es requerido.' });
         }
-
         const pdfUrl = `/uploads/pdf/${req.file.filename}`;
 
         const newArticle = new Article({
             title,
             description,
             pdfUrl,
-            author,
+            author: user.userId,
             theme,
             authorReputationAtCreation: user.reputacion,
             source
@@ -83,7 +78,16 @@ exports.uploadArticle = async (req, res) => {
 
         res.status(201).json({
             message: 'Artículo creado con éxito.',
-            newArticle
+            article: {
+                _id: newArticle._id,
+                title: newArticle.title,
+                description: newArticle.description,
+                pdfUrl: newArticle.pdfUrl,
+                theme: newArticle.theme,
+                veracity: newArticle.veracity,
+                createdAt: newArticle.createdAt,
+                source: newArticle.source
+            }
         });
 
     } catch (err) {
@@ -91,7 +95,7 @@ exports.uploadArticle = async (req, res) => {
 
         // Eliminar el archivo PDF si ocurre un error
         if (req.file && req.file.path) {
-            fs.unlink(req.file.path, () => {});
+            fs.unlink(req.file.path, () => { });
         }
 
         res.status(500).json({ error: 'Error subiendo el PDF o creando el artículo.' });
@@ -102,14 +106,16 @@ exports.uploadArticle = async (req, res) => {
 //Método para obetener los artículos del feed, con el voto del usuario logeado y jerarquía de temas
 exports.obtenerArticulosFeed = async (req, res) => {
     try {
-        const { page = 1, limit = 10, userId, tema, ordenarPorFecha, ordenarPorVeracidad, days } = req.query;
+        const { page = 1, limit = 10, tema, ordenarPorFecha, ordenarPorVeracidad, days } = req.query;
+        const user = req.user.userId;
+
         const fechaLimite = new Date();
-        if(days){
+        if (days) {
             fechaLimite.setDate(fechaLimite.getDate() - days);
-        }else{
+        } else {
             fechaLimite.setDate(fechaLimite.getDate() - 100);
         }
-        
+
         let query = {
             veracity: { $gt: -1 },
             createdAt: { $gte: fechaLimite }
@@ -142,9 +148,9 @@ exports.obtenerArticulosFeed = async (req, res) => {
         const articlesWithDetails = await Promise.all(
             articles.map(async (article) => {
 
-                const userVoteObj = article.votes.find(vote => vote.user.toString() === userId);
+                const author = await User.findById(article.author);
+                const userVoteObj = article.votes.find(vote => vote.user.toString() === user.userId);
                 const userVote = userVoteObj ? userVoteObj.voteType : null;
-
                 const upVotes = article.votes.filter(vote => vote.voteType === 'upvote').length;
                 const downVotes = article.votes.filter(vote => vote.voteType === 'downvote').length;
 
@@ -152,16 +158,25 @@ exports.obtenerArticulosFeed = async (req, res) => {
                     ? await getThemeHierarchyById(article.theme)
                     : { nivel1: null, nivel2: null, nivel3: null };
 
-                const authorInfo = await getUserInfoById(article.author);
+                if (!author) {
+                    return res.status(404).json({ message: 'Autor no encontrado.' });
+                }
+                const authorInfo = await getUserInfoById(author.username);
 
                 return {
-                    ...article,
-                    userVote,
-                    themes,
-                    upVotes,
-                    downVotes,
-                    authorInfo,
-                    votes: undefined
+                    _id: article._id,
+                    title: article.title,
+                    description: article.description,
+                    pdfUrl: article.pdfUrl,
+                    theme: article.theme,
+                    veracity: article.veracity,
+                    createdAt: article.createdAt,
+                    source: article.source,
+                    upVotes: upVotes,
+                    downVotes: downVotes,
+                    userVote: userVote,
+                    authorInfo: authorInfo,
+                    themes: themes
                 };
             })
         );
@@ -173,22 +188,21 @@ exports.obtenerArticulosFeed = async (req, res) => {
     }
 };
 
-
 //Método para dar like a un artículo
 exports.darLike = async (req, res) => {
     try {
-        const { articleId, pesoVoto, user, voteType } = req.body;
+        const { articleId, pesoVoto, voteType } = req.body;
 
         if (!['upvote', 'downvote'].includes(voteType)) {
             return res.status(400).json({ message: 'Tipo de voto inválido.' });
         }
 
-        const usuario = await User.findById(user);
+        const usuario = await User.findById(req.user.userId);
         if (!usuario) {
             return res.status(404).json({ message: 'Usuario no encontrado.' });
         }
 
-        if (usuario.reputacion < 15) { 
+        if (usuario.reputacion < 15) {
             return res.status(403).json({ message: 'No tienes suficiente reputación para votar.' });
         }
 
@@ -243,7 +257,9 @@ exports.darLike = async (req, res) => {
         usuario.fechaUltimoVoto = new Date();
         await usuario.save();
 
-        return res.status(200).json({ message: 'Voto registrado correctamente.', articulo: updatedArticle });
+        return res.status(200).json({
+            message: 'Voto registrado correctamente.'
+        });
 
     } catch (error) {
         console.error('Error al dar like/dislike:', error);
@@ -252,33 +268,42 @@ exports.darLike = async (req, res) => {
 };
 
 
-
 // Detalle del artículo
 exports.getArticleById = async (req, res) => {
     try {
         const { id } = req.params;
-        const { userId } = req.query;
+        const voterId = req.user.userId;
 
         // Encuentra el artículo por ID
         const article = await Article.findById(id);
-
         if (!article) {
             return res.status(404).json({ message: 'Artículo no encontrado' });
         }
+        const author = await User.findById(article.author);
+        if (!author) {
+            return res.status(404).json({ message: 'Autor no encontrado.' });
+        }
 
         const themeHierarchy = await getThemeHierarchyById(article.theme);
-        const authorInfo = await getUserInfoById(article.author);
-        const userVoteObj = article.votes.find(vote => vote.user.toString() === userId);
+        const authorInfo = await getUserInfoById(author.username);
+        const userVoteObj = article.votes.find(vote => vote.user.toString() === voterId);
         const userVote = userVoteObj ? userVoteObj.voteType : null;
         const upVotes = article.votes.filter(vote => vote.voteType === 'upvote').length;
         const downVotes = article.votes.filter(vote => vote.voteType === 'downvote').length;
         const articleWithThemes = {
-            ...article.toObject(),
-            themes: themeHierarchy,
-            authorInfo: authorInfo,
-            userVote: userVote,
+            _id: article._id,
+            title: article.title,
+            description: article.description,
+            pdfUrl: article.pdfUrl,
+            theme: article.theme,
+            veracity: article.veracity,
+            createdAt: article.createdAt,
+            source: article.source,
             upVotes: upVotes,
-            downVotes: downVotes
+            downVotes: downVotes,
+            userVote: userVote,
+            authorInfo: authorInfo,
+            themes: themeHierarchy
         };
 
         res.json(articleWithThemes);
@@ -292,18 +317,26 @@ exports.getArticleById = async (req, res) => {
 //Get de artículos por usuario
 exports.getArticlesByUser = async (req, res) => {
     try {
-        const { authorId, viewerId } = req.query;
+        const { authorUsername } = req.query;
+        const viewer = await User.findById(req.user.userId);
+        if (!viewer) {
+            return res.status(404).json({ message: 'Viewer no encontrado.' });
+        }
+        const author = await User.findOne({ username: authorUsername });
+        if (!author) {
+            return res.status(404).json({ message: 'Autor no encontrado.' });
+        }
 
-        let articlesQuery = Article.find({ author: authorId }).lean();
+        let articlesQuery = Article.find({ author: author.userId }).lean();
         const articles = await articlesQuery;
 
         const articlesWithDetails = await Promise.all(
             articles.map(async (article) => {
 
                 let userVote = null;
-                if (viewerId) {
+                if (viewer.userId) {
                     const userVoteObj = article.votes.find(
-                        (vote) => vote.user.toString() === viewerId
+                        (vote) => vote.user.toString() === viewer.userId
                     );
                     userVote = userVoteObj ? userVoteObj.voteType : null;
                 }
@@ -320,16 +353,22 @@ exports.getArticlesByUser = async (req, res) => {
                     themes = await getThemeHierarchyById(article.theme);
                 }
 
-                const authorInfo = await getUserInfoById(article.author);
+                const authorInfo = await getUserInfoById(author.username);
 
                 return {
-                    ...article,
-                    userVote,
-                    upVotes,
-                    downVotes,
-                    themes,
-                    authorInfo,
-                    votes: undefined
+                    _id: article._id,
+                    title: article.title,
+                    description: article.description,
+                    pdfUrl: article.pdfUrl,
+                    theme: article.theme,
+                    veracity: article.veracity,
+                    createdAt: article.createdAt,
+                    source: article.source,
+                    upVotes: upVotes,
+                    downVotes: downVotes,
+                    userVote: userVote,
+                    authorInfo: authorInfo,
+                    themes: themes
                 };
             })
         );
@@ -347,23 +386,31 @@ exports.getArticlesByUser = async (req, res) => {
 
 exports.eliminarArticulo = async (req, res) => {
     try {
-        const { articleId, userId } = req.query;
+        const { articleId } = req.query;
+        const user = await User.findById(req.user.userId);
+        if (!user) {
+            return res.status(404).json({ message: 'Usuario no encontrado.' });
+        }
 
         const articulo = await Article.findById(articleId);
         if (!articulo) {
             return res.status(404).json({ message: 'Artículo no encontrado.' });
         }
 
-        if (articulo.author.toString() !== userId) {
+        if (articulo.author.toString() !== user.userId) {
             return res.status(403).json({ message: 'No tienes permiso para eliminar este artículo.' });
         }
 
         // Eliminar el archivo PDF asociado al artículo
         const pdfPath = path.join(__dirname, '..', articulo.pdfUrl);
-        fs.unlink(pdfPath, (err) => {
+        fs.unlink(pdfPath, async (err) => {
             if (err) {
                 console.error('Error al eliminar el archivo PDF:', err);
+                return res.status(500).json({ message: 'Error al eliminar el archivo PDF.' });
             }
+            
+            await Article.findByIdAndDelete(articleId);
+            res.status(200).json({ message: 'Artículo eliminado con éxito.' });
         });
 
         await Article.findByIdAndDelete(articleId);
