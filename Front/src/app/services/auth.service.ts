@@ -13,15 +13,15 @@ interface TokenValidationResponse {
   providedIn: 'root'
 })
 export class AuthService {
-  private currentUser = new BehaviorSubject<{ username: string } | null>(null);
+  private currentUser = new BehaviorSubject<UserProfile | null>(null);
   private apiUrl = 'http://localhost:3000/api';
 
   constructor(private http: HttpClient) { }
 
   // Método de login
-  login(credentials: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/auth/login`, credentials, { withCredentials: true });
-  }
+  login(credentials: any): Observable<{ token: string; user: UserProfile }> {
+    return this.http.post<{ token: string; user: UserProfile }>(`${this.apiUrl}/auth/login`, credentials, { withCredentials: true });
+  }  
 
   // Método de registro
   register(userData: any): Observable<any> {
@@ -57,19 +57,28 @@ export class AuthService {
   }
 
   //Método para obtener los datos de un usuario
-  getUserById(userId: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/profile/getUser/${userId}`);
+  getUserById(username: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/profile/getUser/${username}`);
   }
 
-  updateProfile(data: any, userId: string): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/profile/update/${userId}`, data);
+  updateProfile(data: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/profile/update`, data).pipe(
+      map(response => {
+        if (response.user) {
+          this.currentUser.next(response.user);
+        }
+        return response;
+      })
+    );
   }
 
   deleteAccount(deleteArticles: boolean) {
-    const params: any = {
-      deleteArticles
-    }
-    return this.http.delete(`${this.apiUrl}/profile/delete`, { params });
+    const params = { deleteArticles };
+    return this.http.delete(`${this.apiUrl}/profile/delete`, { params, withCredentials: true }).pipe(
+      map(() => {
+        this.currentUser.next(null);
+      })
+    );
   }
 
 }

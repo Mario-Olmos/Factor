@@ -10,7 +10,7 @@ const uploadImage = require('../../middlewares/uploadMiddlewareImages');
 router.get('/getUser/:id', userController.getUserById);
 
 // Ruta para actualizar el perfil de un usuario
-router.put('/update/:userId',authMiddleware, uploadImage, userController.updateUserProfile);
+router.put('/update',authMiddleware, uploadImage, userController.updateUserProfile);
 
 //Ruta para eliminar la cuenta
 router.delete('/delete',authMiddleware, userController.deleteUser);
