@@ -18,18 +18,18 @@
             </div>
 
             <div class="article-actions">
-                <button class="like-btn" (click)="darLike(article?._id ?? '')"
-                    [ngClass]="{'liked': article?.userVote === 'upvote'}">
+                <button class="like-btn" (click)="votarArticulo(article._id, 'upvote')"
+                    [ngClass]="{'liked': article.userVote === 'upvote'}">
                     <span class="material-icons">thumb_up</span>
                 </button>
                 <span class="vote-counter">{{ article.upVotes }}</span>
 
-                <button class="dislike-btn" (click)="darDislike(article?._id ?? '')"
-                    [ngClass]="{'disliked': article?.userVote === 'downvote'}">
+                <button class="dislike-btn" (click)="votarArticulo(article._id, 'downvote')"
+                    [ngClass]="{'disliked': article.userVote === 'downvote'}">
                     <span class="material-icons">thumb_down</span>
                 </button>
                 <span class="vote-counter">{{ article.downVotes }}</span>
-                <button class="view-btn" [routerLink]="['/article', article?._id]">Ver</button>
+                <button class="view-btn" [routerLink]="['/articles', article?._id]">Ver</button>
 
                 <button *ngIf="isOwnProfile" (click)="confirmDelete(article._id)" class="remove-btn">
                     Eliminar
@@ -54,7 +54,7 @@
 
             <!-- Condicional para mostrar "Ver perfil" o mensaje de cuenta eliminada -->
             <ng-container *ngIf="article.authorInfo; else deletedAuthor">
-                <button class="profile-btn" [routerLink]="['/perfil', article.author]">
+                <button class="profile-btn" [routerLink]="['/perfil', article.authorInfo.username]">
                     Ver perfil
                 </button>
             </ng-container>

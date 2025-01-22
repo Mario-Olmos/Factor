@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ArticlesService } from '../../services/articles.service';
 import { Theme } from '../../models/theme.model';
 import { Article } from '../../models/article.model';
-import { User } from '../../models/user.model';
+import { UserProfile } from '../../models/user.model';
 import { AuthService } from '../../services/auth.service';
 import { ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
@@ -17,7 +17,7 @@ export class FilterPageComponent implements OnInit {
   public themes: Theme[] = [];
   public articles: Article[] = [];
   public filterForm: FormGroup;
-  public currentUser: User | null = null;
+  public currentUser: UserProfile | null = null;
   public popupMessage: string = '';
   public popupType: 'success' | 'error' | '' = '';
 
@@ -31,8 +31,8 @@ export class FilterPageComponent implements OnInit {
 
     this.filterForm = this.fb.group({
       theme: [''],
-      orderField: [''],
-      orderDirection: ['']
+      ordenarPorFecha: [''],
+      ordenarPorVeracidad: ['']
     });
   }
 
@@ -40,10 +40,16 @@ export class FilterPageComponent implements OnInit {
 
     this.authService.getCurrentUser().subscribe(user => {
       this.currentUser = user;
+    }, error => {
+      console.error('Error al obtener el usuario actual:', error);
+      this.showErrorMessage('Error al cargar los datos del usuario.');
     });
 
     this.articlesService.getThemes().subscribe((themes) => {
       this.themes = themes;
+    }, error => {
+      console.error('Error al cargar las temáticas:', error);
+      this.showErrorMessage('Error al cargar las temáticas.');
     });
 
     this.route.queryParams.subscribe(params => {
@@ -62,26 +68,28 @@ export class FilterPageComponent implements OnInit {
    * @returns void
    */
   private fetchFilteredArticles(): void {
-    const { theme, orderField, orderDirection } = this.filterForm.value;
+    const { theme, ordenarPorFecha, ordenarPorVeracidad } = this.filterForm.value;
 
-    const validOrders: ('asc' | 'desc')[] = ['asc', 'desc'];
-    const validatedOrderField: 'asc' | 'desc' = validOrders.includes(orderField) ? orderField as 'asc' | 'desc' : 'asc';
-    const validatedOrderDirection: 'asc' | 'desc' = validOrders.includes(orderDirection) ? orderDirection as 'asc' | 'desc' : 'desc';
+    let validatedOrdenarPorFecha: 'asc' | 'desc' | undefined;
+    let validatedOrdenarPorVeracidad: 'asc' | 'desc' | undefined;
+
+    if (ordenarPorFecha && ['asc', 'desc'].includes(ordenarPorFecha)) {
+      validatedOrdenarPorFecha = ordenarPorFecha as 'asc' | 'desc';
+    }
+
+    if (ordenarPorVeracidad && ['asc', 'desc'].includes(ordenarPorVeracidad)) {
+      validatedOrdenarPorVeracidad = ordenarPorVeracidad as 'asc' | 'desc';
+    }
 
     this.articlesService.getArticles(
       1, // Página inicial
       10, // Límite de artículos por página
-      this.currentUser!.userId,
       theme || undefined,
-      validatedOrderField,
-      validatedOrderDirection
+      validatedOrdenarPorFecha,
+      validatedOrdenarPorVeracidad
     ).subscribe(
       (articles: Article[]) => {
-        this.articles = articles.map(article => ({
-          ...article,
-          userVote: article.userVote,
-        }));
-        this.cdr.detectChanges();
+        this.articles = articles;
       },
       (error: any) => {
         console.error('Error al cargar los artículos', error);

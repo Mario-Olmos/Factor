@@ -1,90 +1,153 @@
-import { Component, OnInit } from '@angular/core';
+// home.component.ts
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ArticlesService } from '../../services/articles.service';
 import { AuthService } from '../../services/auth.service';
 import { Theme } from '../../models/theme.model';
 import { Article } from '../../models/article.model';
-import { User } from '../../models/user.model';
-import { Router } from '@angular/router';
+import { UserProfile } from '../../models/user.model';
+import { Router, ActivatedRoute } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements OnInit {
-  themes: Theme[] = [];
-  articles: Article[] = [];
-  currentUser: User | null = null;
-  popupMessage: string = '';
-  popupType: 'success' | 'error' | '' = '';
-  
-  currentPage!: number;
-  articlesPerPage = 10;
-  themeLimit = 6;
-  days = 300;
-  tema = undefined; 
-  ordenarPorFecha: 'asc' | 'desc' = 'desc'; 
-  ordenarPorVeracidad: 'asc' | 'desc' = 'desc';
-  
+export class HomeComponent implements OnInit, OnDestroy {
+  public themes: Theme[] = [];
+  public articles: Article[] = [];
+  public currentUser: UserProfile | null = null;
+  public popupMessage: string = '';
+  public popupType: 'success' | 'error' | '' = '';
+
+  public currentPage: number = 1;
+  public articlesPerPage: number = 10;
+  public themeLimit: number = 6;
+  public days: number = 300;
+  public tema?: string;
+  public ordenarPorFecha: 'asc' | 'desc' = 'desc';
+  public ordenarPorVeracidad: 'asc' | 'desc' = 'desc';
+
+  public loadingThemes: boolean = false;
+  public loadingArticles: boolean = false;
+
+  private destroy$ = new Subject<void>();
+
   constructor(
-    private articlesService: ArticlesService, 
-    private authService: AuthService, 
-    private router: Router
+    private articlesService: ArticlesService,
+    private authService: AuthService,
+    private router: Router,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
-    this.currentPage = 1;
+    this.loadCurrentUser();
+    this.loadThemes();
+    this.loadArticlesFromParams();
+  }
 
-    this.authService.getCurrentUser().subscribe(user => {
-      this.currentUser = user;
-    });
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
-    // Obtener temas feed
-    this.articlesService.getTrendyThemes(this.themeLimit, this.days).subscribe(
-      (themes: Theme[]) => {
-        this.themes = themes;
-      },
-      (error) => {
-        this.showErrorMessage('Error al cargar los temas');
-      }
-    );
+  /**
+   * Carga el usuario actual.
+   */
+  private loadCurrentUser(): void {
+    this.authService.getCurrentUser()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
+        user => {
+          this.currentUser = user;
+        },
+        error => {
+          console.error('Error al obtener el usuario actual:', error);
+          this.showErrorMessage('Error al cargar los datos del usuario.');
+        }
+      );
+  }
 
-    // Obtener artículos feed
+  /**
+   * Carga los temas populares.
+   */
+  private loadThemes(): void {
+    this.loadingThemes = true;
+    this.articlesService.getTrendyThemes(this.themeLimit, this.days)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
+        (themes: Theme[]) => {
+          this.themes = themes;
+          this.loadingThemes = false;
+        },
+        (error) => {
+          console.error('Error al cargar los temas:', error);
+          this.showErrorMessage('Error al cargar los temas.');
+          this.loadingThemes = false;
+        }
+      );
+  }
+
+  /**
+   * Carga los artículos según los parámetros de la URL.
+   */
+  private loadArticlesFromParams(): void {
+    this.route.queryParams
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(params => {
+        const themeParam = params['theme'];
+        if (themeParam) {
+          this.tema = themeParam;
+        }
+        this.fetchArticles();
+      });
+  }
+
+  /**
+   * Llama al servicio de artículos para obtener una lista de artículos filtrados según los criterios actuales.
+   * @returns void
+   */
+  private fetchArticles(): void {
+    this.loadingArticles = true;
     this.articlesService.getArticles(
       this.currentPage,
       this.articlesPerPage,
-      this.currentUser!.userId,
       this.tema,
       this.ordenarPorFecha,
       this.ordenarPorVeracidad,
       this.days
-    ).subscribe(
-      (articles: any[]) => {
-        this.articles = articles.map(article => ({
-          ...article,
-          userVote: article.userVote
-        }));
-
-        this.currentPage++;
-      },
-      (error) => {
-        this.showErrorMessage('Error al cargar los Artículos');
-      }
-    );
+    )
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
+        (response: any) => {
+          this.articles = response.articles;
+          this.currentPage++;
+          this.loadingArticles = false;
+        },
+        (error) => {
+          console.error('Error al cargar los Artículos:', error);
+          this.showErrorMessage('Error al cargar los Artículos.');
+          this.loadingArticles = false;
+        }
+      );
   }
 
   /**
    * Redirige a la página de exploración con el tema seleccionado como parámetro.
    * @param tema - Tema seleccionado para filtrar en la página de exploración.
    */
-  public navigateToExplore(tema: Theme): void { 
+  public navigateToExplore(tema: Theme): void {
     this.router.navigate(['/explorador'], {
       queryParams: { theme: tema._id }
+    }).catch(error => {
+      console.error('Error al navegar a la página de exploración:', error);
+      this.showErrorMessage('Error al navegar a la página de exploración.');
     });
   }
 
   /**
-   * Mensajes
+   * Mensajes de notificación.
    */
   private showSuccessMessage(message: string): void {
     this.popupMessage = message;
@@ -99,5 +162,12 @@ export class HomeComponent implements OnInit {
   public onPopUpClosed(): void {
     this.popupMessage = '';
     this.popupType = '';
+  }
+
+  /**
+   * Método para cargar más artículos (Implementar paginación).
+   */
+  public loadMoreArticles(): void {
+    this.fetchArticles();
   }
 }

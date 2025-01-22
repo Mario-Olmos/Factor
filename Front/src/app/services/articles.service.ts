@@ -46,7 +46,7 @@ export class ArticlesService {
     ordenarPorFecha?: 'asc' | 'desc',
     ordenarPorVeracidad?: 'asc' | 'desc',
     days?: number
-  ): Observable<any[]> {
+  ): Observable<any> {
     const params: any = {
       page: page.toString(),
       limit: limit.toString()
@@ -65,13 +65,8 @@ export class ArticlesService {
     return this.http.get<any[]>(`${this.apiUrl}/articles/getArticles`, { params });
   }
 
-  //Método para dar "Like"
-  darLike(payload: any): Observable<Article> {
-    return this.http.post<Article>(`${this.apiUrl}/articles/meGusta`, payload, { withCredentials: true });
-  }
-  
-  //Método para dar "Dislike"
-  darDislike(payload: any): Observable<Article> {
+  //Método para dar "Like" o "Dislike"
+  votarArticulo(payload: any): Observable<Article> {
     return this.http.post<Article>(`${this.apiUrl}/articles/meGusta`, payload, { withCredentials: true });
   }
 

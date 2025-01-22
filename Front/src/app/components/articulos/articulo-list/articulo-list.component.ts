@@ -2,7 +2,7 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { Article } from '../../../models/article.model';
 import { ArticlesService } from '../../../services/articles.service';
-import { User } from '../../../models/user.model';
+import { UserProfile } from '../../../models/user.model';
 import { SharedService } from '../../../services/shared.service';
 
 @Component({
@@ -12,9 +12,9 @@ import { SharedService } from '../../../services/shared.service';
 })
 export class ArticuloListComponent implements OnChanges {
   @Input() articles: Article[] = [];
-  @Input() currentUser!: User | null;
+  @Input() currentUser!: UserProfile | null;
   @Input() isOwnProfile: boolean = false;
-  
+
   popupMessage: string = '';
   popupType: 'success' | 'error' | '' = '';
 
@@ -34,10 +34,11 @@ export class ArticuloListComponent implements OnChanges {
   }
 
   /**
-   * Maneja el voto positivo (like) en un artículo.
-   * @param articleId ID del artículo a votar.
-   */
-  public darLike(articleId: string): void {
+* Maneja el voto en un artículo.
+* @param articleId ID del artículo a votar.
+* @param voteType Tipo de voto ('upvote' o 'downvote').
+*/
+  public votarArticulo(articleId: string, voteType: 'upvote' | 'downvote'): void {
     if (!this.currentUser) {
       this.showErrorMessage('Debes estar logueado para votar.');
       return;
@@ -53,53 +54,16 @@ export class ArticuloListComponent implements OnChanges {
     const payload = {
       articleId: articleId,
       pesoVoto: pesoVoto,
-      user: this.currentUser.userId, 
-      voteType: 'upvote'
+      voteType: voteType
     };
 
-    this.articlesService.darLike(payload).subscribe(
+    this.articlesService.votarArticulo(payload).subscribe(
       (response: any) => {
-        this.showSuccessMessage(response.message || '¡Voto positivo registrado con éxito!');
-        this.actualizarVotos(articleId, 'upvote', pesoVoto); 
-      },
-      (error: any) => {
-        if (error.status === 400 && error.error.message === 'Ya has votado este artículo') {
-          this.showErrorMessage('Ya has votado este artículo. No puedes votar de nuevo.');
-        } else {
-          this.showErrorMessage(error.error.message || 'Ocurrió un error al registrar tu voto.');
-        }
-      }
-    );
-  }
-
-  /**
-   * Maneja el voto negativo (dislike) en un artículo.
-   * @param articleId ID del artículo a votar.
-   */
-  public darDislike(articleId: string): void {
-    if (!this.currentUser) {
-      this.showErrorMessage('Debes estar logueado para votar.');
-      return;
-    }
-
-    if (!this.puedeVotar(this.currentUser.reputacion)) {
-      this.showErrorMessage('No tienes suficiente reputación para votar!');
-      return;
-    }
-
-    const pesoVoto = this.sharedService.calcularPesoVoto(this.currentUser.reputacion);
-
-    const payload = {
-      articleId: articleId,
-      pesoVoto: pesoVoto,
-      user: this.currentUser.userId,
-      voteType: 'downvote'
-    };
-
-    this.articlesService.darLike(payload).subscribe(
-      (response: any) => { 
-        this.showSuccessMessage(response.message || '¡Voto negativo registrado con éxito!');
-        this.actualizarVotos(articleId, 'downvote', pesoVoto); 
+        const message = voteType === 'upvote'
+          ? (response.message || '¡Voto positivo registrado con éxito!')
+          : (response.message || '¡Voto negativo registrado con éxito!');
+        this.showSuccessMessage(message);
+        this.actualizarVotos(articleId, voteType, pesoVoto);
       },
       (error: any) => {
         if (error.status === 400 && error.error.message === 'Ya has votado este artículo') {
@@ -118,7 +82,7 @@ export class ArticuloListComponent implements OnChanges {
   public confirmDelete(articleId: string): void {
     const confirmacion = confirm('¿Estás seguro de que deseas eliminar este artículo? Esta acción no se puede deshacer.');
     if (confirmacion && this.currentUser) {
-      this.eliminarArticulo(articleId, this.currentUser.userId);
+      this.eliminarArticulo(articleId);
     }
   }
 
@@ -127,11 +91,11 @@ export class ArticuloListComponent implements OnChanges {
    * @param articleId ID del artículo a eliminar.
    * @param userId ID del usuario que elimina el artículo.
    */
-  public eliminarArticulo(articleId: string, userId: string): void {
-    this.articlesService.eliminarArticulo(articleId, userId).subscribe(
+  public eliminarArticulo(articleId: string): void {
+    this.articlesService.eliminarArticulo(articleId).subscribe(
       (response: any) => {
         this.showSuccessMessage(response.message || 'Artículo eliminado con éxito.');
-        this.removerArticuloDelArray(articleId); 
+        this.removerArticuloDelArray(articleId);
       },
       (error: any) => {
         this.showErrorMessage('Ocurrió un error al eliminar el artículo.');
@@ -189,11 +153,11 @@ export class ArticuloListComponent implements OnChanges {
     return this.sharedService.puedeVotar(reputation);
   }
 
-  public getFullImageUrl(rel: string | undefined):string{
+  public getFullImageUrl(rel: string | undefined): string {
     return this.sharedService.getFullImageUrl(rel);
   }
 
-  
+
   /**
    * Mensajes
    */

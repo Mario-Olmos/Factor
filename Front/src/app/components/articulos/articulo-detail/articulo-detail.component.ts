@@ -4,7 +4,7 @@ import { Article } from '../../../models/article.model';
 import { ActivatedRoute } from '@angular/router';
 import { ArticlesService } from '../../../services/articles.service';
 import { AuthService } from '../../../services/auth.service';
-import { User } from '../../../models/user.model';
+import { UserProfile } from '../../../models/user.model';
 import { SharedService } from '../../../services/shared.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
@@ -15,10 +15,10 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 })
 export class ArticuloDetailComponent implements OnInit {
   @ViewChild('pdfIframe') pdfIframe!: ElementRef;
-  currentUser: User | null = null;
+  currentUser: UserProfile | null = null;
   errorMessage: string = '';
   article: Article | null = null;
-  pdfSrc!: any;
+  pdfSrc!: SafeResourceUrl;
   popupMessage: string = '';
   popupType: 'success' | 'error' | '' = '';
 
@@ -45,7 +45,7 @@ export class ArticuloDetailComponent implements OnInit {
     // Obtiene el ID del artículo de la URL y carga los datos
     const articleId = this.route.snapshot.paramMap.get('id');
     if (articleId) {
-      this.loadArticle(articleId, this.currentUser!.userId);
+      this.loadArticle(articleId);
     } else {
       this.errorMessage = 'ID del artículo no válido.';
     }
@@ -56,8 +56,8 @@ export class ArticuloDetailComponent implements OnInit {
    * @param articleId ID del artículo a votar.
    * @param userId Id del autor del artículo.
    */
-  private loadArticle(articleId: string, userId: string): void {
-    this.articlesService.getArticleById(articleId, userId).subscribe(
+  private loadArticle(articleId: string): void {
+    this.articlesService.getArticleById(articleId).subscribe(
       (article: any) => {
 
         if (article.createdAt) {
@@ -78,12 +78,13 @@ export class ArticuloDetailComponent implements OnInit {
       }
     );
   }
-  
+
   /**
-   * Maneja el voto positivo (like) en un artículo.
-   * @param articleId ID del artículo a votar.
-   */
-  public darLike(articleId: string): void {
+ * Maneja el voto en un artículo.
+ * @param articleId ID del artículo a votar.
+ * @param voteType Tipo de voto ('upvote' o 'downvote').
+ */
+  public votarArticulo(articleId: string, voteType: 'upvote' | 'downvote'): void {
     if (!this.currentUser) {
       this.showErrorMessage('Debes estar logueado para votar.');
       return;
@@ -99,14 +100,16 @@ export class ArticuloDetailComponent implements OnInit {
     const payload = {
       articleId: articleId,
       pesoVoto: pesoVoto,
-      user: this.currentUser.userId, 
-      voteType: 'upvote'
+      voteType: voteType
     };
 
-    this.articlesService.darLike(payload).subscribe(
+    this.articlesService.votarArticulo(payload).subscribe(
       (response: any) => {
-        this.showSuccessMessage(response.message || '¡Voto positivo registrado con éxito!');
-        this.actualizarVotos('upvote', pesoVoto); 
+        const message = voteType === 'upvote'
+          ? (response.message || '¡Voto positivo registrado con éxito!')
+          : (response.message || '¡Voto negativo registrado con éxito!');
+        this.showSuccessMessage(message);
+        this.actualizarVotos(voteType, pesoVoto);
       },
       (error: any) => {
         if (error.status === 400 && error.error.message === 'Ya has votado este artículo') {
@@ -118,44 +121,6 @@ export class ArticuloDetailComponent implements OnInit {
     );
   }
 
-  /**
-   * Maneja el voto negativo (dislike) en un artículo.
-   * @param articleId ID del artículo a votar.
-   */
-  public darDislike(articleId: string): void {
-    if (!this.currentUser) {
-      this.showErrorMessage('Debes estar logueado para votar.');
-      return;
-    }
-
-    if (!this.puedeVotar(this.currentUser.reputacion)) {
-      this.showErrorMessage('No tienes suficiente reputación para votar!');
-      return;
-    }
-
-    const pesoVoto = this.sharedService.calcularPesoVoto(this.currentUser.reputacion);
-
-    const payload = {
-      articleId: articleId,
-      pesoVoto: pesoVoto,
-      user: this.currentUser.userId,
-      voteType: 'downvote'
-    };
-
-    this.articlesService.darLike(payload).subscribe(
-      (response: any) => { 
-        this.showSuccessMessage(response.message || '¡Voto negativo registrado con éxito!');
-        this.actualizarVotos( 'downvote', pesoVoto); 
-      },
-      (error: any) => {
-        if (error.status === 400 && error.error.message === 'Ya has votado este artículo') {
-          this.showErrorMessage('Ya has votado este artículo. No puedes votar de nuevo.');
-        } else {
-          this.showErrorMessage(error.error.message || 'Ocurrió un error al registrar tu voto.');
-        }
-      }
-    );
-  }
 
   /**
    * Actualiza los votos y la veracidad del artículo.

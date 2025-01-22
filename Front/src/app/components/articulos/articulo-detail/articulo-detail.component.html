@@ -42,10 +42,6 @@
                     [ngStyle]="{'background-color': getReputationColor(article.authorInfo.reputacion)}">
                     {{ getReputationDescription(article.authorInfo.reputacion) }}
                 </span>
-                <p class="author-email"><strong>Email:</strong> {{ article.authorInfo.email }}</p>
-                <p class="author-birthdate" *ngIf="article.authorInfo.fechaNacimiento">
-                    <strong>Fecha de nacimiento:</strong> {{ article.authorInfo.fechaNacimiento | date:'longDate' }}
-                </p>
 
                 <div class="profile-acreditaciones-container" *ngIf="article.authorInfo.acreditaciones.length > 0">
                     <h3>Acreditaciones</h3>
@@ -54,7 +50,7 @@
                     </div>
                 </div>
 
-                <button class="profile-btn" [routerLink]="['/perfil', article.author]">
+                <button class="profile-btn" [routerLink]="['/perfil', article.authorInfo.username]">
                     Ver perfil
                 </button>
             </div>
@@ -64,13 +60,13 @@
     <!-- Footer-->
     <div class="article-footer">
         <div class="article-actions">
-            <button class="like-btn" (click)="darLike(article._id)"
+            <button class="like-btn" (click)="votarArticulo(article._id, 'upvote')"
                 [ngClass]="{'liked': article.userVote === 'upvote'}">
                 <span class="material-icons">thumb_up</span>
             </button>
             <span class="vote-counter">{{ article.upVotes }}</span>
 
-            <button class="dislike-btn" (click)="darDislike(article._id)"
+            <button class="dislike-btn" (click)="votarArticulo(article._id, 'downvote')"
                 [ngClass]="{'disliked': article.userVote === 'downvote'}">
                 <span class="material-icons">thumb_down</span>
             </button>
