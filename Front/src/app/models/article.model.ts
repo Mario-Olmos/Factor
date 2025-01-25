@@ -1,6 +1,6 @@
 import { UserArticle } from './user.model';
 
-export type UserVote = 'up' | 'down' | 'none';
+export type UserVote = 'upvote' | 'downvote' | 'none';
 
 export interface Article {
   _id: string;

@@ -15,7 +15,7 @@ export class ArticlesService {
 
   // Método para crear un nuevo artículo
   uploadArticle(formData: FormData): Observable<any> {
-    return this.http.post(`${this.apiUrl}/upload`, formData);
+    return this.http.post(`${this.apiUrl}/upload`, formData, { withCredentials: true });
   }
 
   //Método para crear temáticas y subtemáticas (Solo moderadores)
@@ -42,16 +42,14 @@ export class ArticlesService {
   getArticles(
     page: number,
     limit: number,
-    userId: string,
     tema?: string,
     ordenarPorFecha?: 'asc' | 'desc',
     ordenarPorVeracidad?: 'asc' | 'desc',
     days?: number
-  ): Observable<any[]> {
+  ): Observable<any> {
     const params: any = {
       page: page.toString(),
-      limit: limit.toString(),
-      userId
+      limit: limit.toString()
     };
 
     if (tema) {
@@ -67,50 +65,30 @@ export class ArticlesService {
     return this.http.get<any[]>(`${this.apiUrl}/articles/getArticles`, { params });
   }
 
-  //Método para dar "Like"
-  darLike(payload: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/articles/meGusta`, payload);
-  }
-
-  //Método para dar "Dislike"
-  darDislike(payload: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/articles/meGusta`, payload);
+  //Método para dar "Like" o "Dislike"
+  votarArticulo(payload: any): Observable<Article> {
+    return this.http.post<Article>(`${this.apiUrl}/articles/meGusta`, payload, { withCredentials: true });
   }
 
   //Método get para el detalle del artículo por su id
-  getArticleById(articleId: string, userId: string): Observable<Article> {
-    const params: any = {
-      userId
-    };
-    return this.http.get<any>(`${this.apiUrl}/articles/${articleId}`, { params });
+  getArticleById(articleId: string): Observable<Article> {
+    return this.http.get<Article>(`${this.apiUrl}/articles/${articleId}`, { withCredentials: true });
   }
 
   //Método get para traer los artículos de un usuario
-  getArticlesByUser(authorId: string, viewerId: string) {
+  getArticlesByUser(authorUsername: string): Observable<Article[]> {
     const params: any = {
-      authorId,
-      viewerId
+      authorUsername
     }
-    return this.http.get<Article[]>(`${this.apiUrl}/articles/getArticlesByUser`, { params });
+    return this.http.get<Article[]>(`${this.apiUrl}/articles/getArticlesByUser`, { params, withCredentials: true });
   }
 
   //Método delete para eliminar el artículo de un usuario
-  eliminarArticulo(articleId: string, userId: string): Observable<any> {
+  eliminarArticulo(articleId: string): Observable<{ message: string }> {
     const params: any = {
-      articleId,
-      userId
+      articleId
     }
-    return this.http.delete<any>(`${this.apiUrl}/articles/deleteArticle`, { params });
-  }
-
-  public deleteArticlesByUser(authorId: string): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/articles`, {
-      params: { authorId }
-    });
-  }
-
-  public anonymizeArticles(authorId: string): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/articles/anonymize`, { authorId });
+    return this.http.delete<{ message: string }>(`${this.apiUrl}/articles/deleteArticle`, { params, withCredentials: true });
   }
 
 }

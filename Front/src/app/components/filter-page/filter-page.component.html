@@ -35,17 +35,19 @@
 
   <!-- Ordenar por Veracidad -->
   <div class="filter-item">
-    <label for="order-veracity">Ordenar por Veracidad</label>
-    <select id="order-veracity" class="order-dropdown" formControlName="orderField">
-      <option value="veracity_asc">Veracidad ↑</option>
-      <option value="veracity_desc">Veracidad ↓</option>
+    <label for="ordenar-veracidad">Ordenar por Veracidad</label>
+    <select id="ordenar-veracidad" class="order-dropdown" formControlName="ordenarPorVeracidad">
+      <option value="">Ninguno</option>
+      <option value="asc">Veracidad ↑</option>
+      <option value="desc">Veracidad ↓</option>
     </select>
   </div>
-
+  
   <!-- Ordenar por Fecha -->
   <div class="filter-item">
-    <label for="order-date">Ordenar por Fecha</label>
-    <select id="order-date" class="order-dropdown" formControlName="orderDirection">
+    <label for="ordenar-fecha">Ordenar por Fecha</label>
+    <select id="ordenar-fecha" class="order-dropdown" formControlName="ordenarPorFecha">
+      <option value="">Ninguno</option>
       <option value="asc">Fecha ↑</option>
       <option value="desc">Fecha ↓</option>
     </select>
