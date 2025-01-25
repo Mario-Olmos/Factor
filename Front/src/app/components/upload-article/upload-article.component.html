@@ -1,11 +1,5 @@
-<!-- src/app/components/upload-article/upload-article.component.html -->
-
 <!-- Popup de notificación -->
-<app-pop-up 
-  *ngIf="popupMessage" 
-  [message]="popupMessage" 
-  [type]="popupType" 
-  (closed)="onPopUpClosed()">
+<app-pop-up *ngIf="popupMessage" [message]="popupMessage" [type]="popupType" (closed)="onPopUpClosed()">
 </app-pop-up>
 
 <div class="container">
@@ -14,15 +8,8 @@
 
     <!-- Título -->
     <div class="form-group mb-3">
-      <label for="title">Título</label>
-      <input 
-        type="text" 
-        id="title" 
-        formControlName="title" 
-        class="form-control" 
-        placeholder="Título del artículo"
-        required 
-        aria-describedby="titleHelp" />
+      <input type="text" id="title" formControlName="title" class="form-control" placeholder="Título del artículo"
+        required aria-describedby="titleHelp" />
       <small id="titleHelp" class="form-text text-muted">
         Máximo 100 caracteres.
       </small>
@@ -36,34 +23,22 @@
 
     <!-- Descripción -->
     <div class="form-group mb-3">
-      <label for="description">Descripción</label>
-      <textarea 
-        id="description" 
-        formControlName="description" 
-        class="form-control" 
-        placeholder="Descripción del artículo" 
-        rows="6"
-        aria-describedby="descriptionHelp">
+      <textarea id="description" formControlName="description" class="form-control"
+        placeholder="Descripción del artículo" rows="6" aria-describedby="descriptionHelp">
       </textarea>
       <small id="descriptionHelp" class="form-text text-muted">
-        Máximo 1000 caracteres.
+        Máximo 2000 caracteres.
       </small>
-      <div *ngIf="articleForm.get('description')?.errors?.['maxlength'] && articleForm.get('description')?.touched" class="error">
-        <small>La descripción no puede exceder 1000 caracteres.</small>
+      <div *ngIf="articleForm.get('description')?.errors?.['maxlength'] && articleForm.get('description')?.touched"
+        class="error">
+        <small>La descripción no puede exceder 2000 caracteres.</small>
       </div>
     </div>
 
     <!-- Fuente -->
     <div class="form-group mb-3">
-      <label for="source">Fuente</label>
-      <input 
-        type="text" 
-        id="source" 
-        formControlName="source" 
-        class="form-control" 
-        placeholder="Fuente del artículo"
-        required 
-        aria-describedby="sourceHelp" />
+      <input type="text" id="source" formControlName="source" class="form-control" placeholder="Fuente del artículo"
+        required aria-describedby="sourceHelp" />
       <small id="sourceHelp" class="form-text text-muted">
         Máximo 200 caracteres.
       </small>
@@ -77,13 +52,7 @@
 
     <!-- Tema -->
     <div class="form-group mb-3">
-      <label for="theme">Tema</label>
-      <select 
-        id="theme" 
-        class="form-control" 
-        formControlName="theme" 
-        required 
-        aria-describedby="themeHelp">
+      <select id="theme" class="form-control" formControlName="theme" required aria-describedby="themeHelp">
         <option value="" disabled selected>Seleccione una temática</option>
 
         <!-- Primer nivel -->
@@ -117,18 +86,10 @@
 
     <!-- PDF -->
     <div class="form-group mb-3">
-      <label for="pdf">Archivo PDF</label>
-      <input 
-        type="file" 
-        id="pdf" 
-        (change)="onFileChange($event)" 
-        class="form-control" 
-        accept="application/pdf" 
-        required 
-        aria-describedby="pdfHelp" />
-      <small id="pdfHelp" class="form-text text-muted">
-        Selecciona un archivo en formato PDF.
-      </small>
+      <label for="pdf" class="custom-file-upload">
+        Seleccionar archivo
+      </label>
+      <input type="file" id="pdf" (change)="onFileChange($event)" class="form-control" accept="application/pdf" />
       <div *ngIf="pdfError" class="error">
         <small>Por favor, selecciona un archivo PDF válido.</small>
       </div>
@@ -139,35 +100,8 @@
       <p>Archivo seleccionado: {{ pdfFileName }}</p>
     </div>
 
-    <!-- Imagen (opcional) -->
-    <div class="form-group mb-3">
-      <label for="image">Imagen de Perfil (opcional)</label>
-      <input 
-        type="file" 
-        id="image" 
-        (change)="onImageChange($event)" 
-        class="form-control" 
-        accept="image/jpeg, image/png" 
-        aria-describedby="imageHelp" />
-      <small id="imageHelp" class="form-text text-muted">
-        Selecciona una imagen en formato JPEG o PNG.
-      </small>
-      <!-- Elimina la verificación de 'invalid' ya que no hay validadores -->
-      <div *ngIf="!selectedFile && articleForm.get('image')?.touched" class="error">
-        <small>Por favor, selecciona una imagen válida.</small>
-      </div>
-    </div>
-
-    <!-- Vista previa de la imagen seleccionada -->
-    <div *ngIf="selectedFile" class="mb-3">
-      <p>Imagen seleccionada: {{ selectedFile.name }}</p>
-    </div>
-
     <!-- Botón de envío con indicador de carga -->
-    <button 
-      type="submit" 
-      class="btn btn-primary" 
-      [disabled]="!articleForm.valid || !pdfFile || loading">
+    <button type="submit" class="save-btn" [disabled]="!articleForm.valid || !pdfFile || loading">
       <span *ngIf="!loading">Subir Artículo</span>
       <span *ngIf="loading">Subiendo...</span>
     </button>

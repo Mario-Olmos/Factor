@@ -24,7 +24,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   public currentPage: number = 1;
   public articlesPerPage: number = 10;
   public themeLimit: number = 6;
-  public days: number = 300;
+  public days: number = 365;
   public tema?: string;
   public ordenarPorFecha: 'asc' | 'desc' = 'desc';
   public ordenarPorVeracidad: 'asc' | 'desc' = 'desc';
@@ -44,7 +44,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loadCurrentUser();
     this.loadThemes();
-    this.loadArticlesFromParams();
+    this.fetchArticles();
   }
 
   ngOnDestroy(): void {
@@ -90,21 +90,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Carga los artículos según los parámetros de la URL.
-   */
-  private loadArticlesFromParams(): void {
-    this.route.queryParams
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(params => {
-        const themeParam = params['theme'];
-        if (themeParam) {
-          this.tema = themeParam;
-        }
-        this.fetchArticles();
-      });
-  }
-
-  /**
    * Llama al servicio de artículos para obtener una lista de artículos filtrados según los criterios actuales.
    * @returns void
    */
@@ -120,9 +105,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     )
       .pipe(takeUntil(this.destroy$))
       .subscribe(
-        (response: any) => {
-          this.articles = response.articles;
-          this.currentPage++;
+        (articles: Article[]) => {
+          this.articles = articles;
+          this.currentPage ++;
           this.loadingArticles = false;
         },
         (error) => {

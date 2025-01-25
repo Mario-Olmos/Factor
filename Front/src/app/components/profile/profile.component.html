@@ -1,11 +1,7 @@
 <!-- src/app/components/profile/profile.component.html -->
 
 <!-- Popup de notificación -->
-<app-pop-up 
-  *ngIf="popupMessage" 
-  [message]="popupMessage" 
-  [type]="popupType" 
-  (closed)="onPopUpClosed()">
+<app-pop-up *ngIf="popupMessage" [message]="popupMessage" [type]="popupType" (closed)="onPopUpClosed()">
 </app-pop-up>
 
 <!-- Contenedor principal -->
@@ -70,10 +66,12 @@
       <div class="form-group">
         <label for="nombre">Nombre:</label>
         <input id="nombre" formControlName="nombre" class="form-control" type="text" />
-        <div *ngIf="profileForm.get('nombre')?.errors?.['required'] && profileForm.get('nombre')?.touched" class="error">
+        <div *ngIf="profileForm.get('nombre')?.errors?.['required'] && profileForm.get('nombre')?.touched"
+          class="error">
           <small>El nombre es requerido.</small>
         </div>
-        <div *ngIf="profileForm.get('nombre')?.errors?.['maxlength'] && profileForm.get('nombre')?.touched" class="error">
+        <div *ngIf="profileForm.get('nombre')?.errors?.['maxlength'] && profileForm.get('nombre')?.touched"
+          class="error">
           <small>El nombre no puede exceder 100 caracteres.</small>
         </div>
       </div>
@@ -81,10 +79,12 @@
       <div class="form-group">
         <label for="apellidos">Apellidos:</label>
         <input id="apellidos" formControlName="apellidos" class="form-control" type="text" />
-        <div *ngIf="profileForm.get('apellidos')?.errors?.['required'] && profileForm.get('apellidos')?.touched" class="error">
+        <div *ngIf="profileForm.get('apellidos')?.errors?.['required'] && profileForm.get('apellidos')?.touched"
+          class="error">
           <small>Los apellidos son requeridos.</small>
         </div>
-        <div *ngIf="profileForm.get('apellidos')?.errors?.['maxlength'] && profileForm.get('apellidos')?.touched" class="error">
+        <div *ngIf="profileForm.get('apellidos')?.errors?.['maxlength'] && profileForm.get('apellidos')?.touched"
+          class="error">
           <small>Los apellidos no pueden exceder 100 caracteres.</small>
         </div>
       </div>
@@ -92,7 +92,9 @@
       <div class="form-group">
         <label for="fechaNacimiento">Fecha de nacimiento:</label>
         <input id="fechaNacimiento" formControlName="fechaNacimiento" type="date" class="form-control" />
-        <div *ngIf="profileForm.get('fechaNacimiento')?.errors?.['required'] && profileForm.get('fechaNacimiento')?.touched" class="error">
+        <div
+          *ngIf="profileForm.get('fechaNacimiento')?.errors?.['required'] && profileForm.get('fechaNacimiento')?.touched"
+          class="error">
           <small>La fecha de nacimiento es requerida.</small>
         </div>
       </div>
@@ -108,20 +110,25 @@
       <!-- Acreditaciones (edición) -->
       <div class="acreditaciones">
         <h3>Acreditaciones</h3>
-        <div formArrayName="acreditaciones" *ngFor="let acreditacion of acreditaciones.controls; let i = index" class="acreditacion-item">
+        <div formArrayName="acreditaciones" *ngFor="let acreditacion of acreditaciones.controls; let i = index"
+          class="acreditacion-item">
           <div [formGroupName]="i" class="acreditacion-fields">
             <div class="form-group">
               <label for="title-{{ i }}">Título:</label>
               <input id="title-{{ i }}" formControlName="title" class="form-control" type="text" placeholder="Título" />
-              <div *ngIf="acreditacion.get('title')?.errors?.['required'] && acreditacion.get('title')?.touched" class="error">
+              <div *ngIf="acreditacion.get('title')?.errors?.['required'] && acreditacion.get('title')?.touched"
+                class="error">
                 <small>Título es requerido.</small>
               </div>
             </div>
 
             <div class="form-group">
               <label for="institution-{{ i }}">Institución:</label>
-              <input id="institution-{{ i }}" formControlName="institution" class="form-control" type="text" placeholder="Institución" />
-              <div *ngIf="acreditacion.get('institution')?.errors?.['required'] && acreditacion.get('institution')?.touched" class="error">
+              <input id="institution-{{ i }}" formControlName="institution" class="form-control" type="text"
+                placeholder="Institución" />
+              <div
+                *ngIf="acreditacion.get('institution')?.errors?.['required'] && acreditacion.get('institution')?.touched"
+                class="error">
                 <small>Institución es requerida.</small>
               </div>
             </div>
@@ -129,7 +136,8 @@
             <div class="form-group">
               <label for="year-{{ i }}">Año:</label>
               <input id="year-{{ i }}" formControlName="year" class="form-control" type="number" placeholder="Año" />
-              <div *ngIf="acreditacion.get('year')?.errors?.['required'] && acreditacion.get('year')?.touched" class="error">
+              <div *ngIf="acreditacion.get('year')?.errors?.['required'] && acreditacion.get('year')?.touched"
+                class="error">
                 <small>Año es requerido.</small>
               </div>
               <div *ngIf="acreditacion.get('year')?.errors?.['min'] && acreditacion.get('year')?.touched" class="error">
@@ -153,19 +161,11 @@
 
       <!-- Botones para guardar o cancelar edición -->
       <div class="edit-buttons">
-        <button 
-          type="button" 
-          class="save-btn" 
-          (click)="saveProfile()" 
-          [disabled]="!profileForm.valid || loading">
+        <button type="button" class="save-btn" (click)="saveProfile()" [disabled]="!profileForm.valid || loading">
           <span *ngIf="!loading">Guardar</span>
           <span *ngIf="loading">Guardando...</span>
         </button>
-        <button 
-          type="button" 
-          class="cancel-btn" 
-          (click)="editProfile()" 
-          [disabled]="loading">
+        <button type="button" class="cancel-btn" (click)="editProfile()" [disabled]="loading">
           Cancelar
         </button>
       </div>

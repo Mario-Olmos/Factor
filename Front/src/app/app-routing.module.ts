@@ -16,7 +16,7 @@ const routes: Routes = [
   { path: 'home', component: HomeComponent , canActivate: [AuthGuard] },
   { path: 'theme', component: ThemeComponent , canActivate: [AuthGuard] },
   { path: 'uploadArticle', component: UploadArticleComponent , canActivate: [AuthGuard] },
-  { path: 'article/:id', component: ArticuloDetailComponent, canActivate: [AuthGuard] },
+  { path: 'articles/:id', component: ArticuloDetailComponent, canActivate: [AuthGuard] },
   { path: 'explorador', component: FilterPageComponent, canActivate: [AuthGuard] },
   { path: 'perfil/me', component: ProfileComponent, canActivate: [AuthGuard] },
   { path: 'perfil/:id', component: ProfileComponent, canActivate: [AuthGuard] }, 

@@ -5,7 +5,6 @@ import { Theme } from '../../models/theme.model';
 import { Article } from '../../models/article.model';
 import { UserProfile } from '../../models/user.model';
 import { AuthService } from '../../services/auth.service';
-import { ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -25,7 +24,6 @@ export class FilterPageComponent implements OnInit {
     private fb: FormBuilder,
     private articlesService: ArticlesService,
     private authService: AuthService,
-    private cdr: ChangeDetectorRef,
     private route: ActivatedRoute
   ) {
 

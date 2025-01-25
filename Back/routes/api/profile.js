@@ -7,7 +7,7 @@ const uploadImage = require('../../middlewares/uploadMiddlewareImages');
 // Rutas para /api/profile
 
 // Ruta para obtener información completa del usuario por username (perfil público)
-router.get('/getUser/:id', userController.getUserById);
+router.get('/getUser/:username', userController.getUserById);
 
 // Ruta para actualizar el perfil de un usuario
 router.put('/update',authMiddleware, uploadImage, userController.updateUserProfile);

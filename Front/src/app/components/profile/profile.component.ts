@@ -145,7 +145,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   /**
    * Crea un grupo de formulario para una acreditación.
    */
-  private createAccreditationGroup(ac: Acreditacion = { title: '', institution: '', year: 1900 }): FormGroup {
+  private createAccreditationGroup(ac: Acreditacion = { title: '', institution: '', year: 2025 }): FormGroup {
     return this.fb.group({
       title: [ac.title, Validators.required],
       institution: [ac.institution, Validators.required],
@@ -298,7 +298,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     } else if (this.user?.imagenPerfil) {
       return this.sharedService.getFullImageUrl(this.user.imagenPerfil);
     } else {
-      return 'assets/images/default-profile.png'; // Ruta a una imagen por defecto
+      return 'assets/images/default-avatar.png'; // Ruta a una imagen por defecto
     }
   }
 

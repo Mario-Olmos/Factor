@@ -53,7 +53,7 @@ export class UploadArticleComponent implements OnInit, OnDestroy {
   private initializeForm(): void {
     this.articleForm = this.fb.group({
       title: ['', [Validators.required, Validators.maxLength(100)]],
-      description: ['', [Validators.maxLength(1000)]],
+      description: ['', [Validators.maxLength(2000)]],
       theme: ['', Validators.required],
       source: ['', [Validators.required, Validators.maxLength(200)]],
       image: [null] // Campo para la imagen opcional

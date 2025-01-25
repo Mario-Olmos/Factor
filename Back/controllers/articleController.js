@@ -113,7 +113,7 @@ exports.obtenerArticulosFeed = async (req, res) => {
         if (days) {
             fechaLimite.setDate(fechaLimite.getDate() - days);
         } else {
-            fechaLimite.setDate(fechaLimite.getDate() - 100);
+            fechaLimite.setDate(fechaLimite.getDate() - 1000);
         }
 
         let query = {
@@ -149,7 +149,7 @@ exports.obtenerArticulosFeed = async (req, res) => {
             articles.map(async (article) => {
 
                 const author = await User.findById(article.author);
-                const userVoteObj = article.votes.find(vote => vote.user.toString() === user.userId);
+                const userVoteObj = article.votes.find(vote => vote.user.toString() === user);
                 const userVote = userVoteObj ? userVoteObj.voteType : null;
                 const upVotes = article.votes.filter(vote => vote.voteType === 'upvote').length;
                 const downVotes = article.votes.filter(vote => vote.voteType === 'downvote').length;
@@ -217,13 +217,6 @@ exports.darLike = async (req, res) => {
             "votes.votedAt": { $gte: oneWeekAgo }
         });
 
-        console.log(votacionesUltimaSemana);
-        if (votacionesUltimaSemana >= votingLimit) {
-            return res.status(403).json({
-                message: 'Has alcanzado el límite de votaciones permitidas para tu nivel de reputación.'
-            });
-        }
-
         const articulo = await Article.findById(articleId);
         if (!articulo) {
             return res.status(404).json({ message: 'Artículo no encontrado.' });
@@ -233,6 +226,13 @@ exports.darLike = async (req, res) => {
 
         if (votoExistente) {
             return res.status(400).json({ message: 'Ya has votado este artículo.' });
+        }
+
+        console.log(votacionesUltimaSemana);
+        if (votacionesUltimaSemana >= votingLimit) {
+            return res.status(403).json({
+                message: 'Has alcanzado el límite de votaciones permitidas para tu nivel de reputación.'
+            });
         }
 
         const cambioVeracidad = voteType === 'upvote' ? pesoVoto : -pesoVoto;
@@ -317,43 +317,28 @@ exports.getArticleById = async (req, res) => {
 //Get de artículos por usuario
 exports.getArticlesByUser = async (req, res) => {
     try {
-        const { authorUsername } = req.query;
+        const { username } = req.query;
         const viewer = await User.findById(req.user.userId);
         if (!viewer) {
             return res.status(404).json({ message: 'Viewer no encontrado.' });
         }
-        const author = await User.findOne({ username: authorUsername });
+        const author = await User.findOne({ username: username });
         if (!author) {
             return res.status(404).json({ message: 'Autor no encontrado.' });
         }
 
-        let articlesQuery = Article.find({ author: author.userId }).lean();
+        let articlesQuery = Article.find({ author: author._id }).lean();
         const articles = await articlesQuery;
 
         const articlesWithDetails = await Promise.all(
             articles.map(async (article) => {
 
-                let userVote = null;
-                if (viewer.userId) {
-                    const userVoteObj = article.votes.find(
-                        (vote) => vote.user.toString() === viewer.userId
-                    );
-                    userVote = userVoteObj ? userVoteObj.voteType : null;
-                }
-
-                const upVotes = article.votes.filter(
-                    (vote) => vote.voteType === 'upvote'
-                ).length;
-                const downVotes = article.votes.filter(
-                    (vote) => vote.voteType === 'downvote'
-                ).length;
-
-                let themes = null;
-                if (article.theme) {
-                    themes = await getThemeHierarchyById(article.theme);
-                }
-
+                const themes = await getThemeHierarchyById(article.theme);
                 const authorInfo = await getUserInfoById(author.username);
+                const userVoteObj = article.votes.find(vote => vote.user.toString() === viewer._id.toString());
+                const userVote = userVoteObj ? userVoteObj.voteType : null;
+                const upVotes = article.votes.filter(vote => vote.voteType === 'upvote').length;
+                const downVotes = article.votes.filter(vote => vote.voteType === 'downvote').length;
 
                 return {
                     _id: article._id,
@@ -408,7 +393,7 @@ exports.eliminarArticulo = async (req, res) => {
                 console.error('Error al eliminar el archivo PDF:', err);
                 return res.status(500).json({ message: 'Error al eliminar el archivo PDF.' });
             }
-            
+
             await Article.findByIdAndDelete(articleId);
             res.status(200).json({ message: 'Artículo eliminado con éxito.' });
         });

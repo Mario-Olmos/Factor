@@ -61,6 +61,9 @@ export class ArticlesService {
     if (ordenarPorVeracidad) {
       params.ordenarPorVeracidad = ordenarPorVeracidad;
     }
+    if (days) {
+      params.days = days;
+    }
 
     return this.http.get<any[]>(`${this.apiUrl}/articles/getArticles`, { params, withCredentials: true }, );
   }
@@ -76,9 +79,9 @@ export class ArticlesService {
   }
 
   //Método get para traer los artículos de un usuario
-  getArticlesByUser(authorUsername: string): Observable<Article[]> {
+  getArticlesByUser(username: string): Observable<Article[]> {
     const params: any = {
-      authorUsername
+      username
     }
     return this.http.get<Article[]>(`${this.apiUrl}/articles/getArticlesByUser`, { params, withCredentials: true });
   }
