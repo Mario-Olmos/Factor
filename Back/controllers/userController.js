@@ -164,7 +164,12 @@ exports.getUserInfoById = async (username) => {
             throw new Error('Usuario no encontrado');
         }
         return {
-            user
+            username: user.username,
+            nombre: user.nombre,
+            apellidos: user.apellidos,
+            imagenPerfil: user.imagenPerfil,
+            reputacion: user.reputacion,
+            acreditaciones: user.acreditaciones
         };
     } catch (error) {
         console.error(`Error al obtener información del usuario con username: ${username}`, error);

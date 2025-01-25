@@ -62,7 +62,7 @@ export class AuthService {
   }
 
   updateProfile(data: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/profile/update`, data).pipe(
+    return this.http.put<any>(`${this.apiUrl}/profile/update`, data, { withCredentials: true }).pipe(
       map(response => {
         if (response.user) {
           this.currentUser.next(response.user);
@@ -72,13 +72,5 @@ export class AuthService {
     );
   }
 
-  deleteAccount(deleteArticles: boolean) {
-    const params = { deleteArticles };
-    return this.http.delete(`${this.apiUrl}/profile/delete`, { params, withCredentials: true }).pipe(
-      map(() => {
-        this.currentUser.next(null);
-      })
-    );
-  }
 
 }
