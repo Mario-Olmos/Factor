@@ -62,7 +62,7 @@ export class ArticlesService {
       params.ordenarPorVeracidad = ordenarPorVeracidad;
     }
 
-    return this.http.get<any[]>(`${this.apiUrl}/articles/getArticles`, { params });
+    return this.http.get<any[]>(`${this.apiUrl}/articles/getArticles`, { params, withCredentials: true }, );
   }
 
   //Método para dar "Like" o "Dislike"

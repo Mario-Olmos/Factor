@@ -1,24 +1,29 @@
-import { Component, OnInit } from '@angular/core';
+// src/app/components/profile/profile.component.ts
+
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { User } from '../../models/user.model';
+import { UserArticle, UserProfile } from '../../models/user.model';
+import { Acreditacion } from '../../models/acreditacion.model';
 import { Article } from '../../models/article.model';
 import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { ArticlesService } from '../../services/articles.service';
 import { SharedService } from '../../services/shared.service';
 import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css']
 })
-export class ProfileComponent implements OnInit {
-  userId!: string;
+export class ProfileComponent implements OnInit, OnDestroy {
+  profileUsername!: string;
   isOwnProfile: boolean = false;
-  user!: User;
+  user: UserArticle | null = null;
   articles: Article[] = [];
-  currentUser: User | null = null;
+  currentUser: UserProfile | null = null;
   activeTab: string = 'info';
   isEditing: boolean = false;
   profileForm!: FormGroup;
@@ -27,6 +32,10 @@ export class ProfileComponent implements OnInit {
   selectedFile: File | null = null;
   showDeleteConfirmation: boolean = false;
   deleteConfirmationMessage: string = 'Se va a eliminar su cuenta, por favor seleccione si quiere mantener sus artículos en la plataforma.';
+
+  public loading: boolean = false; // Propiedad 'loading' definida
+
+  private destroy$ = new Subject<void>();
 
   constructor(
     private route: ActivatedRoute,
@@ -38,91 +47,105 @@ export class ProfileComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.authService.getCurrentUser().subscribe({
-      next: (user) => {
-        this.currentUser = user;
+    this.authService.getCurrentUser()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (user) => {
+          this.currentUser = user;
 
-        this.route.params.subscribe((params) => {
-          const requestedUserId = params['id'];
+          this.route.params
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((params) => {
+              const requestedUserId = params['username'];
 
-          if (!requestedUserId || requestedUserId === 'me') {
-            this.userId = this.currentUser!.userId;
-            this.isOwnProfile = true;
-          } else {
-            this.userId = requestedUserId;
-            this.isOwnProfile = false;
-          }
-          console.log(`Perfil cargado: ${this.isOwnProfile ? 'propio' : 'otro usuario'}`);
-          this.loadUserProfile();
-        });
-      },
-      error: (error) => {
-        console.error('Error al obtener el usuario actual:', error);
-      },
-    });
+              if (!requestedUserId || requestedUserId === 'me') {
+                this.profileUsername = this.currentUser!.username;
+                this.isOwnProfile = true;
+              } else {
+                this.profileUsername = requestedUserId;
+                this.isOwnProfile = false;
+              }
+              console.log(`Perfil cargado: ${this.isOwnProfile ? 'propio' : 'otro usuario'}`);
+              this.loadUserProfile();
+            });
+        },
+        error: (error) => {
+          console.error('Error al obtener el usuario actual:', error);
+          this.showErrorMessage('Error al cargar los datos del usuario.');
+        },
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   /**
-   * Carga la info del usuario y sus artículos publicados.
-   * @returns void
+   * Carga la información del usuario y sus artículos publicados.
    */
   private loadUserProfile(): void {
-    this.authService.getUserById(this.userId).subscribe({
-      next: (data) => {
-        this.user = data.user;
-        this.initForm();
-        this.loadArticlesByUser();
-      },
-      error: (error) => {
-        this.showErrorMessage('Error al cargar el perfil del usuario:');
-      }
-    });
+    if (!this.isOwnProfile) {
+      this.authService.getUserById(this.profileUsername)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (data: { user: UserArticle }) => {
+            this.user = data.user;
+            this.loadArticlesByUser();
+          },
+          error: (error) => {
+            console.error('Error al cargar el perfil del usuario:', error);
+            this.showErrorMessage('Error al cargar el perfil del usuario.');
+          }
+        });
+    } else {
+      this.initForm();
+      this.loadArticlesByUser();
+    }
   }
 
   /**
    * Carga los artículos publicados por el usuario.
-   * @returns void
    */
   private loadArticlesByUser(): void {
-    const authorId = this.userId;
-    const viewerId = this.currentUser!.userId;
-    this.articlesService.getArticlesByUser(authorId, viewerId).subscribe({
-      next: (articles) => {
-        this.articles = articles;
-      },
-      error: (error) => {
-        this.showErrorMessage('Error al cargar los artículos del usuario:');
-      }
-    });
+    const authorUsername = this.profileUsername;
+    this.articlesService.getArticlesByUser(authorUsername)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (articles: Article[]) => {
+          this.articles = articles;
+        },
+        error: (error) => {
+          console.error('Error al cargar los artículos del usuario:', error);
+          this.showErrorMessage('Error al cargar los artículos del usuario.');
+        }
+      });
   }
 
   /**
    * Inicializa el formulario de perfil con los datos del usuario.
-   * @returns void
    */
   private initForm(): void {
     this.profileForm = this.fb.group({
-      nombre: [this.user.nombre, Validators.required],
-      apellidos: [this.user.apellidos, Validators.required],
+      nombre: [this.currentUser?.nombre, [Validators.required, Validators.maxLength(100)]],
+      apellidos: [this.currentUser?.apellidos, [Validators.required, Validators.maxLength(100)]],
       fechaNacimiento: [
-        this.user.fechaNacimiento
-          ? this.formatDateForInput(new Date(this.user.fechaNacimiento))
+        this.currentUser?.fechaNacimiento
+          ? this.formatDateForInput(new Date(this.currentUser.fechaNacimiento))
           : '',
         Validators.required
       ],
-      imagenPerfil: [this.user.imagenPerfil || ''],
+      imagenPerfil: [this.currentUser?.imagenPerfil || ''],
       acreditaciones: this.fb.array(
-        this.user.acreditaciones.map(ac => this.createAccreditationGroup(ac))
+        this.currentUser!.acreditaciones.map(ac => this.createAccreditationGroup(ac))
       )
     });
   }
 
   /**
    * Crea un grupo de formulario para una acreditación.
-   * @param ac Objeto de acreditación existente o vacío.
-   * @returns Grupo de formulario para la acreditación.
    */
-  private createAccreditationGroup(ac: any = { title: '', institution: '', year: '' }): FormGroup {
+  private createAccreditationGroup(ac: Acreditacion = { title: '', institution: '', year: 1900 }): FormGroup {
     return this.fb.group({
       title: [ac.title, Validators.required],
       institution: [ac.institution, Validators.required],
@@ -139,7 +162,6 @@ export class ProfileComponent implements OnInit {
 
   /**
    * Obtiene el array de acreditaciones del formulario.
-   * @returns FormArray de acreditaciones.
    */
   public get acreditaciones(): FormArray {
     return this.profileForm.get('acreditaciones') as FormArray;
@@ -147,7 +169,6 @@ export class ProfileComponent implements OnInit {
 
   /**
    * Añade una nueva acreditación al formulario.
-   * @returns void
    */
   public addAccreditation(): void {
     this.acreditaciones.push(this.createAccreditationGroup());
@@ -155,8 +176,6 @@ export class ProfileComponent implements OnInit {
 
   /**
    * Elimina una acreditación específica del formulario.
-   * @param index Índice de la acreditación a eliminar.
-   * @returns void
    */
   public removeAccreditation(index: number): void {
     this.acreditaciones.removeAt(index);
@@ -164,8 +183,6 @@ export class ProfileComponent implements OnInit {
 
   /**
    * Cambia la pestaña activa en el perfil.
-   * @param tab Nombre de la pestaña a activar.
-   * @returns void
    */
   public setActiveTab(tab: string): void {
     this.activeTab = tab;
@@ -173,19 +190,16 @@ export class ProfileComponent implements OnInit {
 
   /**
    * Alterna el modo de edición del perfil.
-   * @returns void
    */
   public editProfile(): void {
     this.isEditing = !this.isEditing;
-    if (this.isEditing) {
+    if (this.isEditing && this.isOwnProfile) {
       this.initForm();
     }
   }
 
   /**
    * Maneja la selección de una nueva imagen de perfil.
-   * @param event Evento de selección de archivo.
-   * @returns void
    */
   public onImageSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -198,13 +212,20 @@ export class ProfileComponent implements OnInit {
 
   /**
    * Guarda los cambios realizados en el perfil del usuario.
-   * @returns void
    */
   public saveProfile(): void {
     if (!this.profileForm.valid) {
       this.showErrorMessage('Formulario no válido. Revisa los errores.');
       return;
     }
+
+    // Verifica si es propio perfil antes de proceder
+    if (!this.isOwnProfile) {
+      this.showErrorMessage('No puedes editar el perfil de otro usuario.');
+      return;
+    }
+
+    this.loading = true; // Iniciar el estado de carga
 
     // CASO A: El usuario NO subió ninguna imagen => Envío JSON normal
     if (!this.selectedFile) {
@@ -215,18 +236,23 @@ export class ProfileComponent implements OnInit {
         acreditaciones: this.profileForm.value.acreditaciones,
       };
 
-      this.authService.updateProfile(userJson, this.user._id).subscribe({
-        next: (resp) => {
-          this.user = resp.user;
-          this.isEditing = false;
-          this.showSuccessMessage('Perfil actualizado.');
-        },
-        error: (err) => {
-          this.showErrorMessage('Error actualizando perfil:');
-        }
-      });
+      this.authService.updateProfile(userJson)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (resp: { user: UserProfile }) => {
+            this.currentUser = resp.user; // Actualiza currentUser
+            this.isEditing = false;
+            this.showSuccessMessage('Perfil actualizado.');
+            this.loading = false; // Finalizar el estado de carga
+          },
+          error: (err) => {
+            console.error('Error actualizando perfil:', err);
+            this.showErrorMessage('Error actualizando perfil.');
+            this.loading = false; // Finalizar el estado de carga
+          }
+        });
 
-      // CASO B: El usuario SÍ seleccionó imagen => Envío FormData (multipart/form-data)
+    // CASO B: El usuario SÍ seleccionó imagen => Envío FormData (multipart/form-data)
     } else {
       const formData = new FormData();
       formData.append('nombre', this.profileForm.value.nombre);
@@ -235,23 +261,26 @@ export class ProfileComponent implements OnInit {
       formData.append('acreditaciones', JSON.stringify(this.profileForm.value.acreditaciones));
       formData.append('imagenPerfil', this.selectedFile);
 
-      this.authService.updateProfile(formData, this.user._id).subscribe({
-        next: (resp) => {
-          this.user = resp.user;
-          this.isEditing = false;
-          this.showSuccessMessage('Perfil e imagen actualizados.');
-        },
-        error: (err) => {
-          this.showErrorMessage('Error actualizando perfil:');
-        }
-      });
+      this.authService.updateProfile(formData)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (resp: { user: UserProfile }) => {
+            this.currentUser = resp.user; // Actualiza currentUser
+            this.isEditing = false;
+            this.showSuccessMessage('Perfil e imagen actualizados.');
+            this.loading = false; // Finalizar el estado de carga
+          },
+          error: (err) => {
+            console.error('Error actualizando perfil:', err);
+            this.showErrorMessage('Error actualizando perfil.');
+            this.loading = false; // Finalizar el estado de carga
+          }
+        });
     }
   }
 
   /**
    * Formatea una fecha para que sea compatible con los inputs de tipo date.
-   * @param date Objeto Date a formatear.
-   * @returns Fecha formateada como string 'YYYY-MM-DD'.
    */
   private formatDateForInput(date: Date): string {
     const year = date.getFullYear();
@@ -260,26 +289,39 @@ export class ProfileComponent implements OnInit {
     return `${year}-${month}-${day}`;
   }
 
+  /**
+   * Obtiene la URL completa de la imagen de perfil.
+   */
+  public getProfileImageUrl(): string {
+    if (this.isOwnProfile && this.currentUser?.imagenPerfil) {
+      return this.sharedService.getFullImageUrl(this.currentUser.imagenPerfil);
+    } else if (this.user?.imagenPerfil) {
+      return this.sharedService.getFullImageUrl(this.user.imagenPerfil);
+    } else {
+      return 'assets/images/default-profile.png'; // Ruta a una imagen por defecto
+    }
+  }
 
   /**
    * Métodos auxiliares
    */
-  public getFullImageUrl(rel: string | undefined):string{
+  public getFullImageUrl(rel: string | undefined): string {
     return this.sharedService.getFullImageUrl(rel);
   }
-
 
   /**
    * Logout
    */
   logout() {
-    this.authService.logout().subscribe(() => {
-      this.router.navigate(['/login']);
-    });
+    this.authService.logout()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.router.navigate(['/login']);
+      });
   }
 
   /**
-   * Mensajes
+   * Mensajes de notificación.
    */
   private showSuccessMessage(message: string): void {
     this.popupMessage = message;
@@ -297,50 +339,31 @@ export class ProfileComponent implements OnInit {
   }
 
   /**
-   * Muestra la confirmación para eliminar la cuenta.
-   * @returns void
+   * Getters para simplificar el HTML
    */
-  public confirmDeleteAccount(): void {
-    this.showDeleteConfirmation = true;
+  public get displayName(): string {
+    if (this.isOwnProfile && this.currentUser) {
+      return `${this.currentUser.nombre} ${this.currentUser.apellidos}`;
+    } else if (this.user) {
+      return `${this.user.nombre} ${this.user.apellidos}`;
+    }
+    return 'Usuario';
   }
 
-  /**
-   * Maneja la respuesta del usuario en la confirmación de eliminación de cuenta.
-   * @param confirm - `true` si el usuario confirma la eliminación, `false` si cancela.
-   * @returns void
-   */
-  public handleDeleteAccount(confirm: boolean): void {
-    this.showDeleteConfirmation = false;
-    if (confirm) {
-      this.deleteAccount(false);
-    } else {
-      this.deleteAccount(true);
+  public get displayAcreditaciones(): Acreditacion[] {
+    if (this.isOwnProfile && this.currentUser) {
+      return this.currentUser.acreditaciones;
+    } else if (this.user) {
+      return this.user.acreditaciones;
     }
+    return [];
   }
 
-  /**
-   * Elimina la cuenta del usuario y, opcionalmente, sus artículos.
-   * @param deleteArticles - `true` para eliminar todos los artículos del usuario, `false` para mantenerlos.
-   * @returns void
-   */
-  private deleteAccount(deleteArticles: boolean): void {
-    if (!this.currentUser) {
-      this.showErrorMessage('Usuario no autenticado.');
-      return;
-    }
+  public get displayEmail(): string | undefined {
+    return this.isOwnProfile ? this.currentUser?.email : undefined;
+  }
 
-    this.authService.deleteAccount(deleteArticles).subscribe({
-      next: (resp) => {
-        this.showSuccessMessage('Cuenta eliminada con éxito.');
-        setTimeout(() => {
-          this.authService.logout();
-          this.router.navigate(['/login']);
-        }, 3000);
-      },
-      error: (err) => {
-        console.error('Error al eliminar la cuenta:', err);
-        this.showErrorMessage('Error al eliminar la cuenta.');
-      }
-    });
+  public get displayFechaNacimiento(): Date | undefined {
+    return this.isOwnProfile ? this.currentUser?.fechaNacimiento : undefined;
   }
 }

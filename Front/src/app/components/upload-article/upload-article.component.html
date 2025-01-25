@@ -1,3 +1,5 @@
+<!-- src/app/components/upload-article/upload-article.component.html -->
+
 <!-- Popup de notificación -->
 <app-pop-up 
   *ngIf="popupMessage" 
@@ -24,9 +26,11 @@
       <small id="titleHelp" class="form-text text-muted">
         Máximo 100 caracteres.
       </small>
-      <div *ngIf="articleForm.get('title')?.invalid && articleForm.get('title')?.touched" class="error">
-        <small *ngIf="articleForm.get('title')?.errors?.required">El título es requerido.</small>
-        <small *ngIf="articleForm.get('title')?.errors?.maxlength">El título no puede exceder 100 caracteres.</small>
+      <div *ngIf="articleForm.get('title')?.errors?.['required'] && articleForm.get('title')?.touched" class="error">
+        <small>El título es requerido.</small>
+      </div>
+      <div *ngIf="articleForm.get('title')?.errors?.['maxlength'] && articleForm.get('title')?.touched" class="error">
+        <small>El título no puede exceder 100 caracteres.</small>
       </div>
     </div>
 
@@ -36,7 +40,7 @@
       <textarea 
         id="description" 
         formControlName="description" 
-        class="form-control"
+        class="form-control" 
         placeholder="Descripción del artículo" 
         rows="6"
         aria-describedby="descriptionHelp">
@@ -44,8 +48,8 @@
       <small id="descriptionHelp" class="form-text text-muted">
         Máximo 1000 caracteres.
       </small>
-      <div *ngIf="articleForm.get('description')?.invalid && articleForm.get('description')?.touched" class="error">
-        <small *ngIf="articleForm.get('description')?.errors?.maxlength">La descripción no puede exceder 1000 caracteres.</small>
+      <div *ngIf="articleForm.get('description')?.errors?.['maxlength'] && articleForm.get('description')?.touched" class="error">
+        <small>La descripción no puede exceder 1000 caracteres.</small>
       </div>
     </div>
 
@@ -63,9 +67,11 @@
       <small id="sourceHelp" class="form-text text-muted">
         Máximo 200 caracteres.
       </small>
-      <div *ngIf="articleForm.get('source')?.invalid && articleForm.get('source')?.touched" class="error">
-        <small *ngIf="articleForm.get('source')?.errors?.required">La fuente es requerida.</small>
-        <small *ngIf="articleForm.get('source')?.errors?.maxlength">La fuente no puede exceder 200 caracteres.</small>
+      <div *ngIf="articleForm.get('source')?.errors?.['required'] && articleForm.get('source')?.touched" class="error">
+        <small>La fuente es requerida.</small>
+      </div>
+      <div *ngIf="articleForm.get('source')?.errors?.['maxlength'] && articleForm.get('source')?.touched" class="error">
+        <small>La fuente no puede exceder 200 caracteres.</small>
       </div>
     </div>
 
@@ -104,7 +110,7 @@
       <small id="themeHelp" class="form-text text-muted">
         Selecciona una temática para el artículo.
       </small>
-      <div *ngIf="articleForm.get('theme')?.invalid && articleForm.get('theme')?.touched" class="error">
+      <div *ngIf="articleForm.get('theme')?.errors?.['required'] && articleForm.get('theme')?.touched" class="error">
         <small>La temática es requerida.</small>
       </div>
     </div>
@@ -146,7 +152,8 @@
       <small id="imageHelp" class="form-text text-muted">
         Selecciona una imagen en formato JPEG o PNG.
       </small>
-      <div *ngIf="!selectedFile && articleForm.get('image')?.touched && articleForm.get('image')?.invalid" class="error">
+      <!-- Elimina la verificación de 'invalid' ya que no hay validadores -->
+      <div *ngIf="!selectedFile && articleForm.get('image')?.touched" class="error">
         <small>Por favor, selecciona una imagen válida.</small>
       </div>
     </div>
@@ -159,8 +166,8 @@
     <!-- Botón de envío con indicador de carga -->
     <button 
       type="submit" 
-      class="button" 
-      [disabled]="articleForm.invalid || !pdfFile || loading">
+      class="btn btn-primary" 
+      [disabled]="!articleForm.valid || !pdfFile || loading">
       <span *ngIf="!loading">Subir Artículo</span>
       <span *ngIf="loading">Subiendo...</span>
     </button>
