@@ -783,7 +783,7 @@ p {
 .profile-tabs {
     display: flex;
     gap: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 40px;
     justify-content: flex-start;
 }
 
@@ -810,4 +810,9 @@ p {
 
 .profile-container .author-info {
     display: none !important;
+}
+
+.profile-container .article-card{
+    background: #FEFAE0;
+    margin-top: 50px;
 }

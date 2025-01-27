@@ -16,6 +16,7 @@ import { ArticuloListComponent } from './components/articulos/articulo-list/arti
 import { FilterPageComponent } from './components/filter-page/filter-page.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { PopUpComponent } from './components/shared/pop-up/pop-up.component';
+import { DecisionPopUpComponent } from './components/shared/decision-pop-up/decision-pop-up.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { PopUpComponent } from './components/shared/pop-up/pop-up.component';
     ArticuloListComponent,
     FilterPageComponent,
     ProfileComponent,
-    PopUpComponent
+    PopUpComponent,
+    DecisionPopUpComponent
   ],
   imports: [
     BrowserModule,

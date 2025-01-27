@@ -32,8 +32,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
   selectedFile: File | null = null;
   showDeleteConfirmation: boolean = false;
   deleteConfirmationMessage: string = 'Se va a eliminar su cuenta, por favor seleccione si quiere mantener sus artículos en la plataforma.';
-
-  public loading: boolean = false; // Propiedad 'loading' definida
+  public loading: boolean = false;
+  public isSettingsMenuOpen: boolean = false;
+  public isDeleteAccountPopupOpen: boolean = false;
 
   private destroy$ = new Subject<void>();
 
@@ -189,6 +190,63 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   /**
+  * Alterna la visibilidad del menú de configuración.
+  */
+  public toggleSettingsMenu(): void {
+    this.isSettingsMenuOpen = !this.isSettingsMenuOpen;
+    console.log('Menú de configuración abierto:', this.isSettingsMenuOpen); // Para depuración
+  }
+
+  /**
+   * Cierra el menú de configuración.
+   */
+  public closeSettingsMenu(): void {
+    this.isSettingsMenuOpen = false;
+  }
+
+  /**
+   * Abre el pop-up de eliminación de cuenta.
+   */
+  public openDeleteAccountPopup(): void {
+    this.isDeleteAccountPopupOpen = true;
+    this.closeSettingsMenu(); // Opcional: cerrar el menú al abrir el pop-up
+  }
+
+  /**
+   * Cierra el pop-up de eliminación de cuenta.
+   */
+  public closeDeleteAccountPopup(): void {
+    this.isDeleteAccountPopupOpen = false;
+  }
+
+  /**
+   * Maneja la elección del usuario en el pop-up de eliminación de cuenta.
+   * @param deleteArticles Indica si se deben eliminar los artículos.
+   */
+  public handleDeleteChoice(deleteArticles: boolean): void {
+    this.loading = true;
+
+    // Realiza la solicitud al backend para eliminar la cuenta
+    this.authService.deleteAccount(deleteArticles)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.showSuccessMessage('Cuenta eliminada con éxito.');
+          this.loading = false;
+          this.closeDeleteAccountPopup();
+          // Redirigir al usuario después de la eliminación, por ejemplo, a la página de inicio
+          this.router.navigate(['/']);
+        },
+        error: (error) => {
+          console.error('Error al eliminar la cuenta:', error);
+          this.showErrorMessage(error.error.message || 'Error al eliminar la cuenta.');
+          this.loading = false;
+          this.closeDeleteAccountPopup();
+        }
+      });
+  }
+
+  /**
    * Alterna el modo de edición del perfil.
    */
   public editProfile(): void {
@@ -252,7 +310,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
           }
         });
 
-    // CASO B: El usuario SÍ seleccionó imagen => Envío FormData (multipart/form-data)
+      // CASO B: El usuario SÍ seleccionó imagen => Envío FormData (multipart/form-data)
     } else {
       const formData = new FormData();
       formData.append('nombre', this.profileForm.value.nombre);
@@ -339,7 +397,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Getters para simplificar el HTML
+   * Getters 
    */
   public get displayName(): string {
     if (this.isOwnProfile && this.currentUser) {

@@ -10,6 +10,16 @@
   <!-- Bloque que siempre se ve: foto + datos básicos -->
   <div class="profile-main-card">
 
+    <div class="profile-settings">
+      <button class="settings-btn" (click)="toggleSettingsMenu()" aria-label="Configuración">
+        <span class="material-icons">settings</span>
+      </button>
+      <div class="settings-menu" *ngIf="isSettingsMenuOpen">
+        <button class="menu-item" (click)="logout()">Cerrar Sesión</button>
+        <button class="menu-item" (click)="openDeleteAccountPopup()">Eliminar Cuenta</button>
+      </div>
+    </div>
+
     <div class="profile-image-container">
       <img [src]="getProfileImageUrl()" class="profile-image" alt="Imagen de perfil de {{ displayName }}" />
     </div>
@@ -100,7 +110,7 @@
       </div>
 
       <div>
-        <label for="imagenPerfil">Imagen de perfil:</label>
+        <label for="imagenPerfil" class="custom-file-upload">Seleccionar imagen de perfil:</label>
         <input id="imagenPerfil" type="file" (change)="onImageSelected($event)" accept="image/*" class="form-control" />
         <div *ngIf="selectedFile" class="mb-2">
           <p>Imagen seleccionada: {{ selectedFile.name }}</p>
@@ -187,3 +197,9 @@
   </div>
 
 </div>
+
+<app-decision-pop-up 
+  *ngIf="isDeleteAccountPopupOpen" 
+  (deleteChoice)="handleDeleteChoice($event)" 
+  (closePopup)="closeDeleteAccountPopup()">
+</app-decision-pop-up>

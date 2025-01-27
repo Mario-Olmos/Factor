@@ -61,7 +61,7 @@ exports.uploadArticle = async (req, res) => {
             title,
             description,
             pdfUrl,
-            author: user.userId,
+            author: user._id,
             theme,
             authorReputationAtCreation: user.reputacion,
             source
@@ -158,26 +158,40 @@ exports.obtenerArticulosFeed = async (req, res) => {
                     ? await getThemeHierarchyById(article.theme)
                     : { nivel1: null, nivel2: null, nivel3: null };
 
-                if (!author) {
-                    return res.status(404).json({ message: 'Autor no encontrado.' });
-                }
-                const authorInfo = await getUserInfoById(author.username);
-
-                return {
-                    _id: article._id,
-                    title: article.title,
-                    description: article.description,
-                    pdfUrl: article.pdfUrl,
-                    theme: article.theme,
-                    veracity: article.veracity,
-                    createdAt: article.createdAt,
-                    source: article.source,
-                    upVotes: upVotes,
-                    downVotes: downVotes,
-                    userVote: userVote,
-                    authorInfo: authorInfo,
-                    themes: themes
-                };
+                if (author) {
+                    const authorInfo = await getUserInfoById(author.username);
+                    return {
+                        _id: article._id,
+                        title: article.title,
+                        description: article.description,
+                        pdfUrl: article.pdfUrl,
+                        theme: article.theme,
+                        veracity: article.veracity,
+                        createdAt: article.createdAt,
+                        source: article.source,
+                        upVotes: upVotes,
+                        downVotes: downVotes,
+                        userVote: userVote,
+                        authorInfo: authorInfo,
+                        themes: themes
+                    };
+                }else{
+                    return {
+                        _id: article._id,
+                        title: article.title,
+                        description: article.description,
+                        pdfUrl: article.pdfUrl,
+                        theme: article.theme,
+                        veracity: article.veracity,
+                        createdAt: article.createdAt,
+                        source: article.source,
+                        upVotes: upVotes,
+                        authorInfo: article.authorInfo,
+                        downVotes: downVotes,
+                        userVote: userVote,
+                        themes: themes
+                    };
+                }             
             })
         );
 
