@@ -9,7 +9,6 @@ exports.validateToken = async (req, res) => {
     if (req.user && req.user.userId) {
         try {
             const user = await User.findById(req.user.userId).select('username reputacion nombre apellidos email fechaNacimiento acreditaciones imagenPerfil');
-
             if (!user) {
                 return res.json({ authenticated: false, message: 'Usuario no encontrado' });
             }
@@ -36,7 +35,6 @@ exports.validateToken = async (req, res) => {
     }
 };
 
-
 // Endpoint para cerrar Sesión
 exports.logout = (req, res) => {
     res.clearCookie('token', {
@@ -48,7 +46,7 @@ exports.logout = (req, res) => {
     return res.status(200).json({ message: 'Logout successful' });
 };
 
-
+//
 const generateUniqueUsername = async (nombre, apellidos) => {
     const baseUsername = `${nombre}${apellidos}`.toLowerCase().replace(/\s+/g, '');
     const uniqueCode = uuidv4().split('-')[0];
@@ -62,14 +60,11 @@ const generateUniqueUsername = async (nombre, apellidos) => {
     return username;
 };
 
-
 // Controlador para registrar un nuevo usuario
 exports.register = async (req, res) => {
     const { nombre, apellidos, email, password, fechaNacimiento } = req.body;
 
     try {
-
-        // Comprobar si el usuario ya existe
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ message: 'El usuario ya existe' });
@@ -78,7 +73,6 @@ exports.register = async (req, res) => {
         const username = await generateUniqueUsername(nombre, apellidos);
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Crear un nuevo usuario
         const newUser = new User({
             nombre,
             apellidos,
@@ -91,7 +85,6 @@ exports.register = async (req, res) => {
 
         await newUser.save();
 
-        // Generar un token JWT
         const token = jwt.sign(
             { userId: newUser._id, email: newUser.email, username: newUser.username },
             process.env.JWT_SECRET,
@@ -103,7 +96,6 @@ exports.register = async (req, res) => {
         res.status(500).json({ message: 'Error al registrar usuario', error: err.message });
     }
 };
-
 
 // Controlador para iniciar sesión
 exports.login = async (req, res) => {
@@ -122,7 +114,7 @@ exports.login = async (req, res) => {
         if (!isMatch) {
             return res.status(400).json({ message: 'Credenciales incorrectas' });
         }
-        // Generar un token JWT
+
         const token = jwt.sign(
             { userId: user._id, email: user.email, username: user.username },
             process.env.JWT_SECRET,
@@ -150,12 +142,10 @@ exports.login = async (req, res) => {
         };
 
         res.status(200).json({ user: userResponse });
-
     } catch (err) {
         res.status(500).json({ message: 'Error al iniciar sesión', error: err.message });
     }
 };
-
 
 //Devolver info del usuario a partir de su username (interfaz UserArticle para los artículos)
 exports.getUserInfoById = async (username) => {
@@ -217,7 +207,6 @@ exports.updateUserProfile = async (req, res) => {
 
         // Si se sube un archivo (req.file) a través de Multer
         if (req.file) {
-            // Guardamos la ruta en el campo imagenPerfil
             user.imagenPerfil = `api/uploads/profiles/${req.file.filename}`;
         }
 
@@ -257,7 +246,6 @@ exports.deleteUser = async (req, res) => {
     try {
         const { deleteArticles } = req.query;
 
-        // Seleccionar solo los campos necesarios
         const user = await User.findById(req.user.userId).select('nombre apellidos email reputacion fechaNacimiento acreditaciones').lean();
         if (!user) {
             return res.status(404).json({ message: 'Usuario no encontrado.' });

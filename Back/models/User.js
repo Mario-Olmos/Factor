@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-// Definición del esquema para los títulos/estudios/acreditaciones
+// Definición del esquema para las acreditaciones
 const AccreditationSchema = new mongoose.Schema({
     title: {
         type: String,
