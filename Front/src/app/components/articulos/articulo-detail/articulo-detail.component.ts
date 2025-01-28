@@ -190,6 +190,10 @@ export class ArticuloDetailComponent implements OnInit {
     return this.sharedService.getReputationColor(reputation);
   }
 
+  public getFullImageUrl(rel: string | undefined): string {
+    return this.sharedService.getFullImageUrl(rel);
+  }
+
   /**
    * Mensajes
    */

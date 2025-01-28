@@ -21,7 +21,7 @@ export class AuthService {
   // Método de login
   login(credentials: any): Observable<{ token: string; user: UserProfile }> {
     return this.http.post<{ token: string; user: UserProfile }>(`${this.apiUrl}/auth/login`, credentials, { withCredentials: true });
-  }  
+  }
 
   // Método de registro
   register(userData: any): Observable<any> {
@@ -45,7 +45,7 @@ export class AuthService {
   // Método para obtener el usuario actual como observable
   getCurrentUser() {
     return this.currentUser.asObservable();
-}
+  }
 
   // Método de logout
   logout(): Observable<any> {
@@ -72,5 +72,15 @@ export class AuthService {
     );
   }
 
-
+  /**
+   * Elimina la cuenta del usuario.
+   * @param deleteArticles Indica si se deben eliminar los artículos.
+   * @returns Observable de la respuesta.
+   */
+  public deleteAccount(deleteArticles: boolean): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/profile/delete`, {
+      params: { deleteArticles: deleteArticles.toString() },
+      withCredentials: true
+    });
+  }
 }

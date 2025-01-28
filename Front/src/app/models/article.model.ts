@@ -14,6 +14,7 @@ export interface Article {
   downVotes: number;
   userVote: UserVote;
   authorInfo: UserArticle;
+  deleted: boolean;
   source: string;
   themes: {
     nivel1: string | null;

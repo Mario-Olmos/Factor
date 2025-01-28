@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Article = require('../models/Article');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
@@ -270,6 +271,7 @@ exports.deleteUser = async (req, res) => {
                 {
                     $set: {
                         author: null,
+                        deleted: true,
                         authorInfo: {
                             nombre: user.nombre,
                             apellidos: user.apellidos,
