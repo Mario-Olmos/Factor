@@ -348,8 +348,12 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Obtiene la URL completa de la imagen de perfil.
+   * Métodos auxiliares
    */
+  public getFullImageUrl(rel: string | undefined): string {
+    return this.sharedService.getFullImageUrl(rel);
+  }
+
   public getProfileImageUrl(): string {
     if (this.isOwnProfile && this.currentUser?.imagenPerfil) {
       return this.sharedService.getFullImageUrl(this.currentUser.imagenPerfil);
@@ -358,13 +362,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
     } else {
       return 'assets/images/default-avatar.png'; // Ruta a una imagen por defecto
     }
-  }
-
-  /**
-   * Métodos auxiliares
-   */
-  public getFullImageUrl(rel: string | undefined): string {
-    return this.sharedService.getFullImageUrl(rel);
   }
 
   /**
