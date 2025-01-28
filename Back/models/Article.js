@@ -55,10 +55,6 @@ const articleSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
-    updatedAt: {
-        type: Date,
-        default: Date.now,
-    },
     votes: [
         {
             user: {
@@ -79,12 +75,6 @@ const articleSchema = new mongoose.Schema({
     ],
     authorInfo: { type: authorInfoSchema },
     deleted: { type: Boolean, default: false }
-});
-
-// Middleware para actualizar la fecha de "updatedAt" cada vez que se guarda un artículo
-articleSchema.pre('save', function (next) {
-    this.updatedAt = Date.now();
-    next();
 });
 
 const Article = mongoose.model('Article', articleSchema);

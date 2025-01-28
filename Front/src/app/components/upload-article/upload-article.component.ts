@@ -114,30 +114,6 @@ export class UploadArticleComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Maneja el cambio de archivo de imagen seleccionado por el usuario.
-   * @param event Evento de cambio de archivo.
-   */
-  public onImageChange(event: any): void {
-    const file = event.target.files[0];
-    if (file && this.isImageFile(file)) {
-      this.selectedFile = file;
-    } else {
-      this.selectedFile = null;
-      this.showErrorMessage('Por favor, selecciona una imagen válida (JPEG, PNG).');
-    }
-  }
-
-  /**
-   * Verifica si el archivo es una imagen válida.
-   * @param file Archivo a verificar.
-   * @returns `true` si es una imagen válida, de lo contrario `false`.
-   */
-  private isImageFile(file: File): boolean {
-    const validImageTypes = ['image/jpeg', 'image/png'];
-    return validImageTypes.includes(file.type);
-  }
-
-  /**
    * Verifica si el usuario tiene suficiente reputación para publicar un artículo.
    * @returns `true` si la reputación es 15 o superior, de lo contrario `false`.
    */
