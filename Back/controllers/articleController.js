@@ -150,48 +150,7 @@ exports.obtenerArticulosFeed = async (req, res) => {
 
                 const author = await User.findById(article.author);
                 const userVoteObj = article.votes.find(vote => vote.user.toString() === user);
-                const userVote = userVoteObj ? userVoteObj.voteType : null;
-                const upVotes = article.votes.filter(vote => vote.voteType === 'upvote').length;
-                const downVotes = article.votes.filter(vote => vote.voteType === 'downvote').length;
-
-                const themes = article.theme
-                    ? await getThemeHierarchyById(article.theme)
-                    : { nivel1: null, nivel2: null, nivel3: null };
-
-                if (author) {
-                    const authorInfo = await getUserInfoById(author.username);
-                    return {
-                        _id: article._id,
-                        title: article.title,
-                        description: article.description,
-                        pdfUrl: article.pdfUrl,
-                        theme: article.theme,
-                        veracity: article.veracity,
-                        createdAt: article.createdAt,
-                        source: article.source,
-                        upVotes: upVotes,
-                        downVotes: downVotes,
-                        userVote: userVote,
-                        authorInfo: authorInfo,
-                        themes: themes
-                    };
-                }else{
-                    return {
-                        _id: article._id,
-                        title: article.title,
-                        description: article.description,
-                        pdfUrl: article.pdfUrl,
-                        theme: article.theme,
-                        veracity: article.veracity,
-                        createdAt: article.createdAt,
-                        source: article.source,
-                        upVotes: upVotes,
-                        authorInfo: article.authorInfo,
-                        downVotes: downVotes,
-                        userVote: userVote,
-                        themes: themes
-                    };
-                }             
+                return getResponseObject(author, article, userVoteObj);
             })
         );
 
@@ -252,7 +211,7 @@ exports.darLike = async (req, res) => {
         const cambioVeracidad = voteType === 'upvote' ? pesoVoto : -pesoVoto;
 
         // Actualizar el artículo: incrementar veracidad y añadir el voto
-        const updatedArticle = await Article.findByIdAndUpdate(
+        await Article.findByIdAndUpdate(
             articleId,
             {
                 $inc: { veracity: cambioVeracidad },
@@ -294,31 +253,10 @@ exports.getArticleById = async (req, res) => {
             return res.status(404).json({ message: 'Artículo no encontrado' });
         }
         const author = await User.findById(article.author);
-        if (!author) {
-            return res.status(404).json({ message: 'Autor no encontrado.' });
-        }
 
-        const themeHierarchy = await getThemeHierarchyById(article.theme);
-        const authorInfo = await getUserInfoById(author.username);
         const userVoteObj = article.votes.find(vote => vote.user.toString() === voterId);
-        const userVote = userVoteObj ? userVoteObj.voteType : null;
-        const upVotes = article.votes.filter(vote => vote.voteType === 'upvote').length;
-        const downVotes = article.votes.filter(vote => vote.voteType === 'downvote').length;
-        const articleWithThemes = {
-            _id: article._id,
-            title: article.title,
-            description: article.description,
-            pdfUrl: article.pdfUrl,
-            theme: article.theme,
-            veracity: article.veracity,
-            createdAt: article.createdAt,
-            source: article.source,
-            upVotes: upVotes,
-            downVotes: downVotes,
-            userVote: userVote,
-            authorInfo: authorInfo,
-            themes: themeHierarchy
-        };
+
+        const articleWithThemes = await getResponseObject(author, article, userVoteObj);
 
         res.json(articleWithThemes);
     } catch (err) {
@@ -346,29 +284,9 @@ exports.getArticlesByUser = async (req, res) => {
 
         const articlesWithDetails = await Promise.all(
             articles.map(async (article) => {
-
-                const themes = await getThemeHierarchyById(article.theme);
-                const authorInfo = await getUserInfoById(author.username);
                 const userVoteObj = article.votes.find(vote => vote.user.toString() === viewer._id.toString());
-                const userVote = userVoteObj ? userVoteObj.voteType : null;
-                const upVotes = article.votes.filter(vote => vote.voteType === 'upvote').length;
-                const downVotes = article.votes.filter(vote => vote.voteType === 'downvote').length;
 
-                return {
-                    _id: article._id,
-                    title: article.title,
-                    description: article.description,
-                    pdfUrl: article.pdfUrl,
-                    theme: article.theme,
-                    veracity: article.veracity,
-                    createdAt: article.createdAt,
-                    source: article.source,
-                    upVotes: upVotes,
-                    downVotes: downVotes,
-                    userVote: userVote,
-                    authorInfo: authorInfo,
-                    themes: themes
-                };
+                return getResponseObject(author, article, userVoteObj);
             })
         );
 
@@ -440,4 +358,55 @@ const getVotingLimit = (reputacion) => {
     if (reputacion >= 15) return 1;
     return 0;
 };
+
+// Función que devuelve una respuesta dependiendo si es un artículo con o sin autor
+const getResponseObject = async (author, article, userVoteObj) => {
+    const userVote = userVoteObj ? userVoteObj.voteType : null;
+    const themes = await getThemeHierarchyById(article.theme);
+    const upVotes = article.votes.filter(vote => vote.voteType === 'upvote').length;
+    const downVotes = article.votes.filter(vote => vote.voteType === 'downvote').length;
+    if (author) {
+        try {
+            const authorInfo = await getUserInfoById(author.username);
+            return {
+                _id: article._id,
+                title: article.title,
+                description: article.description,
+                pdfUrl: article.pdfUrl,
+                theme: article.theme,
+                veracity: article.veracity,
+                createdAt: article.createdAt,
+                source: article.source,
+                upVotes: upVotes,
+                downVotes: downVotes,
+                userVote: userVote,
+                authorInfo: authorInfo,
+                themes: themes,
+                deleted: article.deleted
+            };
+        } catch (error) {
+            console.error('Error al obtener la información del autor:', error);
+        }
+    } else {
+        return {
+            _id: article._id,
+            title: article.title,
+            description: article.description,
+            pdfUrl: article.pdfUrl,
+            theme: article.theme,
+            veracity: article.veracity,
+            createdAt: article.createdAt,
+            source: article.source,
+            upVotes: upVotes,
+            downVotes: downVotes,
+            userVote: userVote,
+            authorInfo: article.authorInfo,
+            themes: themes,
+            deleted: article.deleted
+        };
+    }
+};
+
+
+
 

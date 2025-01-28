@@ -271,6 +271,7 @@ exports.deleteUser = async (req, res) => {
                 {
                     $set: {
                         author: null,
+                        deleted: true,
                         authorInfo: {
                             nombre: user.nombre,
                             apellidos: user.apellidos,

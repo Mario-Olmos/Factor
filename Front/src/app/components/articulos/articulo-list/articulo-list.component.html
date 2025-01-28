@@ -52,8 +52,7 @@
             </p>
             <p><strong>Fecha de publicación:</strong> {{ article.createdAt | date }}</p>
 
-            <!-- Condicional para mostrar "Ver perfil" o mensaje de cuenta eliminada -->
-            <ng-container *ngIf="article.authorInfo; else deletedAuthor">
+            <ng-container *ngIf="!article.deleted; else deletedAuthor">
                 <button class="profile-btn" [routerLink]="['/perfil', article.authorInfo.username]">
                     Ver perfil
                 </button>

@@ -13,7 +13,7 @@ const authorInfoSchema = new mongoose.Schema({
             year: { type: Number, required: true },
         }
     ]
-}, { _id: false }); 
+}, { _id: false });
 
 const articleSchema = new mongoose.Schema({
     title: {
@@ -77,7 +77,8 @@ const articleSchema = new mongoose.Schema({
             }
         }
     ],
-    authorInfo: { type: authorInfoSchema } 
+    authorInfo: { type: authorInfoSchema },
+    deleted: { type: Boolean, default: false }
 });
 
 // Middleware para actualizar la fecha de "updatedAt" cada vez que se guarda un artículo
