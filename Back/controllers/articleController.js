@@ -68,7 +68,7 @@ exports.uploadArticle = async (req, res) => {
         });
 
         if (user.reputacion >= 30) {
-            newArticle.veracity = Math.min(7, user.reputacion / 10);
+            newArticle.veracity = Math.min(6, user.reputacion / 10);
         }
 
         await newArticle.save();
@@ -209,6 +209,7 @@ exports.darLike = async (req, res) => {
         }
 
         const cambioVeracidad = voteType === 'upvote' ? pesoVoto : -pesoVoto;
+        const pesoPool = getPesoPool
 
         // Actualizar el artículo: incrementar veracidad y añadir el voto
         await Article.findByIdAndUpdate(
@@ -356,6 +357,14 @@ const getVotingLimit = (reputacion) => {
     if (reputacion >= 51) return 5;
     if (reputacion >= 31) return 3;
     if (reputacion >= 15) return 1;
+    return 0;
+};
+
+//Función que calcula el peso pool
+const getPesoPool = (reputacion) => {
+    if (reputacion >= 71) return 3;
+    if (reputacion <= 70 && reputacion >=31) return 1.5;
+    if (reputacion <= 30) return 1;
     return 0;
 };
 

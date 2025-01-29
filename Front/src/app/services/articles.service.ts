@@ -24,13 +24,13 @@ export class ArticlesService {
   }
 
   //Método para cargar las temáticas en la app
-  getThemes(): Observable<any[]> {
+  getThemes(): Observable<Theme[]> {
     return this.http.get<Theme[]>(`${this.apiUrl}/theme/getThemes`);
   }
 
   //Método para el feed de temáticas
-  getTrendyThemes(limit: number, days: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/theme/getTrendyThemes`, {
+  getTrendyThemes(limit: number, days: number): Observable<Theme[]> {
+    return this.http.get<Theme[]>(`${this.apiUrl}/theme/getTrendyThemes`, {
       params: {
         limit: limit.toString(),
         days: days.toString()
@@ -46,7 +46,7 @@ export class ArticlesService {
     ordenarPorFecha?: 'asc' | 'desc',
     ordenarPorVeracidad?: 'asc' | 'desc',
     days?: number
-  ): Observable<any> {
+  ): Observable<Article[]> {
     const params: any = {
       page: page.toString(),
       limit: limit.toString()
@@ -65,7 +65,7 @@ export class ArticlesService {
       params.days = days;
     }
 
-    return this.http.get<any[]>(`${this.apiUrl}/articles/getArticles`, { params, withCredentials: true }, );
+    return this.http.get<Article[]>(`${this.apiUrl}/articles/getArticles`, { params, withCredentials: true }, );
   }
 
   //Método para dar "Like" o "Dislike"
