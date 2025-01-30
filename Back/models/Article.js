@@ -67,12 +67,25 @@ const articleSchema = new mongoose.Schema({
                 enum: ['upvote', 'downvote'],
                 required: true,
             },
+            pesoPool: {
+                type: Number,
+                required: true,
+            },
             votedAt: {
                 type: Date,
                 default: Date.now,
             }
         }
     ],
+    evaluated: {
+        type: String,
+        enum: ['verificado', 'neutro', 'desinformativo'],
+        default: null, 
+    },
+    categorizationRounds: {
+        type: Number,
+        default: 0, 
+    },
     authorInfo: { type: authorInfoSchema },
     deleted: { type: Boolean, default: false }
 });

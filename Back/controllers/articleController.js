@@ -68,7 +68,7 @@ exports.uploadArticle = async (req, res) => {
         });
 
         if (user.reputacion >= 30) {
-            newArticle.veracity = Math.min(7, user.reputacion / 10);
+            newArticle.veracity = Math.min(6, user.reputacion / 10);
         }
 
         await newArticle.save();
@@ -161,7 +161,7 @@ exports.obtenerArticulosFeed = async (req, res) => {
     }
 };
 
-//Método para dar like a un artículo
+
 exports.darLike = async (req, res) => {
     try {
         const { articleId, pesoVoto, voteType } = req.body;
@@ -180,7 +180,6 @@ exports.darLike = async (req, res) => {
         }
 
         const votingLimit = getVotingLimit(usuario.reputacion);
-
         const oneWeekAgo = new Date();
         oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
@@ -196,7 +195,6 @@ exports.darLike = async (req, res) => {
         }
 
         const votoExistente = articulo.votes.find(vote => vote.user.toString() === usuario._id.toString());
-
         if (votoExistente) {
             return res.status(400).json({ message: 'Ya has votado este artículo.' });
         }
@@ -209,29 +207,85 @@ exports.darLike = async (req, res) => {
         }
 
         const cambioVeracidad = voteType === 'upvote' ? pesoVoto : -pesoVoto;
+        const pesoPool = getPesoPool(usuario.reputacion);
+        const currentPoolTotal = articulo.votes.reduce((sum, voto) => sum + voto.pesoPool, 0);
+        const newPoolTotal = currentPoolTotal + pesoPool;
+        let categoria = null;
 
-        // Actualizar el artículo: incrementar veracidad y añadir el voto
-        await Article.findByIdAndUpdate(
+        if (newPoolTotal >= 10 && articulo.categorizationRounds === 0) {
+            // Primera ronda de categorización
+            const balanceVotos = articulo.votes.reduce((sum, voto) => {
+                return sum + (voto.voteType === 'upvote' ? voto.pesoPool : -voto.pesoPool);
+            }, 0) + (voteType === 'upvote' ? pesoPool : -pesoPool);
+
+            const diferenciaAbs = Math.abs(balanceVotos);
+            const porcentajeDiferencia = (diferenciaAbs / newPoolTotal) * 100;
+
+            if (balanceVotos > 0 && porcentajeDiferencia > 10) {
+                categoria = 'verificado';
+            } else if (balanceVotos < 0 && porcentajeDiferencia > 10) {
+                categoria = 'desinformativo';
+            } else {
+                categoria = 'neutro';
+            }
+
+            if (categoria !== null) {
+                articulo.categorizationRounds += 1; 
+            }
+
+        } else if (newPoolTotal >= 30 && articulo.categorizationRounds === 1) {
+            const balanceVotos = articulo.votes.reduce((sum, voto) => {
+                return sum + (voto.voteType === 'upvote' ? voto.pesoPool : -voto.pesoPool);
+            }, 0) + (voteType === 'upvote' ? pesoPool : -pesoPool);
+
+            const diferenciaAbs = Math.abs(balanceVotos);
+            const porcentajeDiferencia = (diferenciaAbs / newPoolTotal) * 100;
+
+            if (balanceVotos > 0 && porcentajeDiferencia > 10) {
+                categoria = 'verificado';
+            } else if (balanceVotos < 0 && porcentajeDiferencia > 10) {
+                categoria = 'desinformativo';
+            } else {
+                categoria = 'neutro';
+            }
+
+            if (categoria !== null) {
+                articulo.categorizationRounds += 1; 
+            }
+        }
+
+        const nuevoVoto = {
+            user: usuario._id,
+            voteType: voteType,
+            pesoPool: pesoPool,
+            votedAt: new Date(),
+        };
+
+        let updateFields = {
+            $inc: { veracity: cambioVeracidad },
+            $push: { votes: nuevoVoto },
+        };
+
+        if (categoria) {
+            updateFields.$set = { evaluated: categoria };
+        }
+
+        const articuloActualizado = await Article.findByIdAndUpdate(
             articleId,
-            {
-                $inc: { veracity: cambioVeracidad },
-                $push: {
-                    votes: {
-                        user: usuario._id,
-                        voteType: voteType,
-                        votedAt: new Date()
-                    }
-                }
-            },
+            updateFields,
             { new: true }
         );
 
-        // Actualizar la fecha del último voto del usuario
+        if (categoria) {
+            await categorizarArticulo(articuloActualizado, categoria);
+        }
+
         usuario.fechaUltimoVoto = new Date();
         await usuario.save();
 
         return res.status(200).json({
-            message: 'Voto registrado correctamente.'
+            message: 'Voto registrado correctamente.',
+            categoria: categoria, 
         });
 
     } catch (error) {
@@ -359,6 +413,14 @@ const getVotingLimit = (reputacion) => {
     return 0;
 };
 
+//Función que calcula el peso pool
+const getPesoPool = (reputacion) => {
+    if (reputacion >= 71) return 3;
+    if (reputacion <= 70 && reputacion >= 31) return 1.5;
+    if (reputacion <= 30) return 1;
+    return 0;
+};
+
 // Función que devuelve una respuesta dependiendo si es un artículo con o sin autor
 const getResponseObject = async (author, article, userVoteObj) => {
     const userVote = userVoteObj ? userVoteObj.voteType : null;
@@ -382,7 +444,8 @@ const getResponseObject = async (author, article, userVoteObj) => {
                 userVote: userVote,
                 authorInfo: authorInfo,
                 themes: themes,
-                deleted: article.deleted
+                deleted: article.deleted,
+                evaluated: article.evaluated
             };
         } catch (error) {
             console.error('Error al obtener la información del autor:', error);
@@ -402,10 +465,58 @@ const getResponseObject = async (author, article, userVoteObj) => {
             userVote: userVote,
             authorInfo: article.authorInfo,
             themes: themes,
-            deleted: article.deleted
+            deleted: article.deleted,
+            evaluated: article.evaluated
         };
     }
 };
+
+
+async function categorizarArticulo(articulo, categoria) {
+    const currentRound = articulo.categorizationRounds;
+
+    for (const voto of articulo.votes) {
+        const votante = await User.findById(voto.user);
+        if (!votante) continue;
+
+        let ajuste = 0;
+
+        if (categoria === 'verificado') {
+            if (voto.voteType === 'upvote') {
+                ajuste = 2;
+            } else if (voto.voteType === 'downvote') {
+                ajuste = -2;
+            }
+        } else if (categoria === 'desinformativo') {
+            if (voto.voteType === 'downvote') {
+                ajuste = 2;
+            } else if (voto.voteType === 'upvote') {
+                ajuste = -2;
+            }
+        } else if (categoria === 'neutro') {
+            continue;
+        }
+
+        votante.reputacion += ajuste;
+        votante.reputacion = Math.max(0, Math.min(100, Math.round(votante.reputacion)));
+        await votante.save();
+    }
+
+    const autor = await User.findById(articulo.author);
+    if (autor) {
+        if(currentRound === 1){
+            if (categoria === 'verificado') {
+                    autor.reputacion += 5;
+            } else if (categoria === 'desinformativo') {
+                    autor.reputacion -= 5;
+            }
+        }
+        autor.reputacion = Math.max(0, Math.min(100, Math.round(autor.reputacion)));
+
+        await autor.save();
+    }
+}
+
 
 
 

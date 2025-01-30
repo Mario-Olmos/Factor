@@ -33,9 +33,9 @@ export class AuthService {
     return this.http.get<TokenValidationResponse>(`${this.apiUrl}/auth/validate-token`, { withCredentials: true }).pipe(
       map(response => {
         if (response.authenticated && response.user) {
-          this.currentUser.next(response.user); // Usuario autenticado, actualiza el BehaviorSubject
+          this.currentUser.next(response.user); 
         } else {
-          this.currentUser.next(null); // Token inválido o usuario no autenticado
+          this.currentUser.next(null); 
         }
         return response;
       })
