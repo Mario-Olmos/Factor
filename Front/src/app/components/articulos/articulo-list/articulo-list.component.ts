@@ -54,7 +54,7 @@ export class ArticuloListComponent implements OnChanges {
     const payload = {
       articleId: articleId,
       pesoVoto: pesoVoto,
-      voteType: voteType
+      voteType: voteType,
     };
 
     this.articlesService.votarArticulo(payload).subscribe(
