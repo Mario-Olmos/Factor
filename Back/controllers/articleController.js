@@ -63,7 +63,6 @@ exports.uploadArticle = async (req, res) => {
             pdfUrl,
             author: user._id,
             theme,
-            authorReputationAtCreation: user.reputacion,
             source
         });
 
@@ -268,6 +267,7 @@ exports.darLike = async (req, res) => {
 
         if (categoria) {
             updateFields.$set = { evaluated: categoria };
+            updateFields.$inc = { categorizationRounds: 1};
         }
 
         const articuloActualizado = await Article.findByIdAndUpdate(
@@ -284,8 +284,7 @@ exports.darLike = async (req, res) => {
         await usuario.save();
 
         return res.status(200).json({
-            message: 'Voto registrado correctamente.',
-            categoria: categoria, 
+            message: 'Voto registrado correctamente.'
         });
 
     } catch (error) {

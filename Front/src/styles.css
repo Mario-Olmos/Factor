@@ -395,6 +395,26 @@ p {
     z-index: 1;
 }
 
+.categorization-badge {
+    display: inline-block;
+    margin-top: 30px;
+    width: 15%;
+    margin-left: 20px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    color: white;
+    font-size: 0.9em;
+    text-align: center;
+    font-weight: bold;
+    cursor: default;
+    text-transform: uppercase;
+    transition: opacity 0.3s ease;
+}
+
+.categorization-badge:hover {
+    opacity: 0.8;
+}
+
 .vote-counter {
     margin: 0 0px;
     font-size: 1.1rem;

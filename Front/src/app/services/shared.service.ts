@@ -1,5 +1,6 @@
 // shared.service.ts
 import { Injectable } from '@angular/core';
+import { categorizationType } from '../models/article.model';
 
 @Injectable({
   providedIn: 'root'
@@ -71,6 +72,36 @@ export class SharedService {
     } else {
       return '#4CAF50'; // Verde
     }
+  }
+
+  /**
+   * Obtiene la descripción de la categoría del artículo.
+   * @param evaluation Valor de la categoría del artículo.
+   * @returns Descripción de categoría.
+   */
+  getCategorizationDescription(evaluated: categorizationType): any {
+    if (evaluated === 'verificado') {
+      return 'Verificado';
+    } else if (evaluated === 'neutro') {
+      return 'Neutro';
+    } else if (evaluated === 'pocoFiable') {
+      return 'Poco fiable';
+    } else return null;
+  }
+
+  /**
+   * Obtiene el color de categoría basado en el valor.
+   * @param reputacion Valor de categoría del artículo.
+   * @returns Color.
+   */
+  getCategorizationColor(evaluated: categorizationType): any {
+    if (evaluated === 'pocoFiable') {
+      return '#FF4D4D'; // Rojo
+    } else if (evaluated === 'neutro') {
+      return '#FFC107'; // Amarillo
+    } else if(evaluated === 'verificado'){
+      return '#4CAF50'; // Verde
+    }else return null;
   }
 
   /**

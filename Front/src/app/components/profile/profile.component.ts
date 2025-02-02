@@ -58,6 +58,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this.destroy$))
             .subscribe((params) => {
               const requestedUserId = params['username'];
+              console.log (requestedUserId);
 
               if (!requestedUserId || requestedUserId === 'me') {
                 this.profileUsername = this.currentUser!.username;
@@ -235,7 +236,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
           this.loading = false;
           this.closeDeleteAccountPopup();
           // Redirigir al usuario después de la eliminación, por ejemplo, a la página de inicio
-          this.router.navigate(['/']);
+          setTimeout(() => {
+            this.router.navigate(['/']);
+          }, 2000);
         },
         error: (error) => {
           console.error('Error al eliminar la cuenta:', error);

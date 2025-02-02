@@ -155,8 +155,6 @@ export class UploadArticleComponent implements OnInit, OnDestroy {
             this.showSuccessMessage('Artículo subido con éxito.');
             this.resetForm();
             this.loading = false;
-            // Navegar a otra ruta si es necesario
-            // this.router.navigate(['/ruta-destino']);
           },
           error => {
             console.error('Error al subir el artículo', error);
