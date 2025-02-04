@@ -7,6 +7,7 @@ import { AuthService } from '../../../services/auth.service';
 import { UserProfile } from '../../../models/user.model';
 import { SharedService } from '../../../services/shared.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { categorizationType } from '../../../models/article.model';
 
 @Component({
   selector: 'app-articulo-detail',
@@ -188,6 +189,14 @@ export class ArticuloDetailComponent implements OnInit {
 
   public getReputationColor(reputation: number): string {
     return this.sharedService.getReputationColor(reputation);
+  }
+
+  public getCategorizationDescription(evaluated: categorizationType): any {
+    return this.sharedService.getCategorizationDescription(evaluated);
+  }
+
+  public getCategorizationColor(evaluated: categorizationType): any {
+    return this.sharedService.getCategorizationColor(evaluated);
   }
 
   public getFullImageUrl(rel: string | undefined): string {

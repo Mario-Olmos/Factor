@@ -61,6 +61,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-items: center;
   gap: 15px;
   height: auto;
 }
@@ -82,20 +83,18 @@
 }
 
 .article-title {
+  position: relative;
   font-size: 40px;
+  margin: 0;
 }
 
 .veracity-circle {
   position: absolute;
-  top: 20px;
-  right: 10px;
-  left: 180px;
+  margin-left: 7%;
+  margin-top: 8%;
   width: 90px;
   height: 90px;
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   font-size: 2.5rem;
   font-weight: bold;
   color: #fff;
@@ -121,6 +120,11 @@
   position: relative;
   padding-bottom: 20px;
   border-bottom: none;
+}
+
+.article-subheader {
+  align-items: center;
+  width: 100%;
 }
 
 .themes {
@@ -168,3 +172,24 @@
   font-size: 18px;
   margin-left: 4px;
 }
+
+.article-header .categorization-badge {
+  margin-left: 20%;
+  margin-right: 20%;
+  margin-bottom: 50px;
+  width: 60%;
+  height: 50px;
+  padding: 10px 20px;
+  border-radius: 50px;
+  color: white;
+  font-size: 1.2em;
+  text-align: center;
+  font-weight: bold;
+  cursor: default;
+  text-transform: uppercase;
+}
+
+.article-header .categorization-badge:hover {
+  opacity: 0.8;
+}
+

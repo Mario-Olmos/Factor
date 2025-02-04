@@ -34,10 +34,6 @@ const articleSchema = new mongoose.Schema({
         ref: 'User',
         required: true,
     },
-    authorReputationAtCreation: {
-        type: Number,
-        required: true,
-    },
     theme: {
         type: String,
         required: true,
@@ -79,7 +75,7 @@ const articleSchema = new mongoose.Schema({
     ],
     evaluated: {
         type: String,
-        enum: ['verificado', 'neutro', 'desinformativo'],
+        enum: ['verificado', 'neutro', 'pocoFiable'],
         default: null, 
     },
     categorizationRounds: {

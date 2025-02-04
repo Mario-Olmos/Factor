@@ -4,6 +4,7 @@ import { Article } from '../../../models/article.model';
 import { ArticlesService } from '../../../services/articles.service';
 import { UserProfile } from '../../../models/user.model';
 import { SharedService } from '../../../services/shared.service';
+import { categorizationType } from '../../../models/article.model';
 
 @Component({
   selector: 'app-article-list',
@@ -147,6 +148,14 @@ export class ArticuloListComponent implements OnChanges {
 
   public getReputationColor(reputation: number): string {
     return this.sharedService.getReputationColor(reputation);
+  }
+
+  public getCategorizationDescription(evaluated: categorizationType): any {
+    return this.sharedService.getCategorizationDescription(evaluated);
+  }
+
+  public getCategorizationColor(evaluated: categorizationType): any {
+    return this.sharedService.getCategorizationColor(evaluated);
   }
 
   public puedeVotar(reputation: number): boolean {

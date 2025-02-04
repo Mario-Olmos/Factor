@@ -19,7 +19,7 @@ const routes: Routes = [
   { path: 'articles/:id', component: ArticuloDetailComponent, canActivate: [AuthGuard] },
   { path: 'explorador', component: FilterPageComponent, canActivate: [AuthGuard] },
   { path: 'perfil/me', component: ProfileComponent, canActivate: [AuthGuard] },
-  { path: 'perfil/:id', component: ProfileComponent, canActivate: [AuthGuard] }, 
+  { path: 'perfil/:username', component: ProfileComponent, canActivate: [AuthGuard] }, 
   { path: '', redirectTo: '/home', pathMatch: 'full' } // Ruta predeterminada
 ];
 

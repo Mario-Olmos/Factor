@@ -8,9 +8,12 @@
             <div class="veracity-circle" [ngStyle]="{'background-color': getVeracityColor(article?.veracity ?? 0)}">
                 {{ article.veracity | number: '1.1-1' }}
             </div>
+            <span class="categorization-badge"
+                [ngStyle]="{'background-color': getCategorizationColor(article.evaluated)}">
+                {{ getCategorizationDescription(article.evaluated) }}
+            </span>
             <h5 class="article-title">{{ article.title }}</h5>
             <p class="article-description">{{ article.description }}</p>
-
             <div class="themes">
                 <span class="theme theme-level1">{{ article?.themes?.nivel1 }}</span>
                 <span class="theme theme-level2">{{ article?.themes?.nivel2 }}</span>
@@ -45,6 +48,8 @@
                     {{ article.authorInfo.nombre || 'Cuenta eliminada' }}
                     {{ article.authorInfo.apellidos || '' }}
                 </strong>
+            </p>
+            <p>
                 <span class="reputation-badge"
                     [ngStyle]="{'background-color': getReputationColor(article.authorInfo.reputacion)}">
                     {{ getReputationDescription(article.authorInfo.reputacion) }}
