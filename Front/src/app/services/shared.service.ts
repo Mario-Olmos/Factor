@@ -53,9 +53,9 @@ export class SharedService {
     if (reputacion < 50) {
       return 'Explorador';
     } else if (reputacion < 75) {
-      return 'Contribuyente Activo';
+      return 'Iniciado';
     } else {
-      return 'Autor Elite';
+      return 'Autor Élite';
     }
   }
 
@@ -86,7 +86,7 @@ export class SharedService {
       return 'Neutro';
     } else if (evaluated === 'pocoFiable') {
       return 'Poco fiable';
-    } else return null;
+    } else return 'Sin evaluar';
   }
 
   /**
@@ -101,7 +101,7 @@ export class SharedService {
       return '#FFC107'; // Amarillo
     } else if(evaluated === 'verificado'){
       return '#4CAF50'; // Verde
-    }else return null;
+    }else return '#808080';
   }
 
   /**

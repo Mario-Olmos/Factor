@@ -48,6 +48,8 @@
                     {{ article.authorInfo.nombre || 'Cuenta eliminada' }}
                     {{ article.authorInfo.apellidos || '' }}
                 </strong>
+            </p>
+            <p>
                 <span class="reputation-badge"
                     [ngStyle]="{'background-color': getReputationColor(article.authorInfo.reputacion)}">
                     {{ getReputationDescription(article.authorInfo.reputacion) }}

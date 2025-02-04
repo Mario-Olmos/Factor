@@ -58,7 +58,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this.destroy$))
             .subscribe((params) => {
               const requestedUserId = params['username'];
-              console.log (requestedUserId);
+              console.log(requestedUserId);
 
               if (!requestedUserId || requestedUserId === 'me') {
                 this.profileUsername = this.currentUser!.username;
@@ -353,6 +353,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
   /**
    * Métodos auxiliares
    */
+  public getReputationDescription(reputation: number): string {
+    return this.sharedService.getReputationDescription(reputation);
+  }
+
+  public getReputationColor(reputation: number): string {
+    return this.sharedService.getReputationColor(reputation);
+  }
+
   public getFullImageUrl(rel: string | undefined): string {
     return this.sharedService.getFullImageUrl(rel);
   }
@@ -415,6 +423,15 @@ export class ProfileComponent implements OnInit, OnDestroy {
       return this.user.acreditaciones;
     }
     return [];
+  }
+
+  public get displayReputationBadge(): number {
+    if (this.isOwnProfile && this.currentUser) {
+      return this.currentUser.reputacion;
+    } else if (this.user) {
+      return this.user.reputacion;
+    }
+    return 0;
   }
 
   public get displayEmail(): string | undefined {

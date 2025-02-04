@@ -11,7 +11,7 @@
   <div class="profile-main-card">
 
     <div class="profile-settings">
-      <button class="settings-btn" (click)="toggleSettingsMenu()" aria-label="Configuración">
+      <button class="settings-btn" *ngIf="isOwnProfile" (click)="toggleSettingsMenu()" aria-label="Configuración">
         <span class="material-icons">settings</span>
       </button>
       <div class="settings-menu" *ngIf="isSettingsMenuOpen">
@@ -26,6 +26,11 @@
 
     <div class="profile-info-container">
       <h1 class="profile-name">{{ displayName }}</h1>
+
+      <span class="reputation-badge"
+        [ngStyle]="{'background-color': getReputationColor(displayReputationBadge)}">
+        {{ getReputationDescription(displayReputationBadge) }}
+      </span>
 
       <!-- Datos fijos (solo lectura): email, fecha de nacimiento, etc. -->
       <div class="profile-details">
@@ -198,8 +203,6 @@
 
 </div>
 
-<app-decision-pop-up 
-  *ngIf="isDeleteAccountPopupOpen" 
-  (deleteChoice)="handleDeleteChoice($event)" 
+<app-decision-pop-up *ngIf="isDeleteAccountPopupOpen" (deleteChoice)="handleDeleteChoice($event)"
   (closePopup)="closeDeleteAccountPopup()">
 </app-decision-pop-up>
