@@ -19,6 +19,7 @@ export class FilterPageComponent implements OnInit {
   public currentUser: UserProfile | null = null;
   public popupMessage: string = '';
   public popupType: 'success' | 'error' | '' = '';
+  public noResults: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -50,16 +51,29 @@ export class FilterPageComponent implements OnInit {
       this.showErrorMessage('Error al cargar las temáticas.');
     });
 
+    this.filterForm.get('ordenarPorFecha')?.valueChanges.subscribe(val => {
+      if (val && val !== '') {
+        this.filterForm.get('ordenarPorVeracidad')?.disable();
+      } else {
+        this.filterForm.get('ordenarPorVeracidad')?.enable();
+      }
+    });
+
+    this.filterForm.get('ordenarPorVeracidad')?.valueChanges.subscribe(val => {
+      if (val && val !== '') {
+        this.filterForm.get('ordenarPorFecha')?.disable();
+      } else {
+        this.filterForm.get('ordenarPorFecha')?.enable();
+      }
+    });
+
     this.route.queryParams.subscribe(params => {
       const theme = params['theme'];
-
-      this.filterForm.patchValue({
-        theme: theme
-      });
-
+      this.filterForm.patchValue({ theme: theme });
       this.fetchFilteredArticles();
     });
   }
+
 
   /**
    * Llama al servicio de artículos para obtener una lista de artículos filtrados según los criterios actuales.
@@ -87,7 +101,11 @@ export class FilterPageComponent implements OnInit {
       validatedOrdenarPorVeracidad
     ).subscribe(
       (articles: Article[]) => {
-        this.articles = articles;
+        this.articles = articles.map(article => ({
+          ...article,
+          userVote: article.userVote,
+        }));
+        this.noResults = this.articles.length === 0;
       },
       (error: any) => {
         console.error('Error al cargar los artículos', error);
@@ -95,6 +113,7 @@ export class FilterPageComponent implements OnInit {
       }
     );
   }
+
 
   /**
    * Método llamado cuando cambia algún filtro en el formulario.

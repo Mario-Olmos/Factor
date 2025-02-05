@@ -67,6 +67,10 @@
   <hr class="section-line">
 </div>
 
+<div *ngIf="noResults" class="no-results">
+  <p>No se encontraron resultados.</p>
+</div>
+
 <!-- Lista de artículos filtrados -->
 <div class="articles-list">
   <app-article-list [articles]="articles" [currentUser]="currentUser"></app-article-list>

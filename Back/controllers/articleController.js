@@ -106,13 +106,13 @@ exports.uploadArticle = async (req, res) => {
 exports.obtenerArticulosFeed = async (req, res) => {
     try {
         const { page = 1, limit = 10, tema, ordenarPorFecha, ordenarPorVeracidad, days } = req.query;
-        const user = req.user.userId;
+        const userId = req.user.userId;
 
         const fechaLimite = new Date();
         if (days) {
-            fechaLimite.setDate(fechaLimite.getDate() - days);
+            fechaLimite.setDate(fechaLimite.getDate() - Number(days));
         } else {
-            fechaLimite.setDate(fechaLimite.getDate() - 1000);
+            fechaLimite.setDate(fechaLimite.getDate() - 100);
         }
 
         let query = {
@@ -120,40 +120,62 @@ exports.obtenerArticulosFeed = async (req, res) => {
             createdAt: { $gte: fechaLimite }
         };
 
-        // Si se proporciona un tema, obtenemos todos sus descendientes
         if (tema) {
             const allThemeIds = await getAllDescendantThemeIds(tema);
             query.theme = { $in: allThemeIds };
         }
 
-        // Obtener los artículos dentro del período reciente y con veracidad positiva
         let articlesQuery = Article.find(query).lean();
 
-        // Ordenar por veracidad y fecha si se especifica
-        if (ordenarPorVeracidad) {
-            articlesQuery = articlesQuery.sort({ veracity: ordenarPorVeracidad === 'asc' ? 1 : -1 });
+        if (ordenarPorVeracidad || ordenarPorFecha) {
+            if (ordenarPorVeracidad) {
+                articlesQuery = articlesQuery.sort({ veracity: ordenarPorVeracidad === 'asc' ? 1 : -1 });
+            }
+            if (ordenarPorFecha) {
+                articlesQuery = articlesQuery.sort({ createdAt: ordenarPorFecha === 'asc' ? 1 : -1 });
+            }
+            const articles = await articlesQuery
+                .skip((page - 1) * limit)
+                .limit(Number(limit));
+
+            const articlesWithDetails = await Promise.all(
+                articles.map(async (article) => {
+                    const author = await User.findById(article.author);
+                    const userVoteObj = article.votes.find(vote => vote.user.toString() === userId);
+                    return getResponseObject(author, article, userVoteObj);
+                })
+            );
+            return res.status(200).json(articlesWithDetails);
+        } else {
+            const articles = await articlesQuery.exec();
+            const currentTime = new Date();
+            const processedArticles = articles.map(article => {
+                const ageDays = (currentTime - new Date(article.createdAt)) / (1000 * 60 * 60 * 24);
+                const freshnessScore = Math.max(0, 30 - ageDays);
+                let evaluatedScore = 0;
+                if (article.evaluated === 'verificado') {
+                    evaluatedScore = 3;
+                } else if (article.evaluated === 'pocoFiable') {
+                    evaluatedScore = -3;
+                }
+                article.compositeScore = article.veracity + freshnessScore + evaluatedScore;
+                console.log(article.title ,article.compositeScore);
+                return article;
+            });
+
+            processedArticles.sort((a, b) => b.compositeScore - a.compositeScore);
+            const startIndex = (page - 1) * limit;
+            const paginatedArticles = processedArticles.slice(startIndex, startIndex + Number(limit));
+
+            const articlesWithDetails = await Promise.all(
+                paginatedArticles.map(async (article) => {
+                    const author = await User.findById(article.author);
+                    const userVoteObj = article.votes.find(vote => vote.user.toString() === userId);
+                    return getResponseObject(author, article, userVoteObj);
+                })
+            );
+            return res.status(200).json(articlesWithDetails);
         }
-
-        if (ordenarPorFecha) {
-            articlesQuery = articlesQuery.sort({ createdAt: ordenarPorFecha === 'asc' ? 1 : -1 });
-        }
-
-        // Paginación
-        const articles = await articlesQuery
-            .skip((page - 1) * limit)
-            .limit(limit);
-
-        // Agregar el voto del usuario y jerarquía de temas
-        const articlesWithDetails = await Promise.all(
-            articles.map(async (article) => {
-
-                const author = await User.findById(article.author);
-                const userVoteObj = article.votes.find(vote => vote.user.toString() === user);
-                return getResponseObject(author, article, userVoteObj);
-            })
-        );
-
-        return res.status(200).json(articlesWithDetails);
     } catch (error) {
         console.error('Error al cargar el feed de artículos:', error);
         return res.status(500).json({ message: 'Error al cargar el feed de artículos', error: error.message });
@@ -229,7 +251,7 @@ exports.darLike = async (req, res) => {
             }
 
             if (categoria !== null) {
-                articulo.categorizationRounds += 1; 
+                articulo.categorizationRounds += 1;
             }
 
         } else if (newPoolTotal >= 30 && articulo.categorizationRounds === 1) {
@@ -249,7 +271,7 @@ exports.darLike = async (req, res) => {
             }
 
             if (categoria !== null) {
-                articulo.categorizationRounds += 1; 
+                articulo.categorizationRounds += 1;
             }
         }
 
@@ -267,7 +289,7 @@ exports.darLike = async (req, res) => {
 
         if (categoria) {
             updateFields.$set = { evaluated: categoria };
-            updateFields.$inc = { categorizationRounds: 1};
+            updateFields.$inc = { categorizationRounds: 1 };
         }
 
         const articuloActualizado = await Article.findByIdAndUpdate(
@@ -503,11 +525,11 @@ async function categorizarArticulo(articulo, categoria) {
 
     const autor = await User.findById(articulo.author);
     if (autor) {
-        if(currentRound === 1){
+        if (currentRound === 1) {
             if (categoria === 'verificado') {
-                    autor.reputacion += 5;
+                autor.reputacion += 5;
             } else if (categoria === 'desinformativo') {
-                    autor.reputacion -= 5;
+                autor.reputacion -= 5;
             }
         }
         autor.reputacion = Math.max(0, Math.min(100, Math.round(autor.reputacion)));

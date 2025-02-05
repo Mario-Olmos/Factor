@@ -26,8 +26,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   public themeLimit: number = 6;
   public days: number = 365;
   public tema?: string;
-  public ordenarPorFecha: 'asc' | 'desc' = 'desc';
-  public ordenarPorVeracidad: 'asc' | 'desc' = 'desc';
 
   public loadingThemes: boolean = false;
   public loadingArticles: boolean = false;
@@ -99,8 +97,8 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.currentPage,
       this.articlesPerPage,
       this.tema,
-      this.ordenarPorFecha,
-      this.ordenarPorVeracidad,
+      undefined,
+      undefined,
       this.days
     )
       .pipe(takeUntil(this.destroy$))

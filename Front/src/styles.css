@@ -487,15 +487,12 @@ p {
     display: flex;
     flex-wrap: wrap;
     align-items: flex-end;
-    /* Alinea las partes inferiores de cada item */
     gap: 15px;
     background-color: #F2EED7;
-    /* Crema */
     padding: 15px;
     border: 2px solid #e0e0e0;
     border-radius: 8px;
     margin-bottom: 20px;
-    /* Espacio debajo de la barra */
 }
 
 /* --- Cada elemento de la barra de filtros (label + select) --- */
@@ -600,9 +597,8 @@ p {
 }
 
 .profile-info-container .reputation-badge {
-    display: flex;
-    position: relative;
-    width: 120px;   
+    text-align: center;
+    max-width: 180px;
     padding-right: 5px;
     margin-bottom: 20px;
 }
