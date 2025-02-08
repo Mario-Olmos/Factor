@@ -83,4 +83,11 @@ export class AuthService {
       withCredentials: true
     });
   }
+
+  /**
+   * Obtiene privilegios del usuario.
+   */
+  getPrivileges(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/profile/privileges`, { withCredentials: true });
+  }
 }

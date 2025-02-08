@@ -1,5 +1,3 @@
-<!-- src/app/components/profile/profile.component.html -->
-
 <!-- Popup de notificación -->
 <app-pop-up *ngIf="popupMessage" [message]="popupMessage" [type]="popupType" (closed)="onPopUpClosed()">
 </app-pop-up>
@@ -15,8 +13,9 @@
         <span class="material-icons">settings</span>
       </button>
       <div class="settings-menu" *ngIf="isSettingsMenuOpen">
-        <button class="menu-item" (click)="logout()">Cerrar Sesión</button>
-        <button class="menu-item" (click)="openDeleteAccountPopup()">Eliminar Cuenta</button>
+          <button class="menu-item" (click)="logout()">Cerrar Sesión</button>
+          <button class="menu-item" (click)="openPrivilegesPopup()">Consultar Privilegios</button>
+          <button class="menu-item" (click)="openDeleteAccountPopup()">Eliminar Cuenta</button>
       </div>
     </div>
 
@@ -27,8 +26,7 @@
     <div class="profile-info-container">
       <h1 class="profile-name">{{ displayName }}</h1>
 
-      <span class="reputation-badge"
-        [ngStyle]="{'background-color': getReputationColor(displayReputationBadge)}">
+      <span class="reputation-badge" [ngStyle]="{'background-color': getReputationColor(displayReputationBadge)}">
         {{ getReputationDescription(displayReputationBadge) }}
       </span>
 
@@ -206,3 +204,7 @@
 <app-decision-pop-up *ngIf="isDeleteAccountPopupOpen" (deleteChoice)="handleDeleteChoice($event)"
   (closePopup)="closeDeleteAccountPopup()">
 </app-decision-pop-up>
+
+<app-privileges-pop-up *ngIf="isPrivilegesPopupOpen" [currentVotesThisWeek]="currentVotesThisWeek"
+  [maxVotesThisWeek]="maxVotesThisWeek" [currentPublicationsThisMonth]="currentPublicationsThisMonth"
+  [maxPublicationsThisMonth]="maxPublicationsThisMonth" (onClose)="closePrivilegesPopup()"></app-privileges-pop-up>

@@ -302,5 +302,64 @@ exports.deleteUser = async (req, res) => {
     }
 };
 
+exports.getUserPrivileges = async (req, res) => {
+    try {
+        const userId = req.user.userId;
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
+
+        const votingLimit = getVotingLimit(user.reputacion);         
+        const publicationLimit = getPublicationLimit(user.reputacion); 
+
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+        const usedVotesInLastWeek = await Article.countDocuments({
+            'votes.user': user._id,
+            'votes.votedAt': { $gte: oneWeekAgo }
+        });
+
+        const oneMonthAgo = new Date();
+        oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+
+        const usedPublicationsInLastMonth = await Article.countDocuments({
+            author: user._id,
+            createdAt: { $gte: oneMonthAgo }
+        });
+
+        return res.status(200).json({
+            votingLimit,
+            usedVotesInLastWeek,
+            publicationLimit,
+            usedPublicationsInLastMonth
+        });
+
+    } catch (error) {
+        console.error('Error al obtener privilegios del usuario:', error);
+        return res.status(500).json({ message: 'Error interno al obtener privilegios', error: error.message });
+    }
+};
+
+//Función con las reglas de publicación por reputación
+const getPublicationLimit = (reputacion) => {
+    if (reputacion >= 71) return Infinity;
+    if (reputacion >= 51) return 4;
+    if (reputacion >= 31) return 2;
+    if (reputacion >= 15) return 1;
+    return 0;
+};
+
+//Función con las reglas de votación por reputación
+const getVotingLimit = (reputacion) => {
+    if (reputacion >= 71) return Infinity;
+    if (reputacion >= 51) return 5;
+    if (reputacion >= 31) return 3;
+    if (reputacion >= 15) return 1;
+    return 0;
+};
+
 
 

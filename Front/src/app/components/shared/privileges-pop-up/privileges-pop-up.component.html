@@ -1,0 +1,18 @@
+<div class="popup-backdrop">
+  <div class="popup-content popup-large">
+    <h3>Privilegios Actuales</h3>
+    <div class="privileges-grid">
+      <div class="privilege-item">
+        <strong>Votos por semana: 
+          {{ currentVotesThisWeek }}/{{ maxVotesThisWeek }} </strong>
+      </div>
+      <div class="privilege-item">
+        <strong>Publicaciones por mes:
+          {{ currentPublicationsThisMonth }}/{{ maxPublicationsThisMonth }} </strong>
+      </div>
+    </div>
+    <div class="popup-actions">
+      <button class="btn btn-light" (click)="close()">Cancelar</button>
+    </div>
+  </div>
+</div>

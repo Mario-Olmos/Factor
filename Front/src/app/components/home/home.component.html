@@ -50,11 +50,5 @@
       <div *ngIf="!loadingArticles && articles.length === 0" class="text-center my-4">
           <p>No hay artículos en tendencia disponibles.</p>
       </div>
-      <!-- Botón para cargar más artículos (Paginación) -->
-      <div *ngIf="articles.length > 0" class="text-center my-4">
-          <button class="loadMore-btn" (click)="loadMoreArticles()">
-              Cargar Más Artículos
-          </button>
-      </div>
     </div> 
 </div>

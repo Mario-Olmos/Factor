@@ -48,9 +48,9 @@
                     {{ getReputationDescription(article.authorInfo.reputacion) }}
                 </span>
 
-                <div class="profile-acreditaciones-container" *ngIf="article.authorInfo.acreditaciones.length > 0">
+                <div class="detail-acreditaciones-container" *ngIf="article.authorInfo.acreditaciones.length > 0">
                     <h3>Acreditaciones</h3>
-                    <div class="acreditacion" *ngFor="let acreditacion of article.authorInfo.acreditaciones">
+                    <div class="detail-acreditacion" *ngFor="let acreditacion of article.authorInfo.acreditaciones">
                         <p>{{ acreditacion.title }}</p>
                     </div>
                 </div>

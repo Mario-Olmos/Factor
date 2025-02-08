@@ -61,7 +61,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-items: center;
   gap: 15px;
   height: auto;
 }
@@ -70,6 +69,25 @@
 .author-birthdate {
   font-size: 1rem;
   color: #555;
+}
+
+.detail-acreditaciones-container {
+  background-color: #FEFAE0;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.detail-acreditacion {
+  flex-direction: column;
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #ccc;
+}
+
+.detail-acreditacion:last-child {
+  border-bottom: none;
 }
 
 /*****************************************/
