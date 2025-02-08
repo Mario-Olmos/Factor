@@ -3,6 +3,8 @@ const Article = require('../models/Article');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
+const fs = require('fs');
+const path = require('path');
 
 // Endpoint para validar el token
 exports.validateToken = async (req, res) => {
@@ -246,12 +248,23 @@ exports.deleteUser = async (req, res) => {
     try {
         const { deleteArticles } = req.query;
 
-        const user = await User.findById(req.user.userId).select('nombre apellidos email reputacion fechaNacimiento acreditaciones').lean();
+        const user = await User.findById(req.user.userId)
+            .select('nombre apellidos email reputacion fechaNacimiento acreditaciones imagenPerfil')
+            .lean();
         if (!user) {
             return res.status(404).json({ message: 'Usuario no encontrado.' });
         }
 
         if (deleteArticles === 'true') {
+            const articles = await Article.find({ author: user._id });
+            for (const article of articles) {
+                if (article.pdfUrl) {
+                    const pdfPath = path.join(__dirname, '..', article.pdfUrl);
+                    fs.unlink(pdfPath, (err) => {
+                        if (err) console.error('Error al eliminar el PDF:', err);
+                    });
+                }
+            }
             await Article.deleteMany({ author: user._id });
         } else {
             await Article.updateMany(
@@ -272,6 +285,14 @@ exports.deleteUser = async (req, res) => {
             );
         }
 
+        if (user.imagenPerfil) {
+            const imagePathRelative = user.imagenPerfil.replace(/^api\//, '');
+            const profileImagePath = path.join(__dirname, '..', imagePathRelative);
+            fs.unlink(profileImagePath, (err) => {
+                if (err) console.error('Error al eliminar la imagen de perfil:', err);
+            });
+        }
+
         await User.findByIdAndDelete(user._id);
 
         return res.status(200).json({ message: 'Cuenta eliminada con éxito.' });
@@ -280,5 +301,6 @@ exports.deleteUser = async (req, res) => {
         return res.status(500).json({ message: 'Error al eliminar la cuenta.', error: error.message });
     }
 };
+
 
 

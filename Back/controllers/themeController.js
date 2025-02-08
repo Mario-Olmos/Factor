@@ -75,6 +75,11 @@ exports.getTrendyThemes = async (req, res) => {
         const { limit, days } = req.query;
         const diasAtras = new Date();
         diasAtras.setDate(diasAtras.getDate() - days);
+        if (days) {
+            diasAtras.setDate(diasAtras.getDate() - days);
+        } else {
+            diasAtras.setDate(diasAtras.getDate() - 1000);
+        }
 
         // Buscar artículos recientes (últimos x días)
         const articulosRecientes = await Article.find({
