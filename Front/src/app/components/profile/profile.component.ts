@@ -35,6 +35,11 @@ export class ProfileComponent implements OnInit, OnDestroy {
   public loading: boolean = false;
   public isSettingsMenuOpen: boolean = false;
   public isDeleteAccountPopupOpen: boolean = false;
+  public isPrivilegesPopupOpen: boolean = false;
+  public currentVotesThisWeek!: number;
+  public maxVotesThisWeek!: string;
+  public currentPublicationsThisMonth!: number;
+  public maxPublicationsThisMonth!: string;
 
   private destroy$ = new Subject<void>();
 
@@ -145,7 +150,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Crea un grupo de formulario para una acreditación.
+   * Gestión acreditaciones.
    */
   private createAccreditationGroup(ac: Acreditacion = { title: '', institution: '', year: 2025 }): FormGroup {
     return this.fb.group({
@@ -162,62 +167,77 @@ export class ProfileComponent implements OnInit, OnDestroy {
     });
   }
 
-  /**
-   * Obtiene el array de acreditaciones del formulario.
-   */
   public get acreditaciones(): FormArray {
     return this.profileForm.get('acreditaciones') as FormArray;
   }
 
-  /**
-   * Añade una nueva acreditación al formulario.
-   */
   public addAccreditation(): void {
     this.acreditaciones.push(this.createAccreditationGroup());
   }
 
-  /**
-   * Elimina una acreditación específica del formulario.
-   */
   public removeAccreditation(index: number): void {
     this.acreditaciones.removeAt(index);
   }
 
   /**
-   * Cambia la pestaña activa en el perfil.
+   * Gestión de menús
    */
+  public editProfile(): void {
+    this.isEditing = !this.isEditing;
+    if (this.isEditing && this.isOwnProfile) {
+      this.initForm();
+    }
+  }
+
   public setActiveTab(tab: string): void {
     this.activeTab = tab;
   }
 
-  /**
-  * Alterna la visibilidad del menú de configuración.
-  */
   public toggleSettingsMenu(): void {
     this.isSettingsMenuOpen = !this.isSettingsMenuOpen;
-    console.log('Menú de configuración abierto:', this.isSettingsMenuOpen); // Para depuración
+    console.log('Menú de configuración abierto:', this.isSettingsMenuOpen);
   }
 
-  /**
-   * Cierra el menú de configuración.
-   */
   public closeSettingsMenu(): void {
     this.isSettingsMenuOpen = false;
   }
 
-  /**
-   * Abre el pop-up de eliminación de cuenta.
-   */
   public openDeleteAccountPopup(): void {
     this.isDeleteAccountPopupOpen = true;
-    this.closeSettingsMenu(); // Opcional: cerrar el menú al abrir el pop-up
+    this.closeSettingsMenu();
   }
 
-  /**
-   * Cierra el pop-up de eliminación de cuenta.
-   */
   public closeDeleteAccountPopup(): void {
     this.isDeleteAccountPopupOpen = false;
+  }
+
+  public openPrivilegesPopup(): void {
+    this.closeSettingsMenu();
+
+    // Llama a la API que devuelve los límites y lo usado
+    this.authService.getPrivileges().subscribe({
+      next: (data) => {
+        if (data.votingLimit == null && data.publicationLimit == null) {
+          this.maxPublicationsThisMonth = "\u221E";
+          this.maxVotesThisWeek = "\u221E";
+        } else {
+          this.maxVotesThisWeek = String(data.votingLimit);
+          this.maxPublicationsThisMonth= String(data.usedVotesInLastWeek);
+        }
+        this.currentVotesThisWeek = data.usedVotesInLastWeek;
+        this.currentPublicationsThisMonth = data.usedPublicationsInLastMonth;
+
+        this.isPrivilegesPopupOpen = true;
+      },
+      error: (err) => {
+        console.error('Error al obtener privilegios:', err);
+        // Podrías mostrar un mensaje
+      }
+    });
+  }
+
+  public closePrivilegesPopup(): void {
+    this.isPrivilegesPopupOpen = false;
   }
 
   /**
@@ -227,7 +247,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
   public handleDeleteChoice(deleteArticles: boolean): void {
     this.loading = true;
 
-    // Realiza la solicitud al backend para eliminar la cuenta
     this.authService.deleteAccount(deleteArticles)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -235,7 +254,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
           this.showSuccessMessage('Cuenta eliminada con éxito.');
           this.loading = false;
           this.closeDeleteAccountPopup();
-          // Redirigir al usuario después de la eliminación, por ejemplo, a la página de inicio
           setTimeout(() => {
             this.router.navigate(['/']);
           }, 2000);
@@ -247,16 +265,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
           this.closeDeleteAccountPopup();
         }
       });
-  }
-
-  /**
-   * Alterna el modo de edición del perfil.
-   */
-  public editProfile(): void {
-    this.isEditing = !this.isEditing;
-    if (this.isEditing && this.isOwnProfile) {
-      this.initForm();
-    }
   }
 
   /**
@@ -371,7 +379,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     } else if (this.user?.imagenPerfil) {
       return this.sharedService.getFullImageUrl(this.user.imagenPerfil);
     } else {
-      return 'assets/images/default-avatar.png'; // Ruta a una imagen por defecto
+      return 'assets/images/default-avatar.png';
     }
   }
 

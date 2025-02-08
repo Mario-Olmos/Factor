@@ -15,4 +15,7 @@ router.put('/update',authMiddleware, uploadImage, userController.updateUserProfi
 //Ruta para eliminar la cuenta
 router.delete('/delete',authMiddleware, userController.deleteUser);
 
+//Ruta para obtener privilegios
+router.get('/privileges', authMiddleware, userController.getUserPrivileges);
+
 module.exports = router;

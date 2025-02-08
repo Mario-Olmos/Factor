@@ -17,6 +17,7 @@ import { FilterPageComponent } from './components/filter-page/filter-page.compon
 import { ProfileComponent } from './components/profile/profile.component';
 import { PopUpComponent } from './components/shared/pop-up/pop-up.component';
 import { DecisionPopUpComponent } from './components/shared/decision-pop-up/decision-pop-up.component';
+import { PrivilegesPopUpComponent } from './components/shared/privileges-pop-up/privileges-pop-up.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import { DecisionPopUpComponent } from './components/shared/decision-pop-up/deci
     FilterPageComponent,
     ProfileComponent,
     PopUpComponent,
-    DecisionPopUpComponent
+    DecisionPopUpComponent,
+    PrivilegesPopUpComponent
   ],
   imports: [
     BrowserModule,

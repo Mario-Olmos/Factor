@@ -159,7 +159,7 @@ exports.obtenerArticulosFeed = async (req, res) => {
                     evaluatedScore = -3;
                 }
                 article.compositeScore = article.veracity + freshnessScore + evaluatedScore;
-                console.log(article.title ,article.compositeScore);
+                /*console.log(article.title ,article.compositeScore);*/
                 return article;
             });
 
