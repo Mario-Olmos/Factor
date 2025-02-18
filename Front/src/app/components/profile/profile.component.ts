@@ -23,6 +23,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   isOwnProfile: boolean = false;
   user: UserArticle | null = null;
   articles: Article[] = [];
+  activity: Article[] = [];
   currentUser: UserProfile | null = null;
   activeTab: string = 'info';
   isEditing: boolean = false;
@@ -99,6 +100,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
           next: (data: { user: UserArticle }) => {
             this.user = data.user;
             this.loadArticlesByUser();
+            this.loadActivityByUser();
           },
           error: (error) => {
             console.error('Error al cargar el perfil del usuario:', error);
@@ -108,6 +110,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     } else {
       this.initForm();
       this.loadArticlesByUser();
+      this.loadActivityByUser();
     }
   }
 
@@ -121,6 +124,24 @@ export class ProfileComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (articles: Article[]) => {
           this.articles = articles;
+        },
+        error: (error) => {
+          console.error('Error al cargar los artículos del usuario:', error);
+          this.showErrorMessage('Error al cargar los artículos del usuario.');
+        }
+      });
+  }
+
+  /**
+   * Carga la actividad del usuario.
+   */
+  private loadActivityByUser(): void {
+    const authorUsername = this.profileUsername;
+    this.articlesService.getActivityByUser(authorUsername)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (activity: Article[]) => {
+          this.activity = activity;
         },
         error: (error) => {
           console.error('Error al cargar los artículos del usuario:', error);

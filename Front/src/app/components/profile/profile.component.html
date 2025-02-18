@@ -183,12 +183,21 @@
         </button>
       </div>
     </form>
+
+    <p class="activity-title">
+      <strong>Artículos votados por {{ displayName }}</strong>
+    </p>
+    <app-article-list [articles]="activity" [currentUser]="currentUser" [isOwnProfile]="isOwnProfile">
+    </app-article-list>
   </div>
   <!-- Fin de pestaña "Información" -->
 
   <!-- Pestaña "Artículos" -->
   <div *ngIf="activeTab === 'articles'">
-    <h2>Artículos de {{ displayName }}</h2>
+
+    <p class="activity-title">
+      <strong>Artículos de {{ displayName }}</strong>
+    </p>
 
     <div *ngIf="articles && articles.length > 0; else noArticlesBlock">
       <app-article-list [articles]="articles" [currentUser]="currentUser" [isOwnProfile]="isOwnProfile">

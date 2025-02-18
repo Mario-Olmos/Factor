@@ -60,3 +60,9 @@
 .popup-actions .btn {
     width: 48%;
 }
+
+.activity-title{
+    text-align: center;
+    margin-top: 60px;
+    font-size: 2rem;
+}
