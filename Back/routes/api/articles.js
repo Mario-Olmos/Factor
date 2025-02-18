@@ -9,6 +9,8 @@ router.post('/meGusta', authMiddleware, articleController.darLike);
 
 router.get('/getArticlesByUser', authMiddleware, articleController.getArticlesByUser);
 
+router.get('/getActivityByUser', authMiddleware, articleController.getActivityByUser);
+
 router.delete('/deleteArticle', authMiddleware,  articleController.eliminarArticulo);
 
 router.get('/:id',authMiddleware, articleController.getArticleById);

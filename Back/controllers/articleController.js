@@ -376,6 +376,40 @@ exports.getArticlesByUser = async (req, res) => {
 };
 
 
+exports.getActivityByUser = async (req, res) => {
+    try {
+        const { username } = req.query;
+        const viewer = await User.findById(req.user.userId);
+        if (!viewer) {
+            return res.status(404).json({ message: 'Viewer no encontrado.' });
+        }
+        const author = await User.findOne({ username: username });
+        if (!author) {
+            return res.status(404).json({ message: 'Autor no encontrado.' });
+        }
+
+        let articlesQuery = Article.find({ "votes.user": author._id}).lean();
+        const articles = await articlesQuery;
+
+        const articlesWithDetails = await Promise.all(
+            articles.map(async (article) => {
+                const userVoteObj = article.votes.find(vote => vote.user.toString() === viewer._id.toString());
+
+                return getResponseObject(author, article, userVoteObj);
+            })
+        );
+
+        return res.status(200).json(articlesWithDetails);
+
+    } catch (error) {
+        console.error('Error al obtener artículos por usuario:', error);
+        return res
+            .status(500)
+            .json({ message: 'Error al obtener artículos por usuario', error: error.message });
+    }
+};
+
+
 exports.eliminarArticulo = async (req, res) => {
     try {
         const { articleId } = req.query;

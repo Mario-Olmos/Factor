@@ -86,6 +86,14 @@ export class ArticlesService {
     return this.http.get<Article[]>(`${this.apiUrl}/articles/getArticlesByUser`, { params, withCredentials: true });
   }
 
+  //Método get para traer la actividad de un usuario
+  getActivityByUser(username: string): Observable<Article[]> {
+    const params: any = {
+      username
+    }
+    return this.http.get<Article[]>(`${this.apiUrl}/articles/getActivityByUser`, { params, withCredentials: true });
+  }
+
   //Método delete para eliminar el artículo de un usuario
   eliminarArticulo(articleId: string): Observable<{ message: string }> {
     const params: any = {
