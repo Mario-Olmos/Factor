@@ -13,9 +13,9 @@
         <span class="material-icons">settings</span>
       </button>
       <div class="settings-menu" *ngIf="isSettingsMenuOpen">
-          <button class="menu-item" (click)="logout()">Cerrar Sesión</button>
-          <button class="menu-item" (click)="openPrivilegesPopup()">Consultar Privilegios</button>
-          <button class="menu-item" (click)="openDeleteAccountPopup()">Eliminar Cuenta</button>
+        <button class="menu-item" (click)="logout()">Cerrar Sesión</button>
+        <button class="menu-item" (click)="openPrivilegesPopup()">Consultar Privilegios</button>
+        <button class="menu-item" (click)="openDeleteAccountPopup()">Eliminar Cuenta</button>
       </div>
     </div>
 
@@ -110,6 +110,10 @@
           class="error">
           <small>La fecha de nacimiento es requerida.</small>
         </div>
+        <div
+          *ngIf="profileForm.get('fechaNacimiento')?.errors?.['underage']" class="error">
+          <small>Debes ser mayor de 18 años.</small>
+        </div>
       </div>
 
       <div>
@@ -187,8 +191,13 @@
     <p class="activity-title">
       <strong>Artículos votados por {{ displayName }}</strong>
     </p>
-    <app-article-list [articles]="activity" [currentUser]="currentUser" [isOwnProfile]="isOwnProfile">
-    </app-article-list>
+    <div *ngIf="activity && activity.length > 0; else noActivityBlock">
+      <app-article-list [articles]="activity" [currentUser]="currentUser" [isOwnProfile]="isOwnProfile" [isArticleWindow]=false>
+      </app-article-list>
+    </div>
+    <ng-template #noActivityBlock>
+      <p>No hay artículos votados.</p>
+    </ng-template> 
   </div>
   <!-- Fin de pestaña "Información" -->
 
@@ -200,7 +209,7 @@
     </p>
 
     <div *ngIf="articles && articles.length > 0; else noArticlesBlock">
-      <app-article-list [articles]="articles" [currentUser]="currentUser" [isOwnProfile]="isOwnProfile">
+      <app-article-list [articles]="articles" [currentUser]="currentUser" [isOwnProfile]="isOwnProfile" [isArticleWindow]=true>
       </app-article-list>
     </div>
     <ng-template #noArticlesBlock>

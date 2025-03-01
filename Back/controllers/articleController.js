@@ -423,7 +423,7 @@ exports.eliminarArticulo = async (req, res) => {
             return res.status(404).json({ message: 'Artículo no encontrado.' });
         }
 
-        if (articulo.author.toString() !== user.userId) {
+        if (articulo.author.toString() != user._id.toString()) {
             return res.status(403).json({ message: 'No tienes permiso para eliminar este artículo.' });
         }
 
@@ -436,12 +436,8 @@ exports.eliminarArticulo = async (req, res) => {
             }
 
             await Article.findByIdAndDelete(articleId);
-            res.status(200).json({ message: 'Artículo eliminado con éxito.' });
+            return res.status(200).json({ message: 'Artículo eliminado con éxito.' });
         });
-
-        await Article.findByIdAndDelete(articleId);
-
-        res.status(200).json({ message: 'Artículo eliminado con éxito.' });
 
     } catch (error) {
         console.error('Error al eliminar el artículo:', error);
