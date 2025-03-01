@@ -35,7 +35,7 @@
                 <span class="vote-counter">{{ article.downVotes }}</span>
                 <button class="view-btn" [routerLink]="['/articles', article?._id]">Ver</button>
 
-                <button *ngIf="isOwnProfile" (click)="confirmDelete(article._id)" class="remove-btn">
+                <button *ngIf="isOwnProfile && isArticleWindow" (click)="confirmDelete(article._id)" class="remove-btn">
                     Eliminar
                 </button>
             </div>

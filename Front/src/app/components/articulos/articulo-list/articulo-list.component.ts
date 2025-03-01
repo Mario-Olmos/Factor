@@ -15,6 +15,7 @@ export class ArticuloListComponent implements OnChanges {
   @Input() articles: Article[] = [];
   @Input() currentUser!: UserProfile | null;
   @Input() isOwnProfile: boolean = false;
+  @Input() isArticleWindow: boolean = false;
 
   popupMessage: string = '';
   popupType: 'success' | 'error' | '' = '';

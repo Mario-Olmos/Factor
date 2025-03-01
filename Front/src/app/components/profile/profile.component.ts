@@ -161,7 +161,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
         this.currentUser?.fechaNacimiento
           ? this.formatDateForInput(new Date(this.currentUser.fechaNacimiento))
           : '',
-        Validators.required
+        [ Validators.required, this.ageValidator]
       ],
       imagenPerfil: [this.currentUser?.imagenPerfil || ''],
       acreditaciones: this.fb.array(
@@ -235,7 +235,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
   public openPrivilegesPopup(): void {
     this.closeSettingsMenu();
 
-    // Llama a la API que devuelve los límites y lo usado
     this.authService.getPrivileges().subscribe({
       next: (data) => {
         if (data.votingLimit == null && data.publicationLimit == null) {
@@ -298,6 +297,20 @@ export class ProfileComponent implements OnInit, OnDestroy {
       this.selectedFile = file;
       console.log('Archivo seleccionado:', file);
     }
+  }
+
+  /**
+   * Método para registrarse.
+   * @param control Fecha de nacimiento introducida.
+   */
+  private ageValidator(control: any): { [key: string]: boolean } | null {
+    const inputDate = new Date(control.value);
+    const currentDate = new Date();
+    const age = currentDate.getFullYear() - inputDate.getFullYear();
+    if (age < 18 || (age === 18 && currentDate < new Date(inputDate.setFullYear(inputDate.getFullYear() + 18)))) {
+      return { 'underage': true }; 
+    }
+    return null;
   }
 
   /**
