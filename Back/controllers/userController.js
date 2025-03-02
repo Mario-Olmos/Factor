@@ -207,9 +207,22 @@ exports.updateUserProfile = async (req, res) => {
             user.fechaNacimiento = fecha;
         }
 
-        // Si se sube un archivo (req.file) a través de Multer
         if (req.file) {
+            const imagenAnterior = user.imagenPerfil;
+
             user.imagenPerfil = `api/uploads/profiles/${req.file.filename}`;
+
+            if (imagenAnterior) { 
+                const imagePath = path.join(__dirname, '..', imagenAnterior.replace(/^api\//, ''));
+
+                fs.unlink(imagePath, (err) => {
+                    if (err) {
+                        console.error('Error al eliminar la imagen anterior:', err);
+                    } else {
+                        console.log('Imagen anterior eliminada correctamente:', imagenAnterior);
+                    }
+                });
+            }
         }
 
         // Acreditaciones
@@ -221,8 +234,7 @@ exports.updateUserProfile = async (req, res) => {
 
         return res.status(200).json({
             message: 'Perfil actualizado correctamente',
-            user:
-            {
+            user: {
                 username: user.username,
                 reputacion: user.reputacion,
                 nombre: user.nombre,
