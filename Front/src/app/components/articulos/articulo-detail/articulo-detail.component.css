@@ -15,7 +15,8 @@
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 10px;
-  height: 700px;
+  height: 750px;
+  margin-left: 50px;
   overflow: auto;
   /* En caso de contenido desbordado */
 }
@@ -56,6 +57,7 @@
   flex: 1;
   background-color: #F2EED7;
   border: 1px solid #ddd;
+  margin-right: 50px;
   border-radius: 8px;
   padding: 15px;
   display: flex;
@@ -122,10 +124,10 @@
 
 .article-description {
   text-align: justify;
-  line-height: 1.6;
-  margin: 50px 15px;
+  line-height: 1.4;
+  margin: 60px 100px;
   font-family: 'Georgia', 'Times New Roman', serif;
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   color: #333;
 }
 

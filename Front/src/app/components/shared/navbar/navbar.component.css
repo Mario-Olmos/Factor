@@ -1,12 +1,12 @@
 .navbar {
   background-color: #626F47;
   color: #F2EED7;
-  padding: 1rem;
+  padding: 0.8rem;
   max-height: 275px;
 }
 
 .navbar-brand {
-  font-size: 1.5rem;
+  font-size: 2.5rem;
   color: #F2EED7;
 }
 
