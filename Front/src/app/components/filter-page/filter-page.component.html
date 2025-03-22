@@ -42,7 +42,7 @@
       <option value="desc">Puntuación ↓</option>
     </select>
   </div>
-  
+
   <!-- Ordenar por Fecha -->
   <div class="filter-item">
     <label for="ordenar-fecha">Ordenar por Fecha</label>
@@ -72,6 +72,8 @@
 </div>
 
 <!-- Lista de artículos filtrados -->
-<div class="articles-list">
-  <app-article-list [articles]="articles" [currentUser]="currentUser"></app-article-list>
+<div class="home-container">
+  <div class="articles-list">
+    <app-article-list [articles]="articles" [currentUser]="currentUser"></app-article-list>
+  </div>
 </div>

@@ -22,22 +22,27 @@
             </div>
 
             <div class="article-actions">
-                <button class="like-btn" (click)="votarArticulo(article._id, 'upvote')"
-                    [ngClass]="{'liked': article.userVote === 'upvote'}">
-                    <span class="material-icons">thumb_up</span>
-                </button>
-                <span class="vote-counter">{{ article.upVotes }}</span>
+                <div class="voteButtons">
+                    <button class="like-btn" (click)="votarArticulo(article._id, 'upvote')"
+                        [ngClass]="{'liked': article.userVote === 'upvote'}">
+                        <span class="material-icons">thumb_up</span>
+                    </button>
+                    <span class="vote-counter">{{ article.upVotes }}</span>
 
-                <button class="dislike-btn" (click)="votarArticulo(article._id, 'downvote')"
-                    [ngClass]="{'disliked': article.userVote === 'downvote'}">
-                    <span class="material-icons">thumb_down</span>
-                </button>
-                <span class="vote-counter">{{ article.downVotes }}</span>
-                <button class="view-btn" [routerLink]="['/articles', article?._id]">Ver</button>
-
-                <button *ngIf="isOwnProfile && isArticleWindow" (click)="confirmDelete(article._id)" class="remove-btn">
-                    Eliminar
-                </button>
+                    <button class="dislike-btn" (click)="votarArticulo(article._id, 'downvote')"
+                        [ngClass]="{'disliked': article.userVote === 'downvote'}">
+                        <span class="material-icons">thumb_down</span>
+                    </button>
+                    <span class="vote-counter">{{ article.downVotes }}</span>
+                </div>
+                <div class="actionButtons">
+                    <button class="view-btn" [routerLink]="['/articles', article?._id]">Ver</button> 
+                    <button *ngIf="isOwnProfile && isArticleWindow" (click)="confirmDelete(article._id)"
+                        class="remove-btn">
+                        Eliminar
+                    </button>
+                    
+                </div>
             </div>
 
         </div>
@@ -65,7 +70,7 @@
             </ng-container>
 
             <ng-template #deletedAuthor>
-                <p class="deleted-author-message">La cuenta del autor ha sido eliminada.</p>
+                <p class="deleted-author-message">El autor ha eliminado su cuenta.</p>
             </ng-template>
         </div>
     </div>
