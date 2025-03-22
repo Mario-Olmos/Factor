@@ -154,8 +154,8 @@ p {
 /*************************************/
 
 .home-row{
-    margin-right: 100px;
-    margin-left: 100px;
+    margin-right: 160px;
+    margin-left: 160px;
 }
 .card {
     background-color: #626F47;
@@ -199,8 +199,8 @@ p {
     border-radius: 10px;
     padding: 20px;
     margin-bottom: 80px;
-    margin-right: 100px;
-    margin-left: 100px;
+    margin-right: 150px;
+    margin-left: 150px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease-in-out;
     display: flex;
@@ -241,25 +241,68 @@ p {
     color: #333;
 }
 
-.article-actions {
+.voteButtons{
+    position: relative;
+    align-items: center;
+    align-content: center;
+    text-align: center;
+    display: inline-flex;
+    margin-top: 10px;
+}
+
+.actionButtons{
     position: relative;
     float: inline-end;
-    display: flex;
-    padding: 10px;
-    gap: 10px;
-    margin: auto;
     align-items: center;
 }
 
-.article-actions .remove-btn{
-    margin: 0px 50% 0px 0px;
+.article-actions{
+    align-items: center;
+    align-content: center;
+    display: inline-block;
+    margin-inline-end: 45%;
+}
+
+.articlesToggle .article-actions{
+    align-items: center;
+    align-content: center;
+    display: inline-block;
+    margin-inline-start: 0%;
+    margin-inline-end: 34%;
+}
+
+.infoToggle .article-actions{
+    margin-inline-end: 42%;
+}
+
+.article-footer .article-actions{
+    margin-inline-start: 47%;
+}
+
+.actionButtons .remove-btn{
+    position: relative;
     border: none;
     color: white;
-    padding: 10px 30px;
+    padding: 10px 50px;
+    text-align: center;
+    font-size: 16px;
+    border-radius: 5px;
+    margin: 5px;
+    max-width: 150px;
+}
+
+.view-btn {
+    position: relative;
+    background-color: #798645;
+    border: none;
+    color: white;
+    padding: 10px 50px;
     text-align: center;
     text-decoration: none;
     font-size: 16px;
     border-radius: 5px;
+    margin: 5px;
+    transition: background-color 0.3s;
 }
 
 .like-btn,
@@ -267,6 +310,7 @@ p {
     background: transparent;
     border: none;
     font-size: 28px;
+    margin-left: 10px;
     display: inline-flex;
     color: grey;
     justify-self: auto;
@@ -282,19 +326,6 @@ p {
 
 .material-icons {
     font-size: 32px;
-}
-
-.view-btn {
-    margin-left: 25px;
-    background-color: #798645;
-    border: none;
-    color: white;
-    padding: 10px 50px;
-    text-align: center;
-    text-decoration: none;
-    font-size: 16px;
-    border-radius: 5px;
-    transition: background-color 0.3s;
 }
 
 .view-btn:hover {
@@ -426,7 +457,6 @@ p {
 }
 
 .vote-counter {
-    margin: 0 0px;
     font-size: 1.1rem;
     color: black;
 }
@@ -495,7 +525,7 @@ p {
     align-items: flex-end;
     gap: 15px;
     background-color: #F2EED7;
-    padding: 15px;
+    padding: 30px;
     border: 2px solid #e0e0e0;
     border-radius: 8px;
     margin-bottom: 20px;
@@ -507,6 +537,7 @@ p {
     flex-direction: column;
     min-width: 140px;
     flex: 1;
+    margin: 0px 40px;
 }
 
 /* Opcional: estilo diferente para el ítem del botón */
@@ -669,9 +700,10 @@ p {
 }
 
 .edit-profile-btn {
+    margin-top: 30px;
     background: #0066cc;
     color: white;
-    padding: 10px 20px;
+    padding: 15px 25px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -851,4 +883,11 @@ p {
 .profile-container .article-card{
     background: #FEFAE0;
     margin-top: 50px;
+    margin-left: 50px;
+    margin-right: 50px;
+}
+
+.profile-container .themes{
+    padding: 10px;
+    margin-bottom: 10px;
 }
