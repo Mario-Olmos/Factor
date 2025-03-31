@@ -7,9 +7,9 @@ router.get('/getArticles',authMiddleware, articleController.obtenerArticulosFeed
 
 router.post('/meGusta', authMiddleware, articleController.darLike);
 
-router.get('/getArticlesByUser', authMiddleware, articleController.getArticlesByUser);
+router.get('/getArticles-ByUser', authMiddleware, articleController.getArticlesByUser);
 
-router.get('/getActivityByUser', authMiddleware, articleController.getActivityByUser);
+router.get('/getActivity-ByUser', authMiddleware, articleController.getActivityByUser);
 
 router.delete('/deleteArticle', authMiddleware,  articleController.eliminarArticulo);
 

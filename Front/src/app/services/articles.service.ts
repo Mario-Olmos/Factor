@@ -83,7 +83,7 @@ export class ArticlesService {
     const params: any = {
       username
     }
-    return this.http.get<Article[]>(`${this.apiUrl}/articles/getArticlesByUser`, { params, withCredentials: true });
+    return this.http.get<Article[]>(`${this.apiUrl}/articles/getArticles-ByUser`, { params, withCredentials: true });
   }
 
   //Método get para traer la actividad de un usuario
@@ -91,7 +91,7 @@ export class ArticlesService {
     const params: any = {
       username
     }
-    return this.http.get<Article[]>(`${this.apiUrl}/articles/getActivityByUser`, { params, withCredentials: true });
+    return this.http.get<Article[]>(`${this.apiUrl}/articles/getActivity-ByUser`, { params, withCredentials: true });
   }
 
   //Método delete para eliminar el artículo de un usuario
