@@ -242,9 +242,9 @@ exports.darLike = async (req, res) => {
             const diferenciaAbs = Math.abs(balanceVotos);
             const porcentajeDiferencia = (diferenciaAbs / newPoolTotal) * 100;
 
-            if (balanceVotos > 0 && porcentajeDiferencia > 10) {
+            if (balanceVotos > 0 && porcentajeDiferencia > 15) {
                 categoria = 'verificado';
-            } else if (balanceVotos < 0 && porcentajeDiferencia > 10) {
+            } else if (balanceVotos < 0 && porcentajeDiferencia > 15) {
                 categoria = 'desinformativo';
             } else {
                 categoria = 'neutro';
