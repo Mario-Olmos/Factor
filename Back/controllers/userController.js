@@ -45,7 +45,7 @@ exports.logout = (req, res) => {
         sameSite: 'Lax',
         path: '/'
     });
-    return res.status(200).json({ message: 'Logout successful' });
+    return res.status(200).json({ message: 'Sesión terminada con éxito' });
 };
 
 //
@@ -367,10 +367,10 @@ const getPublicationLimit = (reputacion) => {
 //Función con las reglas de votación por reputación
 const getVotingLimit = (reputacion) => {
     if (reputacion >= 71) return Infinity;
-    if (reputacion >= 51) return 6;
-    if (reputacion >= 31) return 4;
-    if (reputacion >= 15) return 2;
-    return 1;
+    if (reputacion >= 51) return 5;
+    if (reputacion >= 31) return 3;
+    if (reputacion >= 15) return 1;
+    return 0;
 };
 
 

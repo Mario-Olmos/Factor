@@ -154,9 +154,9 @@ exports.obtenerArticulosFeed = async (req, res) => {
                 const freshnessScore = Math.max(0, 30 - ageDays);
                 let evaluatedScore = 0;
                 if (article.evaluated === 'verificado') {
-                    evaluatedScore = 3;
+                    evaluatedScore = 5;
                 } else if (article.evaluated === 'pocoFiable') {
-                    evaluatedScore = -3;
+                    evaluatedScore = -5;
                 }
                 article.compositeScore = article.veracity + freshnessScore + evaluatedScore;
                 /*console.log(article.title ,article.compositeScore);*/
