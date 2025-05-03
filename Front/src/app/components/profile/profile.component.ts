@@ -242,7 +242,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
           this.maxVotesThisWeek = "\u221E";
         } else {
           this.maxVotesThisWeek = String(data.votingLimit);
-          this.maxPublicationsThisMonth= String(data.usedVotesInLastWeek);
+          this.maxPublicationsThisMonth= String(data.publicationLimit);
         }
         this.currentVotesThisWeek = data.usedVotesInLastWeek;
         this.currentPublicationsThisMonth = data.usedPublicationsInLastMonth;

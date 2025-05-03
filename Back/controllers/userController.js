@@ -45,7 +45,7 @@ exports.logout = (req, res) => {
         sameSite: 'Lax',
         path: '/'
     });
-    return res.status(200).json({ message: 'Logout successful' });
+    return res.status(200).json({ message: 'Sesión terminada con éxito' });
 };
 
 //

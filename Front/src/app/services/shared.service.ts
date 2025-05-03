@@ -18,16 +18,18 @@ export class SharedService {
    */
   calcularPesoVoto(reputacion: number): number {
     const basePeso = 0.01;
-    const maxPeso = 1;
-
+  
     if (reputacion <= 50) {
-      // Crecimiento lineal desde 0.01 hasta 0.3
       return basePeso + (0.29 * (reputacion / 50));
+    } else if (reputacion <= 70) {
+      const t = (reputacion - 50) / 20;
+      const curva = 0.3 + 0.7 * Math.sqrt((reputacion - 50) / 50);
+      return Math.pow(1 - t, 2) * 0.3 + (2 * (1 - t) * t + Math.pow(t, 2)) * curva;
     } else {
-      // Crecimiento con raíz cuadrada desde 0.3 hasta 1
       return 0.3 + (0.7 * Math.sqrt((reputacion - 50) / 50));
     }
   }
+  
 
   /**
    * Obtiene el color de veracidad basado en el valor.
