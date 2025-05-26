@@ -109,9 +109,8 @@
 }
 
 .veracity-circle {
-  position: absolute;
-  margin-left: 7%;
-  margin-top: 8%;
+  margin-top: 30px;
+  margin-left: 10%;
   width: 90px;
   height: 90px;
   border-radius: 50%;
@@ -133,8 +132,9 @@
 
 .article-header,
 .article-footer {
-  display: flex;
+  display: grid;
   flex-direction: column;
+  text-align: center;
   gap: 10px;
   top: 40px;
   position: relative;
@@ -194,8 +194,8 @@
 }
 
 .article-header .categorization-badge {
-  margin-left: 20%;
   margin-right: 20%;
+  margin-left: 20%;
   margin-bottom: 50px;
   width: 60%;
   height: 50px;
