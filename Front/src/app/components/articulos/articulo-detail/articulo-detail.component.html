@@ -5,14 +5,14 @@
 <div class="article-detail-container" *ngIf="article; else loading">
     <!-- Cabecera del artículo -->
     <div class="article-header">
+        <div class="veracity-circle" [ngStyle]="{'background-color': getVeracityColor(article.veracity)}">
+            {{ article.veracity | number: '1.1-1' }}
+        </div>
         <span class="categorization-badge"
                 [ngStyle]="{'background-color': getCategorizationColor(article.evaluated)}">
                 {{ getCategorizationDescription(article.evaluated) }}
         </span>
         <div class="article-subheader">
-            <div class="veracity-circle" [ngStyle]="{'background-color': getVeracityColor(article.veracity)}">
-                {{ article.veracity | number: '1.1-1' }}
-            </div>
             <div>
                 <h1 class="article-title">{{ article.title }}</h1>
                 <p class="article-description">{{ article.description }}</p>
@@ -71,17 +71,19 @@
     <!-- Footer-->
     <div class="article-footer">
         <div class="article-actions">
-            <button class="like-btn" (click)="votarArticulo(article._id, 'upvote')"
-                [ngClass]="{'liked': article.userVote === 'upvote'}">
-                <span class="material-icons">thumb_up</span>
-            </button>
-            <span class="vote-counter">{{ article.upVotes }}</span>
+            <div class="voteButtons">
+                <button class="like-btn" (click)="votarArticulo(article._id, 'upvote')"
+                    [ngClass]="{'liked': article.userVote === 'upvote'}">
+                    <span class="material-icons">thumb_up</span>
+                </button>
+                <span class="vote-counter">{{ article.upVotes }}</span>
 
-            <button class="dislike-btn" (click)="votarArticulo(article._id, 'downvote')"
-                [ngClass]="{'disliked': article.userVote === 'downvote'}">
-                <span class="material-icons">thumb_down</span>
-            </button>
-            <span class="vote-counter">{{ article.downVotes }}</span>
+                <button class="dislike-btn" (click)="votarArticulo(article._id, 'downvote')"
+                    [ngClass]="{'disliked': article.userVote === 'downvote'}">
+                    <span class="material-icons">thumb_down</span>
+                </button>
+                <span class="vote-counter">{{ article.downVotes }}</span>
+            </div>
         </div>
         <div class="themes">
             <span class="theme theme-level1">{{ article.themes.nivel1 }}</span>
