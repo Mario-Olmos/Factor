@@ -1,0 +1,30 @@
+<nav class="navbar">
+    <div class="container">
+      <a routerLink="/" class="navbar-brand">FACTOR</a>
+  
+      <ul class="navbar-nav">
+        <li class="nav-item" *ngIf="isLoggedIn">
+          <a routerLink="/home" class="nav-link">Home</a>
+        </li>
+        <li class="nav-item" *ngIf="!isLoggedIn">
+          <a routerLink="/login" class="nav-link">Iniciar Sesión</a>
+        </li>
+        <li class="nav-item" *ngIf="!isLoggedIn">
+            <a routerLink="/register" class="nav-link">Registrarse</a>
+        </li>
+        <li class="nav-item" *ngIf="isLoggedIn">
+          <a routerLink="/explorador" class="nav-link">Explorador</a>
+        </li>
+        <li class="nav-item" *ngIf="isLoggedIn">
+          <a routerLink="/uploadArticle" class="nav-link">Subir Artículo</a>
+        </li>
+        <li class="nav-item" *ngIf="isLoggedIn">
+          <a routerLink="/perfil/me" class="nav-link">Perfil</a>
+        </li>
+        <li class="nav-item" *ngIf="isLoggedIn">
+          <a (click)="logout()" class="nav-link">Cerrar Sesión</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  

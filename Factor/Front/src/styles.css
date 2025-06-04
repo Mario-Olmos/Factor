@@ -1,0 +1,893 @@
+body {
+    background: white;
+}
+
+
+/**********************************/
+/* ESTILO GLOBAL PARA FORMULARIOS */
+/**********************************/
+form {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #F2EED7;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.form-group {
+    width: 100%;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="file"],
+input[type="date"],
+textarea[id="description"] {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #444;
+    border-radius: 5px;
+    font-size: 16px;
+    background-color: #FEFAE0;
+    color: black;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.custom-file-upload {
+    margin-top: 15px;
+    width: 100%;
+    display: inline-block;
+    padding: 12px;
+    font-size: 16px;
+    background-color: #FEFAE0;
+    color: black;
+    border: 1px solid #444;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.custom-file-upload:hover {
+    background-color: #F0E6C9;
+}
+
+button[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    background-color: #626F47;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #798645;
+    /* Cambio de color al pasar el ratón */
+}
+
+.container {
+    margin-top: 60px;
+    margin-bottom: 15px;
+    color: #fff;
+}
+
+.error {
+    color: #f44336;
+    font-size: 0.9em;
+    margin-top: 5px;
+}
+
+.invalid-field {
+    border: 2px solid #f44336;
+}
+
+
+/**********************************/
+/*            ENLACES             */
+/**********************************/
+a {
+    color: #798645;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+
+/**********************************/
+/*        ESTILOS PARA H2 Y P     */
+/**********************************/
+/*  */
+h2,
+h4,
+p {
+    text-align: center;
+    color: #000000;
+}
+
+
+/**********************************/
+/*          HOME GENERAL          */
+/**********************************/
+.home-container {
+    margin-top: 30px;
+    padding: 15px;
+}
+
+.home-title {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.section-divider {
+    margin-top: 80px;
+    margin-bottom: 35px;
+    text-align: center;
+}
+
+.section-line {
+    border: 2px solid #798645;
+    margin: 20px auto;
+    width: 60%;
+    border-radius: 50%;
+}
+
+
+/*************************************/
+/* ESTILO GLOBAL PARA TARJETAS TEMAS */
+/*************************************/
+
+.home-row{
+    margin-right: 160px;
+    margin-left: 160px;
+}
+.card {
+    background-color: #626F47;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out, background-color 0.3s ease;
+    padding: 15px;
+    margin-bottom: 40px;
+    min-height: 130px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.card-body {
+    padding: 20px;
+    text-align: center;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+.card-title {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #FEFAE0;
+}
+
+
+/*****************************************/
+/* ESTILO GLOBAL PARA TARJETAS ARTICULOS */
+/*****************************************/
+.article-card {
+    background-color: #F2EED7;
+    position: relative;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 80px;
+    margin-right: 150px;
+    margin-left: 150px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+    display: flex;
+    flex-direction: column;
+}
+
+.article-card:hover {
+    transform: scale(1.02);
+}
+
+.article-layout {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+.article-info {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.article-title {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: black;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.article-description {
+    color: black;
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    font-family: 'Georgia', 'Times New Roman', serif;
+    text-align: justify;
+    color: #333;
+}
+
+.voteButtons{
+    position: relative;
+    align-items: center;
+    align-content: center;
+    text-align: center;
+    display: inline-flex;
+    margin-top: 10px;
+}
+
+.actionButtons{
+    position: relative;
+    float: inline-end;
+    align-items: center;
+}
+
+.article-actions{
+    align-items: center;
+    align-content: center;
+    display: inline-block;
+    margin-inline-end: 45%;
+}
+
+.articlesToggle .article-actions{
+    align-items: center;
+    align-content: center;
+    display: inline-block;
+    margin-inline-start: 0%;
+    margin-inline-end: 34%;
+}
+
+.infoToggle .article-actions{
+    margin-inline-end: 42%;
+}
+
+.article-footer .article-actions{
+    margin-inline-start: 47%;
+}
+
+.actionButtons .remove-btn{
+    position: relative;
+    border: none;
+    color: white;
+    padding: 10px 50px;
+    text-align: center;
+    font-size: 16px;
+    border-radius: 5px;
+    margin: 5px;
+    max-width: 150px;
+}
+
+.view-btn {
+    position: relative;
+    background-color: #798645;
+    border: none;
+    color: white;
+    padding: 10px 50px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    border-radius: 5px;
+    margin: 5px;
+    transition: background-color 0.3s;
+}
+
+.like-btn,
+.dislike-btn {
+    background: transparent;
+    border: none;
+    font-size: 28px;
+    margin-left: 10px;
+    display: inline-flex;
+    color: grey;
+    justify-self: auto;
+}
+
+.liked .material-icons {
+    color: #00ff95;
+}
+
+.disliked .material-icons {
+    color: #ff6347;
+}
+
+.material-icons {
+    font-size: 32px;
+}
+
+.view-btn:hover {
+    background-color: #626F47;
+}
+
+.themes {
+    position: relative;
+    align-items: center;
+    padding: 20px;
+    margin: auto;
+    display: flex;
+    gap: 10px;
+}
+
+.theme {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+}
+
+.theme-level1 {
+    background-color: #4CAF50;
+}
+
+.theme-level2 {
+    background-color: #2196F3;
+}
+
+.theme-level3 {
+    background-color: #FF9800;
+}
+
+.author-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+    background-color: #FEFAE0;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+}
+
+.profile-btn {
+    background-color: #798645;
+    position: relative;
+    float: inline-end;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    margin-top: auto;
+    margin-bottom: 40px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.profile-btn:hover {
+    background-color: #626F47;
+}
+
+.author-image {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ccc;
+    margin: 20px 0;
+}
+
+.reputation-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 12px;
+    color: white;
+    font-size: 0.9em;
+    font-weight: bold;
+    cursor: default;
+    text-transform: uppercase;
+    transition: opacity 0.3s ease;
+}
+
+.reputation-badge:hover {
+    opacity: 0.8;
+}
+
+.veracity-circle {
+    position: absolute;
+    top: 10px;
+    left: 5px;
+    transform: translateY(-50%);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #fff;
+    z-index: 1;
+}
+
+.categorization-badge {
+    display: inline-block;
+    margin-top: 30px;
+    width: 15%;
+    margin-left: 20px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    color: white;
+    font-size: 0.9em;
+    text-align: center;
+    font-weight: bold;
+    cursor: default;
+    text-transform: uppercase;
+    transition: opacity 0.3s ease;
+}
+
+.categorization-badge:hover {
+    opacity: 0.8;
+}
+
+.vote-counter {
+    font-size: 1.1rem;
+    color: black;
+}
+
+
+/*****************************************/
+/* ESTILO GLOBAL PARA DROPDOWN TEMAS */
+/*****************************************/
+/* Estilo general del dropdown */
+.theme-dd-dropdown {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    appearance: none;
+    /* Elimina el estilo por defecto */
+    cursor: pointer;
+}
+
+/* Primer nivel: Temática principal */
+.theme-dd-level1 {
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #2c3e50;
+    background-color: #ecf0f1;
+}
+
+/* Segundo nivel: Subtemas */
+.theme-dd-level2 {
+    font-size: 1.1rem;
+    color: #34495e;
+    padding-left: 20px;
+    background-color: #f4f6f7;
+}
+
+/* Tercer nivel: Sub-subtemas (seleccionables) */
+.theme-dd-level3 {
+    font-size: 0.95rem;
+    color: #16a085;
+    padding-left: 40px;
+    background-color: #ffffff;
+}
+
+/* Hover solo para los seleccionables */
+.theme-dropdown option:not([disabled]):hover {
+    background-color: #e7f3ff;
+    color: #000;
+}
+
+/* Resaltar cuando una opción es seleccionada */
+.theme-dropdown:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+
+
+/*****************************************/
+/* ESTILO GLOBAL PARA BARRA FILTRADO */
+/*****************************************/
+/* --- Contenedor general de la barra de filtros --- */
+.filter-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 15px;
+    background-color: #F2EED7;
+    padding: 30px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+/* --- Cada elemento de la barra de filtros (label + select) --- */
+.filter-item {
+    display: flex;
+    flex-direction: column;
+    min-width: 140px;
+    flex: 1;
+    margin: 0px 40px;
+}
+
+/* Opcional: estilo diferente para el ítem del botón */
+.filter-item-button {
+    align-items: flex-end;
+}
+
+/* --- Label para cada select --- */
+.filter-item label {
+    font-weight: bold;
+    margin-bottom: 6px;
+    font-size: 14px;
+    color: #333;
+}
+
+.theme-dropdown,
+.order-dropdown {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    transition: border-color 0.3s;
+    appearance: none;
+    cursor: pointer;
+}
+
+.theme-dropdown:focus,
+.order-dropdown:focus {
+    outline: none;
+    border-color: #798645;
+    /* Verde suave */
+}
+
+/* --- Botón "Buscar" --- */
+.filter-btn {
+    background-color: #798645;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.filter-btn:hover {
+    background-color: #626F47;
+}
+
+
+
+/*****************************************/
+/* ESTILO GLOBAL PARA PERFIL */
+/*****************************************/
+/* --- Contenedor principal --- */
+.profile-container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #F2EED7;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Tarjeta principal con imagen e info --- */
+.profile-main-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 20px;
+    background-color: #FEFAE0;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.profile-image-container {
+    flex: 0 0 auto;
+}
+
+.profile-image {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.profile-info-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.profile-info-container .reputation-badge {
+    text-align: center;
+    max-width: 180px;
+    padding-right: 5px;
+    margin-bottom: 20px;
+}
+
+.profile-name {
+    display: flex;
+    position: relative;
+    float: left;
+    font-size: 26px;
+    font-weight: bold;
+    color: #333;
+    margin: 0 0 10px 0;
+}
+
+/* --- Datos en modo solo lectura, verticalmente alineados --- */
+.profile-details {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.profile-details p {
+    margin: 0;
+    color: #555;
+}
+
+/* --- Acreditaciones en solo lectura --- */
+.profile-acreditaciones-container {
+    background-color: #FEFAE0;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.profile-acreditaciones-container h3 {
+    margin-top: 0;
+}
+
+/* Separador claro entre acreditaciones */
+.acreditacion {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid #ccc;
+}
+
+.acreditacion:last-child {
+    border-bottom: none;
+    /* Evita la última raya */
+}
+
+.acreditacion p {
+    margin: 0 0 8px 0;
+}
+
+/* --- Botón de editar perfil (solo lectura) --- */
+.edit-profile-btn-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.edit-profile-btn {
+    margin-top: 30px;
+    background: #0066cc;
+    color: white;
+    padding: 15px 25px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.edit-profile-btn:hover {
+    background: #004da0;
+}
+
+/* --- Formulario de edición --- */
+.edit-form {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+    /* Para que todos los campos y acreditaciones tengan el mismo ancho */
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+    width: 100%;
+    /* Ocupa todo el ancho del contenedor */
+}
+
+.form-group label {
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* --- Acreditaciones dentro del formulario (modo edición) --- */
+.acreditaciones {
+    margin-top: 20px;
+}
+
+.acreditaciones h3 {
+    margin-bottom: 10px;
+}
+
+.acreditacion-item {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.acreditacion-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    /* Para forzar que ocupe todo el ancho */
+}
+
+/* Form-groups dentro de las acreditaciones */
+.acreditacion-fields .form-group {
+    margin-bottom: 0;
+    /* Menos espacio vertical entre campos */
+    width: 100%;
+}
+
+/* Botones de las acreditaciones (Agregar/Eliminar) */
+.add-btn,
+.remove-btn {
+    background-color: #798645;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    width: 100%;
+}
+
+.add-btn:hover {
+    background-color: #626F47;
+}
+
+.remove-btn {
+    background-color: #dc3545;
+}
+
+.remove-btn:hover {
+    background-color: #c82333;
+}
+
+/* --- Botones finales (Guardar/Cancelar) --- */
+.edit-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    justify-content: flex-end;
+}
+
+.save-btn {
+    background-color: #798645;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.save-btn:hover {
+    background-color: #626F47;
+}
+
+.cancel-btn {
+    background-color: #0066cc;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.cancel-btn:hover {
+    background-color: #004da0;
+}
+
+/* --- Responsividad opcional (para que imagen e info se apilen en pantallas pequeñas) --- */
+@media (max-width: 600px) {
+    .profile-main-card {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .profile-image {
+        margin-bottom: 20px;
+    }
+}
+
+/* Pestañas (profile-tabs) */
+.profile-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 40px;
+    justify-content: flex-start;
+}
+
+.profile-tabs button {
+    background: #eee;
+    width: 100%;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+
+.profile-tabs button:hover {
+    background: #ddd;
+}
+
+/* Estilo para la pestaña activa */
+.profile-tabs button.active {
+    background: #798645;
+    color: white;
+}
+
+.profile-container .author-info {
+    display: none !important;
+}
+
+.profile-container .article-card{
+    background: #FEFAE0;
+    margin-top: 50px;
+    margin-left: 50px;
+    margin-right: 50px;
+}
+
+.profile-container .themes{
+    padding: 10px;
+    margin-bottom: 10px;
+}

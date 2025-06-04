@@ -1,7 +1,7 @@
 import { UserArticle } from './user.model';
 
 export type UserVote = 'upvote' | 'downvote' | 'none';
-export type categorizationType = 'verificado' | 'neutro' | 'pocoFiable' | 'none' 
+export type categorizationType = 'verificado' | 'neutro' | 'desinformativo' | 'none' 
 
 export interface Article {
   _id: string;

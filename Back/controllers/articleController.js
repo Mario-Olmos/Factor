@@ -151,15 +151,15 @@ exports.obtenerArticulosFeed = async (req, res) => {
             const currentTime = new Date();
             const processedArticles = articles.map(article => {
                 const ageDays = (currentTime - new Date(article.createdAt)) / (1000 * 60 * 60 * 24);
-                const freshnessScore = Math.max(0, 30 - ageDays);
+                const freshnessScore = Math.max(0, (30 - ageDays)/5);
                 let evaluatedScore = 0;
                 if (article.evaluated === 'verificado') {
                     evaluatedScore = 5;
-                } else if (article.evaluated === 'pocoFiable') {
+                } else if (article.evaluated === 'desinformativo') {
                     evaluatedScore = -5;
                 }
                 article.compositeScore = article.veracity + freshnessScore + evaluatedScore;
-                /*console.log(article.title ,article.compositeScore);*/
+                console.log(article.title ,article.compositeScore);
                 return article;
             });
 

@@ -86,7 +86,7 @@ export class SharedService {
       return 'Verificado';
     } else if (evaluated === 'neutro') {
       return 'Neutro';
-    } else if (evaluated === 'pocoFiable') {
+    } else if (evaluated === 'desinformativo') {
       return 'Poco fiable';
     } else return 'Sin evaluar';
   }
@@ -97,7 +97,7 @@ export class SharedService {
    * @returns Color.
    */
   getCategorizationColor(evaluated: categorizationType): any {
-    if (evaluated === 'pocoFiable') {
+    if (evaluated === 'desinformativo') {
       return '#FF4D4D'; // Rojo
     } else if (evaluated === 'neutro') {
       return '#FFC107'; // Amarillo

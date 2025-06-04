@@ -1,0 +1,228 @@
+<!-- Popup de notificación -->
+<app-pop-up *ngIf="popupMessage" [message]="popupMessage" [type]="popupType" (closed)="onPopUpClosed()">
+</app-pop-up>
+
+<!-- Contenedor principal -->
+<div class="profile-container">
+
+  <!-- Bloque que siempre se ve: foto + datos básicos -->
+  <div class="profile-main-card">
+
+    <div class="profile-settings">
+      <button class="settings-btn" *ngIf="isOwnProfile" (click)="toggleSettingsMenu()" aria-label="Configuración">
+        <span class="material-icons">settings</span>
+      </button>
+      <div class="settings-menu" *ngIf="isSettingsMenuOpen">
+        <button class="menu-item" (click)="logout()">Cerrar Sesión</button>
+        <button class="menu-item" (click)="openPrivilegesPopup()">Consultar Privilegios</button>
+        <button class="menu-item" (click)="openDeleteAccountPopup()">Eliminar Cuenta</button>
+      </div>
+    </div>
+
+    <div class="profile-image-container">
+      <img [src]="getProfileImageUrl()" class="profile-image" alt="Imagen de perfil de {{ displayName }}" />
+    </div>
+
+    <div class="profile-info-container">
+      <h1 class="profile-name">{{ displayName }}</h1>
+
+      <span class="reputation-badge" [ngStyle]="{'background-color': getReputationColor(displayReputationBadge)}">
+        {{ getReputationDescription(displayReputationBadge) }}
+      </span>
+
+      <!-- Datos fijos (solo lectura): email, fecha de nacimiento, etc. -->
+      <div class="profile-details">
+        <!-- Email (solo para perfil propio) -->
+        <p class="profile-email" *ngIf="isOwnProfile && displayEmail">
+          <strong>Email:</strong> {{ displayEmail }}
+        </p>
+
+        <!-- Fecha de nacimiento (solo para perfil propio) -->
+        <p *ngIf="isOwnProfile && displayFechaNacimiento" class="profile-birthdate">
+          <strong>Fecha de nacimiento:</strong> {{ displayFechaNacimiento | date }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pestañas -->
+  <div class="profile-tabs">
+    <button [class.active]="activeTab === 'info'" (click)="setActiveTab('info')">
+      Información
+    </button>
+    <button [class.active]="activeTab === 'articles'" (click)="setActiveTab('articles')">
+      Artículos
+    </button>
+  </div>
+
+  <!-- Contenido de la pestaña "Información" -->
+  <div *ngIf="activeTab === 'info'" class="infoToggle">
+    <!-- Acreditaciones en modo solo lectura (si no está editando) -->
+    <div class="profile-acreditaciones-container" *ngIf="displayAcreditaciones.length > 0 && !isEditing">
+      <h3>Acreditaciones</h3>
+      <div class="acreditacion" *ngFor="let acreditacion of displayAcreditaciones">
+        <p><strong>Título:</strong> {{ acreditacion.title }}</p>
+        <p><strong>Institución:</strong> {{ acreditacion.institution }}</p>
+        <p><strong>Año:</strong> {{ acreditacion.year }}</p>
+      </div>
+    </div>
+
+    <!-- Botón de editar perfil (solo si es nuestro perfil y no estamos editando) -->
+    <div class="edit-profile-btn-container" *ngIf="isOwnProfile && !isEditing">
+      <button class="edit-profile-btn" (click)="editProfile()">
+        Editar perfil
+      </button>
+    </div>
+
+    <!-- Formulario de edición -->
+    <form [formGroup]="profileForm" *ngIf="isEditing" class="edit-form" novalidate>
+      <div class="form-group">
+        <label for="nombre">Nombre:</label>
+        <input id="nombre" formControlName="nombre" class="form-control" type="text" />
+        <div *ngIf="profileForm.get('nombre')?.errors?.['required'] && profileForm.get('nombre')?.touched"
+          class="error">
+          <small>El nombre es requerido.</small>
+        </div>
+        <div *ngIf="profileForm.get('nombre')?.errors?.['maxlength'] && profileForm.get('nombre')?.touched"
+          class="error">
+          <small>El nombre no puede exceder 100 caracteres.</small>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="apellidos">Apellidos:</label>
+        <input id="apellidos" formControlName="apellidos" class="form-control" type="text" />
+        <div *ngIf="profileForm.get('apellidos')?.errors?.['required'] && profileForm.get('apellidos')?.touched"
+          class="error">
+          <small>Los apellidos son requeridos.</small>
+        </div>
+        <div *ngIf="profileForm.get('apellidos')?.errors?.['maxlength'] && profileForm.get('apellidos')?.touched"
+          class="error">
+          <small>Los apellidos no pueden exceder 100 caracteres.</small>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="fechaNacimiento">Fecha de nacimiento:</label>
+        <input id="fechaNacimiento" formControlName="fechaNacimiento" type="date" class="form-control" />
+        <div
+          *ngIf="profileForm.get('fechaNacimiento')?.errors?.['required'] && profileForm.get('fechaNacimiento')?.touched"
+          class="error">
+          <small>La fecha de nacimiento es requerida.</small>
+        </div>
+        <div
+          *ngIf="profileForm.get('fechaNacimiento')?.errors?.['underage']" class="error">
+          <small>Debes ser mayor de 18 años.</small>
+        </div>
+      </div>
+
+      <div>
+        <label for="imagenPerfil" class="custom-file-upload">Seleccionar imagen de perfil:</label>
+        <input id="imagenPerfil" type="file" (change)="onImageSelected($event)" accept="image/*" class="form-control" />
+        <div *ngIf="selectedFile" class="mb-2">
+          <p>Imagen seleccionada: {{ selectedFile.name }}</p>
+        </div>
+      </div>
+
+      <!-- Acreditaciones (edición) -->
+      <div class="acreditaciones">
+        <h3>Acreditaciones</h3>
+        <div formArrayName="acreditaciones" *ngFor="let acreditacion of acreditaciones.controls; let i = index"
+          class="acreditacion-item">
+          <div [formGroupName]="i" class="acreditacion-fields">
+            <div class="form-group">
+              <label for="title-{{ i }}">Título:</label>
+              <input id="title-{{ i }}" formControlName="title" class="form-control" type="text" placeholder="Título" />
+              <div *ngIf="acreditacion.get('title')?.errors?.['required'] && acreditacion.get('title')?.touched"
+                class="error">
+                <small>Título es requerido.</small>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="institution-{{ i }}">Institución:</label>
+              <input id="institution-{{ i }}" formControlName="institution" class="form-control" type="text"
+                placeholder="Institución" />
+              <div
+                *ngIf="acreditacion.get('institution')?.errors?.['required'] && acreditacion.get('institution')?.touched"
+                class="error">
+                <small>Institución es requerida.</small>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="year-{{ i }}">Año:</label>
+              <input id="year-{{ i }}" formControlName="year" class="form-control" type="number" placeholder="Año" />
+              <div *ngIf="acreditacion.get('year')?.errors?.['required'] && acreditacion.get('year')?.touched"
+                class="error">
+                <small>Año es requerido.</small>
+              </div>
+              <div *ngIf="acreditacion.get('year')?.errors?.['min'] && acreditacion.get('year')?.touched" class="error">
+                <small>Año no puede ser menor a 1900.</small>
+              </div>
+              <div *ngIf="acreditacion.get('year')?.errors?.['max'] && acreditacion.get('year')?.touched" class="error">
+                <small>Año no puede ser mayor al año actual.</small>
+              </div>
+            </div>
+
+            <button type="button" class="remove-btn" (click)="removeAccreditation(i)">
+              Eliminar
+            </button>
+          </div>
+        </div>
+
+        <button type="button" class="add-btn" (click)="addAccreditation()">
+          Añadir acreditación
+        </button>
+      </div>
+
+      <!-- Botones para guardar o cancelar edición -->
+      <div class="edit-buttons">
+        <button type="button" class="save-btn" (click)="saveProfile()" [disabled]="!profileForm.valid || loading">
+          <span *ngIf="!loading">Guardar</span>
+          <span *ngIf="loading">Guardando...</span>
+        </button>
+        <button type="button" class="cancel-btn" (click)="editProfile()" [disabled]="loading">
+          Cancelar
+        </button>
+      </div>
+    </form>
+
+    <p class="activity-title">
+      <strong>Artículos votados por {{ displayName }}</strong>
+    </p>
+    <div *ngIf="activity && activity.length > 0; else noActivityBlock">
+      <app-article-list [articles]="activity" [currentUser]="currentUser" [isOwnProfile]="isOwnProfile" [isArticleWindow]=false>
+      </app-article-list>
+    </div>
+    <ng-template #noActivityBlock>
+      <p>No hay artículos votados.</p>
+    </ng-template> 
+  </div>
+  <!-- Fin de pestaña "Información" -->
+
+  <!-- Pestaña "Artículos" -->
+  <div *ngIf="activeTab === 'articles'" class="articlesToggle">
+
+    <p class="activity-title">
+      <strong>Artículos de {{ displayName }}</strong>
+    </p>
+
+    <div *ngIf="articles && articles.length > 0; else noArticlesBlock">
+      <app-article-list [articles]="articles" [currentUser]="currentUser" [isOwnProfile]="isOwnProfile" [isArticleWindow]=true>
+      </app-article-list>
+    </div>
+    <ng-template #noArticlesBlock>
+      <p>No hay artículos publicados.</p>
+    </ng-template>
+  </div>
+
+</div>
+
+<app-decision-pop-up *ngIf="isDeleteAccountPopupOpen" (deleteChoice)="handleDeleteChoice($event)"
+  (closePopup)="closeDeleteAccountPopup()">
+</app-decision-pop-up>
+
+<app-privileges-pop-up *ngIf="isPrivilegesPopupOpen" [currentVotesThisWeek]="currentVotesThisWeek"
+  [maxVotesThisWeek]="maxVotesThisWeek" [currentPublicationsThisMonth]="currentPublicationsThisMonth"
+  [maxPublicationsThisMonth]="maxPublicationsThisMonth" (onClose)="closePrivilegesPopup()"></app-privileges-pop-up>
