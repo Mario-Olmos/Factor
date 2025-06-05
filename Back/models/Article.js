@@ -75,7 +75,7 @@ const articleSchema = new mongoose.Schema({
     ],
     evaluated: {
         type: String,
-        enum: ['verificado', 'neutro', 'pocoFiable'],
+        enum: ['verificado', 'neutro', 'desinformativo'],
         default: null, 
     },
     categorizationRounds: {
